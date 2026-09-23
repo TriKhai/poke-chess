@@ -66,6 +66,7 @@ v1.2.9
   Gốc, Lãi, Chuỗi, Thắng, Đồ (Base, Interest, Streak, Win, Item).
 
 v1.3.0
+- Hotfix biểu đồ: nội suy đường cong fixed-point, nét dày liền mạch và chấm nối; áp dụng chung cho tổng kết cuối trận và Lịch sử đấu.
 - Thêm RunStorage RMS version riêng, lưu/resume vòng, RNG, HP, vàng, level/XP,
   streak, đội hình, hàng chờ, shop/lock, pool, inventory, trang bị, địch và lịch sử kết quả.
 - Save tiến độ cũ v1-v3 giữ nguyên; snapshot hỏng bị bỏ an toàn, không làm mất collection.

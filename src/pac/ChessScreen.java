@@ -1435,7 +1435,7 @@ public final class ChessScreen extends Screen {
         int headY=fh*3+4;
         Art.textSmallC(g,Lang.t("TA ","ALLY ")+totalP,W/4,headY,0x76C442);
         Art.textSmallC(g,Lang.t("ĐỊCH ","ENEMY ")+totalE,W*3/4,headY,0xE76E55);
-        int top=headY+fh+2,footer=fh*4+7,rowH=rows>0?(H-top-footer)/rows:20;
+        int top=headY+fh+2,footer=fh*5+7,rowH=rows>0?(H-top-footer)/rows:20;
         if(rowH>24)rowH=24;if(rowH<13)rowH=13;
         int av=rowH>=21?20:16,half=W/2,barW=half-av-8;if(barW<12)barW=12;
         for(int r=0;r<rows;r++){
@@ -1454,9 +1454,12 @@ public final class ChessScreen extends Screen {
         }
         int fy=H-footer+2;
         Art.textSmallC(g,"XP +"+run.lastXp+Lang.t("   Pet còn ","   Survivors ")+run.lastSurvivors,W/2,fy,0xB8E8C0);
-        String goldParts=" ("+run.lastBaseGold+"+I"+run.lastInterest+"+S"+run.lastStreakGold+"+W"+run.lastVictoryGold+(run.lastItemGold>0?"+Item"+run.lastItemGold:"")+")";
-        Art.textSmallC(g,Lang.t("Vàng +","Gold +")+run.lastGold+goldParts,W/2,fy+fh,0xFFD060);
-        if(run.lastItem>=0)Art.textSmallC(g,Lang.t("Vật phẩm: ","Item: ")+ItemData.name(run.lastItem),W/2,fy+fh*2,0x80D8FF);
+        Art.textSmallC(g,Lang.t("Tổng vàng +","Total gold +")+run.lastGold,W/2,fy+fh,0xFFD060);
+        String goldParts=Lang.t("Gốc ","Base ")+run.lastBaseGold+Lang.t("  Lãi ","  Interest ")+run.lastInterest+
+                Lang.t("  Chuỗi ","  Streak ")+run.lastStreakGold+Lang.t("  Thắng ","  Win ")+run.lastVictoryGold+
+                (run.lastItemGold>0?Lang.t("  Đồ ","  Item ")+run.lastItemGold:"");
+        Art.textSmallC(g,goldParts,W/2,fy+fh*2,0xC8B878);
+        if(run.lastItem>=0)Art.textSmallC(g,Lang.t("Vật phẩm: ","Item: ")+ItemData.name(run.lastItem),W/2,fy+fh*3,0x80D8FF);
         Art.textSmallC(g,run.over?Lang.t("FIRE: xem tổng kết","FIRE: final summary"):Lang.t("FIRE: tiếp tục","FIRE: continue"),W/2,H-fh-2,0x8090B0);
     }
 

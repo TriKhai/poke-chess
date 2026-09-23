@@ -62,6 +62,8 @@ v1.2.9
   trang bị cho cả hai phía thay vì chỉ đội người chơi.
 - Sacred Ash hoạt động như hồi sinh một lần để bộ trang bị Tower Duo có hiệu lực.
 - Nâng MIDlet-Version và tài liệu lên 1.2.9; bổ sung regression economy/formation/boss.
+- Hotfix UI economy: bỏ ký hiệu kỹ thuật I/S/W; màn kết quả dùng nhãn đầy đủ
+  Gốc, Lãi, Chuỗi, Thắng, Đồ (Base, Interest, Streak, Win, Item).
 
 KE HOACH
 - v1.3.0: save/resume run và build lite/full.

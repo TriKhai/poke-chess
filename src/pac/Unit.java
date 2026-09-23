@@ -10,6 +10,8 @@ public final class Unit {
     public int hp, prevHp, maxHp, atk, def, speDef, speed, range, cd, cdLeft, mana, prevMana, maxMana;
     public int stun, shield;
     public int dodge, crit, lifesteal, skillBonus, regen;
+    public int critPower, basicCount, damageBlockEvery, damageHitCount, flyCharges;
+    public int[] synTier = new int[Data.NT];
     /** Live combat statistics used by the persistent team inspector. */
     public int damageDealt, damageTaken, damageBlocked, healingDone, shieldDone;
     /** Original held-item ids, copied into combat for the team inspector. */

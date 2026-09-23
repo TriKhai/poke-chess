@@ -598,7 +598,8 @@ public final class Data {
     public static boolean isBase(int sp){return fam[sp]==sp;}
     public static boolean famHasType(int sp,int type){int s=fam[sp];while(s>=0){if(t1[s]==type||t2[s]==type)return true;s=evo[s];}return false;}
     public static int countFamilies(){int n=0;for(int i=0;i<N;i++)if(fam[i]==i)n++;return n;}
-    public static int synLevel(int count){if(count>=6)return 3;if(count>=4)return 2;if(count>=2)return 1;return 0;}
+    public static int synLevel(int count){return SynergyEffects.tier(T_FIRE,count);}
+    public static int synLevel(int type,int count){return SynergyEffects.tier(type,count);}
     public static int visualWidth(int sp){return VisualSize.W[sp];}
     public static int visualHeight(int sp){return VisualSize.H[sp];}
     public static int visualSize(int sp){return Math.max(VisualSize.W[sp],VisualSize.H[sp]);}

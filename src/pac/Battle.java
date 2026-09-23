@@ -112,68 +112,7 @@ public final class Battle {
     }
 
     private void applySyn(int side, int[] cnt) {
-        for (int t = 0; t < Data.NT; t++) {
-            int lv = Data.synLevel(cnt[t]);
-            if (lv == 0) continue;
-            for (int i = 0; i < n; i++) {
-                Unit u = units[i];
-                if (u.side != side || !hasType(u.sp, t)) continue;
-                switch (t) {
-                    case Data.T_NORMAL: {
-                        int p = lv == 1 ? 12 : (lv == 2 ? 25 : 45);
-                        u.maxHp += u.maxHp * p / 100; u.hp = u.maxHp;
-                        break;
-                    }
-                    case Data.T_FIRE:
-                        u.atk += u.atk * (lv == 1 ? 15 : (lv == 2 ? 35 : 60)) / 100;
-                        break;
-                    case Data.T_WATER:
-                        u.mana += (lv == 1 ? 20 : (lv == 2 ? 40 : 70));
-                        if (u.maxMana > 0 && u.mana > u.maxMana) u.mana = u.maxMana;
-                        break;
-                    case Data.T_GRASS:
-                        u.regen += (lv == 1 ? 2 : (lv == 2 ? 4 : 7));
-                        break;
-                    case Data.T_ELEC: {
-                        int p = lv == 1 ? 15 : (lv == 2 ? 30 : 50);
-                        u.speed += u.speed * p / 100;
-                        u.cd = CombatRules.cooldownTicks(1000, u.speed);
-                        if (u.cd < 2) u.cd = 2;
-                        break;
-                    }
-                    case Data.T_ROCK:
-                        u.def += (lv == 1 ? 2 : (lv == 2 ? 5 : 9));
-                        break;
-                    case Data.T_PSY:
-                        u.skillBonus += (lv == 1 ? 30 : (lv == 2 ? 60 : 120));
-                        break;
-                    case Data.T_FIGHT:
-                        u.crit += (lv == 1 ? 15 : (lv == 2 ? 30 : 50));
-                        break;
-                    case Data.T_FLY:
-                        u.dodge += (lv == 1 ? 10 : (lv == 2 ? 20 : 35));
-                        break;
-                    case Data.T_DRAGON: {
-                        int p = lv == 1 ? 10 : (lv == 2 ? 25 : 50);
-                        u.atk += u.atk * p / 100;
-                        u.maxHp += u.maxHp * p / 100; u.hp = u.maxHp;
-                        break;
-                    }
-                    case Data.T_GHOST:
-                        u.lifesteal += (lv == 1 ? 10 : (lv == 2 ? 20 : 35));
-                        break;
-                    default: {
-                        // Extra synergies used by the original client (Bug, Flora,
-                        // Field, Aquatic, etc.) share a compact offline bonus.
-                        int p = lv == 1 ? 8 : (lv == 2 ? 16 : 28);
-                        u.atk += u.atk * p / 100;
-                        u.maxHp += u.maxHp * p / 100;
-                        u.hp = u.maxHp;
-                        break;
-                    }
-                }
-            }
-        }
+        SynergyEffects.apply(this,side,cnt);
     }
 
     // ---- simulation ------------------------------------------------------
@@ -339,9 +278,11 @@ public final class Battle {
             cast(u, t);
         } else {
             if (u.range > 1) addShot(u, t, u.side == 0 ? 0x80C8FF : 0xFF9070, 0);
+            SynergyEffects.onBasicAttack(u,t,rng);
             boolean crit = u.crit > 0 && rng.pct(u.crit);
-            int raw = crit ? u.atk * CombatRules.CRIT_POWER_PERCENT / 100 : u.atk;
+            int raw = crit ? u.atk * SynergyEffects.critPower(u) / 100 : u.atk;
             damage(u, t, raw, PHYSICAL, true, crit);
+            int extra=SynergyEffects.extraAttacks(u);for(int e=0;e<extra&&t.alive;e++)damage(u,t,u.atk,PHYSICAL,true,false);
             if (u.maxMana > 0) {
                 u.mana += CombatRules.ON_ATTACK_MANA;
                 if (u.mana > u.maxMana) u.mana = u.maxMana;
@@ -350,6 +291,7 @@ public final class Battle {
     }
 
     private void cast(Unit u, Unit t) {
+        SynergyEffects.onCast(this,u);
         addSkillFx(Data.abil[u.sp] == 1 || Data.abil[u.sp] == 3 || Data.abil[u.sp] == 6 ? u : t, u.sp);
         int bonus = 100 + u.skillBonus;
         int a = u.atk * bonus / 100;
@@ -470,7 +412,7 @@ public final class Battle {
         }
         addFx(tgt, dealt, crit ? 3 : 0, crit ? 0xFFD030 : (src.side == 0 ? 0xFFFFFF : 0xFF8080));
         if (src.lifesteal > 0) heal(src, dealt * src.lifesteal / 100);
-        if (tgt.hp <= 0) kill(tgt);
+        if (tgt.hp <= 0) kill(tgt,src);
         return dealt;
     }
 
@@ -489,12 +431,14 @@ public final class Battle {
         addFx(u, actual, 1, 0x60FF60);
     }
 
-    private void kill(Unit u) {
+    private void kill(Unit u) { kill(u,null); }
+    private void kill(Unit u,Unit killer) {
         u.alive = false;
         u.state = Unit.DEAD;
         u.hp = 0;
         if (grid[u.y * COLS + u.x] == u) grid[u.y * COLS + u.x] = null;
         addFx(u, 0, 4, u.side == 0 ? 0x80C8FF : 0xFF8060);
+        SynergyEffects.onKill(this,killer,u);
     }
 
     /** Called by CombatStatus; status damage is true damage and cannot grant mana. */

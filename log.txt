@@ -1,0 +1,26 @@
+POKE AUTO CHESS ME - VERSION LOG
+================================
+
+v1.2.5
+- Chốt baseline Git cục bộ cho mã nguồn, tài nguyên runtime, tools và docs.
+- Đồng bộ MIDlet-Version thành 1.2.5.
+- Sửa regression test theo luồng ghép vật phẩm thủ công.
+- Build bắt buộc chạy test trước compile/preverify/JAR.
+- Test item, merge, bán Pokemon, shop lock, mode và 101 trận combat.
+
+v1.2.6
+- Dùng bảng mốc riêng của 31 synergy từ source Pokemon Auto Chess gốc.
+- Tách luật synergy sang SynergyEffects.java, bỏ bonus chung tạm thời.
+- Port các luật combat gốc: khiên Normal, tăng ATK Fire, tam kích Electric,
+  Poison on-hit, Ghost curse, Dark crit, Rock/Ice/Psychic stat, Human hút máu,
+  Monster on-kill, Field on-death, Sound on-cast, Dragon, Wild và các hệ khác.
+- Các hệ có tính năng online/meta được chuyển thành hiệu ứng combat offline:
+  Bug, Aquatic, Baby, Flora, Fossil và Gourmet.
+- UI hiển thị đúng mốc kích hoạt riêng của từng hệ.
+
+KE HOACH
+- v1.2.7: item passive và trigger system.
+- v1.2.8: ability behavior system và status hoàn chỉnh.
+- v1.2.9: economy, enemy formation và boss parity.
+- v1.3.0: save/resume run và build lite/full.
+- v1.3.1: cân bằng, tối ưu thiết bị thật và hoàn thiện nội dung offline.

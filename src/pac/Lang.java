@@ -52,21 +52,41 @@ public final class Lang {
         return Save.language==EN?STATUS_EN[status]:STATUS_VI[status];
     }
 
-    /** Compact descriptions matching Battle.applySyn's actual 2/4/6 bonuses. */
+    /** Compact descriptions for the source-backed offline synergy rules. */
     public static String synergyDesc(int type) {
         switch(type) {
-            case Data.T_NORMAL:return t("HP +12/25/45%","HP +12/25/45%");
-            case Data.T_FIRE:return t("ATK +15/35/60%","ATK +15/35/60%");
-            case Data.T_WATER:return t("MP đầu +20/40/70","Start MP +20/40/70");
-            case Data.T_GRASS:return t("Hồi 2/4/7% HP","Regen 2/4/7% HP");
-            case Data.T_ELEC:return t("Tốc +15/30/50%","Speed +15/30/50%");
-            case Data.T_ROCK:return t("DEF +2/5/9","DEF +2/5/9");
-            case Data.T_PSY:return t("Skill +30/60/120%","Skill +30/60/120%");
-            case Data.T_FIGHT:return t("Crit +15/30/50%","Crit +15/30/50%");
-            case Data.T_FLY:return t("Né +10/20/35%","Dodge +10/20/35%");
-            case Data.T_DRAGON:return t("ATK+HP +10/25/50%","ATK+HP +10/25/50%");
-            case Data.T_GHOST:return t("Hút máu +10/20/35%","Lifesteal +10/20/35%");
-            default:return t("ATK+HP +8/16/28%","ATK+HP +8/16/28%");
+            case Data.T_NORMAL:return t("Khiên 15/35/60/90","Shield 15/35/60/90");
+            case Data.T_FIRE:return t("Đánh tăng ATK 0/1/2/3","Hits grant ATK 0/1/2/3");
+            case Data.T_WATER:return t("MP đầu +15/30/45","Start MP +15/30/45");
+            case Data.T_GRASS:return t("Hồi HP 2/4/6/8%","Regen 2/4/6/8% HP");
+            case Data.T_ELEC:return t("Tam kích mỗi 4/3/3 đòn","Triple hit every 4/3/3 attacks");
+            case Data.T_ROCK:return t("DEF +10/25/50","DEF +10/25/50");
+            case Data.T_PSY:return t("Skill +50/100/150%","Skill +50/100/150%");
+            case Data.T_FIGHT:return t("Phản kích mỗi 10 lần đỡ","Counter every 10 blocks");
+            case Data.T_FLY:return t("Thoát hiểm 1/1/2/2 lần","Escape 1/1/2/2 times");
+            case Data.T_DRAGON:return t("Khiên; cấp 3 tăng Skill/Tốc","Shield; tier 3 grants AP/Speed");
+            case Data.T_GHOST:return t("Né 15% và nguyền đối thủ","15% dodge and enemy curses");
+            case Data.T_BUG:return t("HP +5/10/15/20%","HP +5/10/15/20%");
+            case Data.T_POISON:return t("Độc 30/60/100% khi đánh","30/60/100% poison on hit");
+            case Data.T_GROUND:return t("Tăng DEF/SpeDef và ATK","Gain DEF/SpeDef and ATK");
+            case Data.T_ICE:return t("SpeDef +4/12/25/50","SpeDef +4/12/25/50");
+            case Data.T_DARK:return t("Tăng chí mạng và sát thương","Crit chance and crit power");
+            case Data.T_STEEL:return t("DEF +3","DEF +3");
+            case Data.T_FAIRY:return t("Bảo hộ đầu trận","Opening protection");
+            case Data.T_AMORPHOUS:return t("Tốc/HP theo số hệ kích hoạt","Speed/HP per active synergy");
+            case Data.T_AQUATIC:return t("Tăng tốc và hồi phục","Speed and regeneration");
+            case Data.T_ARTIFICIAL:return t("Trang bị tăng ATK/Skill/Khiên","Items grant ATK/AP/Shield");
+            case Data.T_BABY:return t("Né +5/10/15%","Dodge +5/10/15%");
+            case Data.T_FIELD:return t("Chết hồi máu/tốc đồng minh","Death heals/speeds Field allies");
+            case Data.T_FLORA:return t("Hồi phục và Skill","Regeneration and AP");
+            case Data.T_FOSSIL:return t("ATK và DEF cổ đại","Ancient ATK and DEF");
+            case Data.T_GOURMET:return t("Tăng HP và hồi phục","HP and regeneration");
+            case Data.T_HUMAN:return t("Hút máu 25/35/50%","Lifesteal 25/35/50%");
+            case Data.T_LIGHT:return t("ATK/Skill; cấp cao hộ thể","ATK/AP; high tiers protect");
+            case Data.T_MONSTER:return t("Hạ địch tăng ATK/Skill/HP","Kills grant ATK/AP/HP");
+            case Data.T_SOUND:return t("Dùng chiêu buff cả đội","Casting buffs the team");
+            case Data.T_WILD:return t("Tốc, ATK và gây Vết thương","Speed, ATK and Wound");
+            default:return "";
         }
     }
 

@@ -137,7 +137,7 @@ public final class CollectionScreen extends Screen {
         for(int r=0;r<rows&&top+r<Data.NT;r++){
             int t=top+r,y=y0+r*row;if(t==typeSel){g.setColor(0x405273);g.fillRect(0,y,W,row);}
             Art.typeIcon(g,t,3,y+1);Art.textB(g,Lang.typeName(t),22,y+2,0xFFFFFF);
-            Art.textR(g,"2 / 4 / 6",W-3,y+2,0xFFD060);
+            Art.textR(g,SynergyEffects.marks(t,0),W-3,y+2,0xFFD060);
         }
         int py=y0+rows*row;Art.box(g,2,py,W-4,H-py-2,0x101827,Data.TCOL[typeSel]);
         Art.typeIcon(g,typeSel,6,py+4);Art.textB(g,Lang.typeName(typeSel),25,py+4,Data.TCOL[typeSel]);

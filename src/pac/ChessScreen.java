@@ -729,7 +729,7 @@ public final class ChessScreen extends Screen {
             int[] cnt=new int[Data.NT];fillSynCounts(cnt);int total=presentSynCount(),visible=Math.max(1,(W-24)/25);if(dockSynCursor>=total)dockSynCursor=Math.max(0,total-1);
             Art.text(g,"<",2,y+5,dockSynCursor>0?0xFFFFFF:0x586478);Art.textR(g,">",W-2,y+5,dockSynCursor+1<total?0xFFFFFF:0x586478);
             int first=Math.max(0,Math.min(dockSynCursor-visible+1,total-visible));
-            for(int i=0;i<visible&&first+i<total;i++){int rank=first+i,t=presentSynTypeAt(rank,cnt),x=12+i*25,lv=Data.synLevel(cnt[t]);g.setColor(lv>0?Art.dark(Data.TCOL[t]):0x202735);g.fillArc(x,y,24,24,0,360);Art.typeIcon(g,t,x+4,y+4);g.setColor(rank==dockSynCursor&&zone==4?0xFFE060:(lv>0?Data.TCOL[t]:0x596578));g.drawArc(x,y,23,23,0,360);if(rank==dockSynCursor&&zone==4)g.drawArc(x+1,y+1,21,21,0,360);Art.textSmallR(g,""+cnt[t],x+23,y+14,lv>0?0xFFFFFF:0xA8B5C8);}
+            for(int i=0;i<visible&&first+i<total;i++){int rank=first+i,t=presentSynTypeAt(rank,cnt),x=12+i*25,lv=Data.synLevel(t,cnt[t]);g.setColor(lv>0?Art.dark(Data.TCOL[t]):0x202735);g.fillArc(x,y,24,24,0,360);Art.typeIcon(g,t,x+4,y+4);g.setColor(rank==dockSynCursor&&zone==4?0xFFE060:(lv>0?Data.TCOL[t]:0x596578));g.drawArc(x,y,23,23,0,360);if(rank==dockSynCursor&&zone==4)g.drawArc(x+1,y+1,21,21,0,360);Art.textSmallR(g,""+cnt[t],x+23,y+14,lv>0?0xFFFFFF:0xA8B5C8);}
             g.setColor(0x303B50);g.fillRect(12,sy,trackW,2);if(zone==4&&total>0)paintDockSynHighlight(g,presentSynTypeAt(dockSynCursor,cnt));
         }
         int ty=y+29,n=boardUnitCount();
@@ -756,7 +756,7 @@ public final class ChessScreen extends Screen {
         else if(zone==5){int p=boardPosAt(dockTeamCursor);if(p>=0)sp=run.get(p);}
         if(sp>=0&&avail>=2)drawInfo(g,sp,y,avail,shop);
         else if(zone==4&&dockMode==0&&ownedItemCount()>0&&avail>0){int id=ownedItemAt(dockItemCursor);Art.textSmall(g,ItemData.name(id)+" x"+run.itemCount(id),3,y,0xD8E0F0);}
-        else if(zone==4&&dockMode==1&&avail>0){int[] cnt=new int[Data.NT];fillSynCounts(cnt);int t=presentSynTypeAt(dockSynCursor,cnt);if(t>=0){int lv=Data.synLevel(cnt[t]);String mark=lv==0?"2 / 4 / 6":(lv==1?"(2) / 4 / 6":(lv==2?"2 / (4) / 6":"2 / 4 / (6)"));Art.textSmall(g,Lang.typeName(t)+"  "+cnt[t]+"  "+mark,3,y,lv>0?0xFFD060:0xA8B5C8);if(avail>1)Art.textSmall(g,Lang.synergyDesc(t),3,y+fh,lv>0?0xD8E8FF:0x8090A8);}}
+        else if(zone==4&&dockMode==1&&avail>0){int[] cnt=new int[Data.NT];fillSynCounts(cnt);int t=presentSynTypeAt(dockSynCursor,cnt);if(t>=0){int lv=Data.synLevel(t,cnt[t]);String mark=SynergyEffects.marks(t,cnt[t]);Art.textSmall(g,Lang.typeName(t)+"  "+cnt[t]+"  "+mark,3,y,lv>0?0xFFD060:0xA8B5C8);if(avail>1)Art.textSmall(g,Lang.synergyDesc(t),3,y+fh,lv>0?0xD8E8FF:0x8090A8);}}
         else if(zone==3&&avail>0){String[] d={Lang.t("Mua 4 XP (4 vàng)","Buy 4 XP (4 gold)"),Lang.t("Đổi shop (2 vàng)","Reroll shop (2 gold)"),Lang.t("Khóa shop / Vật phẩm","Lock shop / Items"),Lang.t("Xem cộng hưởng (*)","Show synergies (*)"),Lang.t("Bắt đầu chiến đấu! (9)","Start the fight! (9)")};Art.textSmall(g,d[col],3,y,0xD8E0F0);}
     }
 
@@ -958,11 +958,11 @@ public final class ChessScreen extends Screen {
         int ri=0;
         for (int t = 0; t < Data.NT; t++) {
             if (cnt[t] == 0) continue;
-            int lv = Data.synLevel(cnt[t]);
+            int lv = Data.synLevel(t,cnt[t]);
             if(ri==synCursor){g.setColor(0x405273);g.fillRect(7,y-1,W-14,rowH);}
             int x = 8;
             Art.typeIcon(g,t,x,y);x+=20;
-            String head=lv==1?"(2) 4 6":(lv==2?"2 (4) 6":(lv==3?"2 4 (6)":"2 4 6"));
+            String head=SynergyEffects.marks(t,cnt[t]);
             Art.textSmall(g,head,x,y+2,lv>0?0xFFD060:0x8894A8);
             int dx=x+Art.smallWidth(head)+7;
             if(dx<W-8)Art.textSmall(g,Lang.synergyDesc(t),dx,y+2,lv>0?0xFFFFFF:0x687588);
@@ -970,7 +970,7 @@ public final class ChessScreen extends Screen {
             ri++;
             if (y > y0 + h - fh) break;
         }
-        Art.textSmallC(g,rows==0?Lang.t("Chưa có Pokémon trên bàn","No Pokémon on board"):Lang.t("2/4/6 Pokémon cùng hệ tăng cấp","2/4/6 same-type Pokémon level up"),W/2,y0+h-fh-2,0x8090B0);
+        Art.textSmallC(g,rows==0?Lang.t("Chưa có Pokémon trên bàn","No Pokémon on board"):Lang.t("Mỗi hệ có mốc kích hoạt riêng","Each type has its own thresholds"),W/2,y0+h-fh-2,0x8090B0);
     }
 
     private void paintItemBag(Graphics g){
@@ -1464,7 +1464,7 @@ public final class ChessScreen extends Screen {
         for(int i=0;i<Run.BOARD;i++)if(run.board[i]>=0){int sp=run.board[i];cnt[Data.t1[sp]]++;if(Data.t2[sp]>=0)cnt[Data.t2[sp]]++;}
         Art.textB(g,Lang.t("CỘNG HƯỞNG","SYNERGIES"),4,y,0x80D8FF);y+=fh+1;
         int sx=4,sy=y;
-        for(int t=0;t<Data.NT;t++)if(Data.synLevel(cnt[t])>0){
+        for(int t=0;t<Data.NT;t++)if(Data.synLevel(t,cnt[t])>0){
             if(sx+34>W){sx=4;sy+=17;}Art.typeIcon(g,t,sx,sy);Art.textSmall(g,""+cnt[t],sx+16,sy+2,0xFFD060);sx+=34;
         }
         int infoY=Math.max(sy+18,H-fh*3-2);

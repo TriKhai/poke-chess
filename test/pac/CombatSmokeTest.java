@@ -13,6 +13,18 @@ public final class CombatSmokeTest {
         check("Magical Leaf".equals(Data.skillName[0]), "original ability name missing");
         check(CombatRules.physicalDamage(100, 20) == 50, "armor formula mismatch");
         check(CombatRules.specialDamage(100, 5) == 80, "special defense formula mismatch");
+        int[][] expectedThresholds={
+          {3,5,7,9},{2,4,6,8},{3,6,9,0},{3,5,7,9},{3,5,7,0},{2,4,6,0},{3,5,7,0},{2,4,6,8},
+          {2,4,6,8},{3,5,7,0},{2,4,6,8},{2,4,6,8},{3,5,7,0},{2,4,6,8},{2,4,6,8},{3,5,7,0},
+          {2,4,6,8},{2,4,6,8},{3,5,7,0},{2,4,6,8},{2,4,6,0},{3,5,7,0},{3,6,9,0},{3,4,5,6},
+          {2,4,6,0},{3,4,5,0},{2,4,6,0},{2,3,4,5},{2,4,6,8},{2,4,6,0},{2,4,6,9}
+        };
+        check(expectedThresholds.length==Data.NT,"all 31 synergies need thresholds");
+        for(int type=0;type<Data.NT;type++)for(int tier=0;tier<4;tier++)
+            check(SynergyEffects.threshold(type,tier)==expectedThresholds[type][tier],"threshold mismatch type "+type+" tier "+tier);
+        check(SynergyEffects.tier(Data.T_NORMAL,2)==0&&SynergyEffects.tier(Data.T_NORMAL,3)==1,"Normal threshold mismatch");
+        check(SynergyEffects.tier(Data.T_LIGHT,5)==4,"Light fourth tier mismatch");
+        check(SynergyEffects.tier(Data.T_WATER,9)==3,"Water third tier mismatch");
 
         Save.reset();
         Run sandbox = new Run(123, true);
@@ -90,6 +102,6 @@ public final class CombatSmokeTest {
             check(stress.over, "stress battle did not terminate at seed " + seed);
         }
 
-        System.out.println("CombatSmokeTest OK: roster, items, merge, shop lock, modes and 101 battles");
+        System.out.println("CombatSmokeTest OK: 31 synergies, roster, items, merge, shop lock, modes and 101 battles");
     }
 }

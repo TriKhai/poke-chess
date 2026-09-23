@@ -49,7 +49,8 @@ public final class ChessScreen extends Screen {
     private boolean refreshItemsAsk=false;
     private int refreshItemsChoice=0;
     private int rosterSide = 0, rosterSel = 0, statMode = 0, battleSynCursor = 0;
-    /** True while the arrow-key cursor is on the six combat-stat tabs. */
+    private boolean battleMore=false;
+    /** True while the arrow-key cursor is on the combat-stat tabs. */
     private boolean statFocus = false;
     private final int[] spriteBounds = new int[4];
 
@@ -155,14 +156,20 @@ public final class ChessScreen extends Screen {
             if(k==Game.K_FIRE||k==Game.K_SOFT1||k==Game.K_9)return;
         }
         if (rosterDetail) { keyRoster(k); return; }
+        if(battleMore){
+            if(k==Game.K_FIRE||k==Game.K_SOFT1){statMode=5;battleMore=false;statFocus=false;}
+            else if(k==Game.K_0||k==Game.K_SOFT2||k==Game.K_POUND)battleMore=false;
+            return;
+        }
         int count=rosterCount(rosterSide);
         if (k == Game.K_FIRE && count>0 && (statMode<3||statMode==4)) rosterDetail=true;
         else if (k == Game.K_STAR) speed = speed == 1 ? 2 : (speed == 2 ? 4 : 1);
-        else if (k == Game.K_1) statMode=(statMode+6)%7;
-        else if (k == Game.K_3) statMode=(statMode+1)%7;
+        else if (k == Game.K_0) battleMore=true;
+        else if (k == Game.K_1) statMode=(statMode+5)%6;
+        else if (k == Game.K_3) statMode=(statMode+1)%6;
         else if (k == Game.K_7) {rosterSide=1-rosterSide;rosterSel=0;battleSynCursor=0;}
-        else if (statFocus && k == Game.K_LEFT) statMode=(statMode+6)%7;
-        else if (statFocus && k == Game.K_RIGHT) statMode=(statMode+1)%7;
+        else if (statFocus && k == Game.K_LEFT) statMode=(statMode+5)%6;
+        else if (statFocus && k == Game.K_RIGHT) statMode=(statMode+1)%6;
         else if (statFocus && k == Game.K_DOWN) statFocus=false;
         else if (statFocus && k == Game.K_UP) {rosterSide=1-rosterSide;rosterSel=0;battleSynCursor=0;}
         else if (statMode==3 && (k==Game.K_LEFT||k==Game.K_UP)) moveBattleSyn(-1);
@@ -927,7 +934,7 @@ public final class ChessScreen extends Screen {
     private void fillSynCounts(int[] cnt){
         for(int i=0;i<Data.NT;i++)cnt[i]=0;
         if(bt!=null&&state!=PREP)bt.countSyn(0,cnt);
-        else for(int i=0;i<Run.BOARD;i++){int sp=run.board[i];if(sp<0)continue;cnt[Data.t1[sp]]++;if(Data.t2[sp]>=0)cnt[Data.t2[sp]]++;}
+        else{boolean[] seen=new boolean[Data.N];for(int i=0;i<Run.BOARD;i++){int sp=run.board[i];if(sp<0)continue;int family=Data.fam[sp];if(seen[family])continue;seen[family]=true;cnt[Data.t1[sp]]++;if(Data.t2[sp]>=0)cnt[Data.t2[sp]]++;}}
     }
 
     private void paintDockSynHighlight(Graphics g,int type){
@@ -1202,21 +1209,18 @@ public final class ChessScreen extends Screen {
             String sideName=s==0?Lang.t("TA","ALLY"):Lang.t("ĐỊCH","ENEMY");
             Art.textC(g,sideName+" "+rosterAlive(s)+"/"+rosterCount(s),x+w/2,y+1,0xFFFFFF);
         }
-        String[] modes={"DMG","HP","MP",Lang.t("Hệ","TYPE"),"Item","—","—"};
-        int modeY=y+sideH+2,mh=Math.max(13,fh),mw=W/7;
-        for(int i=0;i<7;i++){
-            int x=i*mw,w=i==6?W-x:mw-1;
+        String[] modes={"DMG","HP","MP",Lang.t("Hệ","TYPE"),"Item","More"};
+        int modeY=y+sideH+2,mh=Math.max(13,fh),mw=W/6;
+        for(int i=0;i<6;i++){
+            int x=i*mw,w=i==5?W-x:mw-1;
             g.setColor(i==statMode?0xC59112:0x35455F);g.fillRect(x,modeY,w,mh);
             if(i==statMode){g.setColor(statFocus?0xFFFFFF:0xFFE060);g.drawRect(x,modeY,w-1,mh-1);}
             Art.textSmallC(g,modes[i],x+w/2,modeY+1,i==statMode?0xFFFFFF:0xA8B5C8);
         }
         int footer=Math.max(13,fh+1),gridY=modeY+mh+2,gridH=h-(gridY-y)-footer;
+        if(battleMore){paintBattleMore(g,gridY,gridH,y+h-footer);return;}
         if(statMode==3){paintBattleSynergies(g,gridY,gridH,y+h-footer,footer);return;}
-        if(statMode>=5){
-            g.setColor(0x1B2638);g.fillRect(0,gridY,W,Math.max(0,gridH));
-            Art.textSmallC(g,Lang.t("Ô chức năng để dành","Reserved slot"),W/2,gridY+Math.max(2,(gridH-fh)/2),0x687890);
-            return;
-        }
+        if(statMode==5){paintBattleDevInfo(g,gridY,gridH,y+h-footer);return;}
         int cw=W/3,ch=Math.max(1,gridH/3),count=rosterCount(rosterSide);
         if(rosterSel>=count)rosterSel=Math.max(0,count-1);
         int max=1;
@@ -1242,6 +1246,26 @@ public final class ChessScreen extends Screen {
         }
         int total=0;for(int i=0;i<count;i++)total+=statValue(rosterUnit(rosterSide,i),statMode);
         Art.textB(g,statMode==4?Lang.t("FIRE: xem trang bị","FIRE: item details"):Lang.t("Tổng: ","Total: ")+total,3,y+h-footer+1,statColor(statMode,rosterSide));
+    }
+
+    private void paintBattleMore(Graphics g,int y,int h,int footerY){
+        int W=game.W,fh=Art.fh;g.setColor(0x182438);g.fillRect(0,y,W,h);
+        Art.textBC(g,Lang.t("MORE - CHẾ ĐỘ DEV","MORE - DEV MODES"),W/2,y+3,0xFFD060);
+        int by=y+fh+7,bh=fh+6;g.setColor(0x405273);g.fillRect(8,by,W-16,bh);g.setColor(0x60E878);g.drawRect(8,by,W-17,bh-1);
+        Art.textC(g,Lang.t("INFO DEV - thông số pet realtime","DEV INFO - realtime unit stats"),W/2,by+3,0xFFFFFF);
+        Art.textSmall(g,Lang.t("FIRE chọn   0 đóng","FIRE select   0 close"),3,footerY+1,0xA8B5C8);
+    }
+
+    private void paintBattleDevInfo(Graphics g,int y,int h,int footerY){
+        int W=game.W,fh=Art.fh;Unit u=rosterUnit(rosterSide,rosterSel);g.setColor(0x121D2D);g.fillRect(0,y,W,h);
+        if(u==null){Art.textSmallC(g,Lang.t("Không có pet đang chọn","No selected unit"),W/2,y+3,0x8090A8);return;}
+        Art.avatarMini(g,u.sp,3,y+2);Art.textB(g,Data.name[u.sp]+"  T"+Data.tier[u.sp],27,y+2,u.alive?0xFFFFFF:0x888898);
+        Art.textSmall(g,"HP "+u.hp+"/"+u.maxHp+"  MP "+u.mana+"/"+u.maxMana+"  SH "+u.shield,27,y+fh+3,0xB8E8C0);
+        Art.textSmall(g,"ATK "+u.atk+"  DEF "+u.def+"  SDEF "+u.speDef+"  SPD "+u.speed,3,y+fh*2+4,0xD8E0F0);
+        Art.textSmall(g,"CRIT "+u.crit+"  DODGE "+u.dodge+"  AP "+u.skillBonus+"  REGEN "+u.regen,3,y+fh*3+5,0xD8E0F0);
+        String types=Lang.typeName(Data.t1[u.sp])+(Data.t2[u.sp]>=0?"/"+Lang.typeName(Data.t2[u.sp]):"");
+        Art.textSmall(g,types+"  "+Lang.moveName(Data.skillName[u.sp]),3,y+fh*4+6,0xFFD060);
+        Art.textSmall(g,Lang.t("0 More  |  mũi tên chọn pet","0 More  |  arrows select unit"),3,footerY+1,0x8090A8);
     }
 
     private int statValue(Unit u,int mode){

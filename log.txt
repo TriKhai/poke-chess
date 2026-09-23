@@ -20,6 +20,9 @@ v1.2.6
 - Hotfix UI: viền chọn pet trong Battle còn một nét mảnh, không che thanh chỉ số.
 - Viết lại mô tả đầy đủ của 31 hệ; hàng chờ và Collection dùng chung nội dung,
   tự xuống dòng và giải thích mốc, đối tượng hưởng lợi, cơ chế online/offline.
+- Hotfix đếm hệ theo dòng tiến hóa: pet trùng và tier 1/2/3 cùng family chỉ tính 1.
+- Battle: phím 0 mở More; thêm INFO DEV hiển thị realtime thông số pet đang hover
+  trong bảng dưới sàn đấu để kiểm tra buff/debuff khi test.
 
 KE HOACH
 - v1.2.7: item passive và trigger system.

@@ -25,6 +25,13 @@ public final class CombatSmokeTest {
         check(SynergyEffects.tier(Data.T_NORMAL,2)==0&&SynergyEffects.tier(Data.T_NORMAL,3)==1,"Normal threshold mismatch");
         check(SynergyEffects.tier(Data.T_LIGHT,5)==4,"Light fourth tier mismatch");
         check(SynergyEffects.tier(Data.T_WATER,9)==3,"Water third tier mismatch");
+        int evolvedBulbasaur=Data.evo[0];
+        int[] uniquePlayer=new int[24],uniqueEnemy=new int[24];
+        for(int i=0;i<24;i++){uniquePlayer[i]=-1;uniqueEnemy[i]=-1;}
+        uniquePlayer[0]=0;uniquePlayer[1]=0;uniquePlayer[2]=evolvedBulbasaur;uniqueEnemy[0]=3;
+        Battle uniqueFamilyBattle=new Battle(uniquePlayer,uniqueEnemy,100,new Rng(71));
+        int[] uniqueCounts=new int[Data.NT];uniqueFamilyBattle.countSyn(0,uniqueCounts);
+        check(uniqueCounts[Data.T_GRASS]==1,"copies/evolution stages must count as one synergy family");
         for(int language=Lang.VI;language<=Lang.EN;language++){
             Save.language=language;
             for(int type=0;type<Data.NT;type++)

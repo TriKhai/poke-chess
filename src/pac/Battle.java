@@ -96,12 +96,16 @@ public final class Battle {
         grid[y * COLS + x] = u;
     }
 
-    /** counts units of each type for a side. */
+    /** Counts each evolution family once; copies and later stages never stack synergy. */
     public void countSyn(int side, int[] cnt) {
         for (int i = 0; i < Data.NT; i++) cnt[i] = 0;
+        boolean[] familySeen = new boolean[Data.N];
         for (int i = 0; i < n; i++) {
             Unit u = units[i];
             if (u.side != side) continue;
+            int family=Data.fam[u.sp];
+            if(familySeen[family])continue;
+            familySeen[family]=true;
             cnt[Data.t1[u.sp]]++;
             if (Data.t2[u.sp] >= 0) cnt[Data.t2[u.sp]]++;
         }

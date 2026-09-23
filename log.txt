@@ -17,6 +17,9 @@ v1.2.6
 - Các hệ có tính năng online/meta được chuyển thành hiệu ứng combat offline:
   Bug, Aquatic, Baby, Flora, Fossil và Gourmet.
 - UI hiển thị đúng mốc kích hoạt riêng của từng hệ.
+- Hotfix UI: viền chọn pet trong Battle còn một nét mảnh, không che thanh chỉ số.
+- Viết lại mô tả đầy đủ của 31 hệ; hàng chờ và Collection dùng chung nội dung,
+  tự xuống dòng và giải thích mốc, đối tượng hưởng lợi, cơ chế online/offline.
 
 KE HOACH
 - v1.2.7: item passive và trigger system.

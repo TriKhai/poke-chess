@@ -5,6 +5,8 @@ public final class Lang {
     private Lang() {}
     private static String[] moveMap;
     private static String[] moveMapMore;
+    private static String[] synergyLongVi;
+    private static String[] synergyLongEn;
 
     public static final int VI = 0;
     public static final int EN = 1;
@@ -88,6 +90,78 @@ public final class Lang {
             case Data.T_WILD:return t("Tốc, ATK và gây Vết thương","Speed, ATK and Wound");
             default:return "";
         }
+    }
+
+    /** Full explanation shared by the preparation bench and Collection. */
+    public static String synergyLongDesc(int type) {
+        if(type<0||type>=Data.NT)return "";
+        if(synergyLongVi==null)synergyLongVi=new String[]{
+          "Mốc 3/5/7/9. Pokemon Normal nhận 15/35/60/90 Khiên khi bắt đầu trận, giúp chịu đòn mở màn.",
+          "Mốc 2/4/6/8. Mỗi đòn đánh thường của Pokemon Fire tăng vĩnh viễn 0/1/2/3 ATK trong trận hiện tại.",
+          "Mốc 3/6/9. Pokemon Water bắt đầu trận với thêm 15/30/45 MP, nhưng không vượt quá MP tối đa.",
+          "Mốc 3/5/7/9. Pokemon Grass hồi 2/4/6/8% HP tối đa mỗi giây khi còn sống.",
+          "Mốc 3/5/7. Pokemon Electric tung thêm 2 đòn sau mỗi đòn thứ 4/3/3; đòn phụ không tích thêm MP.",
+          "Mốc 2/4/6. Pokemon Rock nhận thêm 10/25/50 DEF trong suốt trận.",
+          "Mốc 3/5/7. Pokemon Psychic nhận 50/100/150% sức mạnh kỹ năng, tăng sát thương, hồi máu và Khiên từ chiêu.",
+          "Mốc 2/4/6/8. Pokemon Fighting tích số lần đỡ đòn; mỗi 10 lần sẽ kích hoạt phản kích cận chiến.",
+          "Mốc 2/4/6/8. Pokemon Flying có 1/1/2/2 lần thoát hiểm khi HP thấp để tránh bị dồn sát thương.",
+          "Mốc 3/5/7. Tổng bậc tiến hóa Dragon quyết định Khiên; mốc cuối còn cộng cùng lượng Tốc và sức mạnh kỹ năng.",
+          "Mốc 2/4/6/8. Ghost nhận 15% Né và lần lượt nguyền địch mạnh: giảm thủ, ATK, Skill rồi gây Vết thương.",
+          "Mốc 2/4/6/8. Luật offline tăng 5/10/15/20% HP cho Bug, thay cho cơ chế sinh bầy vào hàng chờ online.",
+          "Mốc 3/5/7. Đòn đánh thường của Pokemon Poison có 30/60/100% gây Độc trong 4 giây.",
+          "Mốc 2/4/6/8. Ground tăng DEF và SpeDef theo cấp; cấp cao còn nhận thêm ATK như hiệu ứng đào sâu.",
+          "Mốc 2/4/6/8. Pokemon Ice nhận thêm 4/12/25/50 SpeDef để chống sát thương kỹ năng.",
+          "Mốc 3/5/7. Dark nhận 30/40/50% chí mạng và tăng 40/60/100% sức mạnh đòn chí mạng.",
+          "Mốc 2/4/6/8. Pokemon Steel nhận thêm 3 DEF; tương tác trang bị Steel sẽ mở rộng ở bản item passive.",
+          "Mốc 2/4/6/8. Fairy được Bảo hộ ngắn lúc mở trận; mốc cuối nhận thêm 5% chí mạng.",
+          "Mốc 3/5/7. Mỗi hệ đang kích hoạt cho Amorphous thêm Tốc 1/3/5 và HP 3/6/10.",
+          "Mốc 2/4/6/8. Luật offline cho Aquatic thêm 10/20/30/40 Tốc và hồi 1/2/3/4% HP mỗi giây.",
+          "Mốc 2/4/6. Từ mốc 2, mỗi trang bị của Artificial tăng ATK, Skill và Khiên; mốc 3 cho gấp đôi.",
+          "Mốc 3/5/7. Luật offline cho Baby thêm 5/10/15% Né, thay cho phần thưởng trứng giữa các vòng online.",
+          "Mốc 3/6/9. Khi một Pokemon Field bị hạ, đồng minh Field hồi 30/40/50 HP và tăng 15/20/25 Tốc.",
+          "Mốc 3/4/5/6. Luật offline cho Flora hồi 1/2/3/4% HP mỗi giây và thêm 10/20/30/40 sức mạnh kỹ năng.",
+          "Mốc 2/4/6. Luật offline cho Fossil thêm 3/6/9 DEF và 2/4/6 ATK, mô phỏng sức mạnh cổ đại.",
+          "Mốc 3/4/5. Luật offline cho Gourmet thêm 8/16/24% HP tối đa và hồi 1/2/3% HP mỗi giây.",
+          "Mốc 2/4/6. Human hồi máu bằng 25/35/50% sát thương thật sự gây ra, không tính sát thương tự gây.",
+          "Mốc 2/3/4/5. Light tăng 20% ATK và 20 Skill; cấp cao tăng 50% hai loại thủ rồi thêm 100 Khiên.",
+          "Mốc 2/4/6/8. Mỗi lần Monster hạ địch tăng ATK, Skill và HP tối đa dựa trên HP của mục tiêu.",
+          "Mốc 2/4/6. Mỗi lần Sound tung chiêu, cả đội nhận ATK; cấp cao còn thêm Tốc và 3 MP.",
+          "Mốc 2/4/6/9. Wild tăng Tốc; từ mốc 3 thêm 40% ATK. Đòn thường có 25% gây Vết thương."
+        };
+        if(synergyLongEn==null)synergyLongEn=new String[]{
+          "At 3/5/7/9, Normal Pokemon start combat with 15/35/60/90 Shield for opening durability.",
+          "At 2/4/6/8, every Fire basic attack permanently grants 0/1/2/3 ATK for the current battle.",
+          "At 3/6/9, Water Pokemon begin with 15/30/45 extra MP, capped at their maximum MP.",
+          "At 3/5/7/9, living Grass Pokemon regenerate 2/4/6/8% maximum HP each second.",
+          "At 3/5/7, Electric Pokemon add two attacks after every 4th/3rd/3rd hit; extra hits grant no MP.",
+          "At 2/4/6, Rock Pokemon gain 10/25/50 DEF for the battle.",
+          "At 3/5/7, Psychic Pokemon gain 50/100/150% ability power for spell damage, healing and shields.",
+          "At 2/4/6/8, Fighting Pokemon count blocked hits and trigger a melee counter every 10 blocks.",
+          "At 2/4/6/8, Flying Pokemon gain 1/1/2/2 low-HP escape charges to avoid focused damage.",
+          "At 3/5/7, total Dragon evolution stars determine Shield; the final tier also grants Speed and ability power.",
+          "At 2/4/6/8, Ghosts gain 15% Dodge and progressively curse enemy defenses, ATK, ability power and healing.",
+          "At 2/4/6/8, the offline rule grants Bug Pokemon 5/10/15/20% max HP instead of online bench swarms.",
+          "At 3/5/7, Poison basic attacks have a 30/60/100% chance to Poison for 4 seconds.",
+          "At 2/4/6/8, Ground Pokemon gain DEF and SpeDef; higher tiers also gain ATK from digging.",
+          "At 2/4/6/8, Ice Pokemon gain 4/12/25/50 SpeDef against ability damage.",
+          "At 3/5/7, Dark Pokemon gain 30/40/50% critical chance and 40/60/100% extra critical power.",
+          "At 2/4/6/8, Steel Pokemon gain 3 DEF; Steel item interactions expand with item passives.",
+          "At 2/4/6/8, Fairy Pokemon receive brief opening protection; the final tier adds 5% critical chance.",
+          "At 3/5/7, each active synergy grants Amorphous Pokemon 1/3/5 Speed and 3/6/10 HP.",
+          "At 2/4/6/8, the offline Aquatic rule grants 10/20/30/40 Speed and 1/2/3/4% HP regeneration.",
+          "At 2/4/6, tier 2 makes each held item grant Artificial ATK, ability power and Shield; tier 3 doubles it.",
+          "At 3/5/7, the offline Baby rule grants 5/10/15% Dodge instead of online between-round egg rewards.",
+          "At 3/6/9, a fallen Field Pokemon heals Field allies for 30/40/50 HP and grants 15/20/25 Speed.",
+          "At 3/4/5/6, the offline Flora rule grants 1/2/3/4% HP regeneration and 10/20/30/40 ability power.",
+          "At 2/4/6, the offline Fossil rule grants 3/6/9 DEF and 2/4/6 ATK as accumulated ancient power.",
+          "At 3/4/5, the offline Gourmet rule grants 8/16/24% max HP and 1/2/3% HP regeneration.",
+          "At 2/4/6, Human Pokemon heal for 25/35/50% of damage actually dealt, excluding self-damage.",
+          "At 2/3/4/5, Light grants 20% ATK and 20 ability power; high tiers add 50% defenses then 100 Shield.",
+          "At 2/4/6/8, every Monster kill grants ATK, ability power and max HP based on the victim.",
+          "At 2/4/6, every Sound ability cast buffs team ATK; higher tiers also grant Speed and 3 MP.",
+          "At 2/4/6/9, Wild gains Speed; tier 3 adds 40% ATK. Basic attacks have 25% chance to Wound."
+        };
+        return Save.language==EN?synergyLongEn[type]:synergyLongVi[type];
     }
 
     /** Vietnamese battle-facing move names; English data remains untouched for combat rules. */

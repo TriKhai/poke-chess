@@ -25,6 +25,12 @@ public final class CombatSmokeTest {
         check(SynergyEffects.tier(Data.T_NORMAL,2)==0&&SynergyEffects.tier(Data.T_NORMAL,3)==1,"Normal threshold mismatch");
         check(SynergyEffects.tier(Data.T_LIGHT,5)==4,"Light fourth tier mismatch");
         check(SynergyEffects.tier(Data.T_WATER,9)==3,"Water third tier mismatch");
+        for(int language=Lang.VI;language<=Lang.EN;language++){
+            Save.language=language;
+            for(int type=0;type<Data.NT;type++)
+                check(Lang.synergyLongDesc(type).length()>30,"missing detailed synergy description "+type+" language "+language);
+        }
+        Save.language=Lang.VI;
 
         Save.reset();
         Run sandbox = new Run(123, true);

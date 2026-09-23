@@ -141,7 +141,7 @@ public final class CollectionScreen extends Screen {
         }
         int py=y0+rows*row;Art.box(g,2,py,W-4,H-py-2,0x101827,Data.TCOL[typeSel]);
         Art.typeIcon(g,typeSel,6,py+4);Art.textB(g,Lang.typeName(typeSel),25,py+4,Data.TCOL[typeSel]);
-        Art.para(g,Data.SYN_TEXT[typeSel],6,py+fh+5,W-12,0xE0E8F0,2);
+        Art.para(g,Lang.synergyLongDesc(typeSel),6,py+fh+5,W-12,0xE0E8F0,4);
     }
 
     private void paintItems(Graphics g){

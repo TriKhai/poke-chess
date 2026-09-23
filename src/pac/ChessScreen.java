@@ -756,7 +756,7 @@ public final class ChessScreen extends Screen {
         else if(zone==5){int p=boardPosAt(dockTeamCursor);if(p>=0)sp=run.get(p);}
         if(sp>=0&&avail>=2)drawInfo(g,sp,y,avail,shop);
         else if(zone==4&&dockMode==0&&ownedItemCount()>0&&avail>0){int id=ownedItemAt(dockItemCursor);Art.textSmall(g,ItemData.name(id)+" x"+run.itemCount(id),3,y,0xD8E0F0);}
-        else if(zone==4&&dockMode==1&&avail>0){int[] cnt=new int[Data.NT];fillSynCounts(cnt);int t=presentSynTypeAt(dockSynCursor,cnt);if(t>=0){int lv=Data.synLevel(t,cnt[t]);String mark=SynergyEffects.marks(t,cnt[t]);Art.textSmall(g,Lang.typeName(t)+"  "+cnt[t]+"  "+mark,3,y,lv>0?0xFFD060:0xA8B5C8);if(avail>1)Art.textSmall(g,Lang.synergyDesc(t),3,y+fh,lv>0?0xD8E8FF:0x8090A8);}}
+        else if(zone==4&&dockMode==1&&avail>0){int[] cnt=new int[Data.NT];fillSynCounts(cnt);int t=presentSynTypeAt(dockSynCursor,cnt);if(t>=0){int lv=Data.synLevel(t,cnt[t]);String mark=SynergyEffects.marks(t,cnt[t]);Art.textSmall(g,Lang.typeName(t)+"  "+cnt[t]+"  "+mark,3,y,lv>0?0xFFD060:0xA8B5C8);if(avail>1)Art.para(g,Lang.synergyLongDesc(t),3,y+fh,game.W-6,lv>0?0xD8E8FF:0x8090A8,avail-1);}}
         else if(zone==3&&avail>0){String[] d={Lang.t("Mua 4 XP (4 vàng)","Buy 4 XP (4 gold)"),Lang.t("Đổi shop (2 vàng)","Reroll shop (2 gold)"),Lang.t("Khóa shop / Vật phẩm","Lock shop / Items"),Lang.t("Xem cộng hưởng (*)","Show synergies (*)"),Lang.t("Bắt đầu chiến đấu! (9)","Start the fight! (9)")};Art.textSmall(g,d[col],3,y,0xD8E0F0);}
     }
 
@@ -1237,7 +1237,8 @@ public final class ChessScreen extends Screen {
             if(statMode==1)barMax=Math.max(1,u.maxHp);
             else if(statMode==2)barMax=Math.max(1,u.maxMana);
             if(statMode!=4)Art.bar(g,barX,barY,barW,5,value,barMax,col);
-            if(slot==rosterSel){g.setColor(0x60E878);g.drawRect(x+1,cy+1,w-3,ch-3);g.drawRect(x+2,cy+2,w-5,ch-5);}
+            // One thin inset outline keeps the progress bar readable.
+            if(slot==rosterSel){g.setColor(0x60E878);g.drawRect(x+1,cy+1,w-3,ch-3);}
         }
         int total=0;for(int i=0;i<count;i++)total+=statValue(rosterUnit(rosterSide,i),statMode);
         Art.textB(g,statMode==4?Lang.t("FIRE: xem trang bị","FIRE: item details"):Lang.t("Tổng: ","Total: ")+total,3,y+h-footer+1,statColor(statMode,rosterSide));

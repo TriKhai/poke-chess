@@ -55,6 +55,12 @@ public final class CombatSmokeTest {
         Save.language=Lang.VI;
 
         Save.reset();
+        int oldPerformance=Save.performance;
+        Save.performance=1;check(Save.frameDelay()==100,"10 FPS performance mode mismatch");
+        Save.performance=0;check(Save.frameDelay()==60,"legacy 16 FPS performance mode mismatch");
+        Save.performance=2;check(Save.frameDelay()==50,"20 FPS performance mode mismatch");
+        Save.performance=3;check(Save.frameDelay()==40,"25 FPS performance mode mismatch");
+        Save.performance=oldPerformance;
         Run sandbox = new Run(123, true);
         sandbox.shop[0] = 0;
         check(sandbox.buy(0), "unlimited mode must allow buying");

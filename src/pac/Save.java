@@ -24,8 +24,9 @@ public final class Save {
     public static int playPath = -1;
     /** 0 Vietnamese (default), 1 English. */
     public static int language = Lang.VI;
-    /** 0 = smooth ~16 FPS, 1 = battery/RAM friendly ~10 FPS. */
+    /** 0 = legacy smooth 16 FPS, 1 = battery 10 FPS, 2 = medium 20 FPS, 3 = high 25 FPS. */
     public static int performance = 0;
+    public static int frameDelay(){switch(performance){case 1:return 100;case 2:return 50;case 3:return 40;default:return 60;}}
 
     public static void enableCheat() {
         cheatMode = true;
@@ -84,7 +85,7 @@ public final class Save {
                     if (language != Lang.EN) language = Lang.VI;
                     playPath = ver >= 3 ? in.readInt() : -1;
                     performance = ver >= 4 ? in.readInt() : 0;
-                    if (performance < 0 || performance > 1) performance = 0;
+                    if (performance < 0 || performance > 3) performance = 0;
                     cheatMode = playPath == 1;
                 }
             }

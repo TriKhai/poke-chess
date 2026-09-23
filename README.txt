@@ -14,7 +14,7 @@ CAU TRUC
   docs/CHI_SO_VA_TRANG_THAI_POKEMON.md  bang chu viet tat, chi so va trang thai combat
 
 PHIEN BAN
-  v1.3.1: them che do hieu nang Muot/Tiet kiem cho may that; giam cap phat RAM
+  v1.3.1: 4 muc hieu nang hien ro 10/16/20/25 FPS cho may that; giam cap phat RAM
           trong UI Battle, sua thong ke he cuoi run va khoa can bang bang regression.
   v1.3.0: save/resume run bang RMS rieng; lich su 5 run gom doi hinh, 3 item/pet
           va bieu do thang/thua; build Full va Lite (bo raw/sfx nang).

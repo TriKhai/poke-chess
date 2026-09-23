@@ -81,6 +81,8 @@ KE HOACH
 v1.3.1
 - Thêm cấu hình Hiệu năng: Mượt (~16 FPS) và Tiết kiệm (~10 FPS) cho máy thật;
   lựa chọn được lưu trong RMS và save v1-v3 vẫn tương thích.
+- Hotfix hiệu năng: mở thành 4 mức có nhãn FPS rõ ràng: Tiết kiệm 10 FPS,
+  Mượt cũ 16 FPS, Trung bình 20 FPS và Cao 25 FPS.
 - Loại cấp phát mảng synergy/family lặp lại trong luồng paint và điều khiển Battle,
   giảm giật do garbage collector trên thiết bị RAM thấp.
 - Màn tổng kết dùng đúng quy tắc mỗi family tiến hóa chỉ đóng góp hệ một lần.

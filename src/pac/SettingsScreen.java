@@ -15,7 +15,7 @@ public final class SettingsScreen extends Screen {
             selected = (selected + 1) % 3;
         else if (key == Game.K_LEFT || key == Game.K_RIGHT || key == Game.K_FIRE || key == Game.K_SOFT1) {
             if (selected == 0) Lang.toggle();
-            else if (selected == 1) { Save.performance=1-Save.performance;Save.save(); }
+            else if (selected == 1) { nextPerformance();Save.save(); }
             else game.setScreen(new MenuScreen(game));
         } else if (key == Game.K_SOFT2 || key == Game.K_0)
             game.setScreen(new MenuScreen(game));
@@ -30,7 +30,7 @@ public final class SettingsScreen extends Screen {
         drawRow(g, 0, y, Lang.t("Ngôn ngữ", "Language"),
                 Save.language == Lang.VI ? "Tiếng Việt" : "English");
         drawRow(g, 1, y + fh * 2 + 8, Lang.t("Hiệu năng", "Performance"),
-                Save.performance==0?Lang.t("Mượt","Smooth"):Lang.t("Tiết kiệm","Battery"));
+                performanceName());
         drawRow(g, 2, y + (fh * 2 + 8)*2, Lang.t("Quay lại", "Back"), "");
 
         Art.textC(g, selected == 0
@@ -39,6 +39,22 @@ public final class SettingsScreen extends Screen {
                 W / 2, H - fh * 2 - 4, 0x90A0B8);
         Art.textC(g, Lang.t("Thiết lập được tự động lưu", "Settings are saved automatically"),
                 W / 2, H - fh - 2, 0x708098);
+    }
+
+    private void nextPerformance(){
+        if(Save.performance==1)Save.performance=0;
+        else if(Save.performance==0)Save.performance=2;
+        else if(Save.performance==2)Save.performance=3;
+        else Save.performance=1;
+    }
+
+    private String performanceName(){
+        switch(Save.performance){
+            case 1:return Lang.t("10 FPS Pin","10 FPS Battery");
+            case 2:return Lang.t("20 FPS TB","20 FPS Medium");
+            case 3:return Lang.t("25 FPS Cao","25 FPS High");
+            default:return Lang.t("16 FPS Mượt","16 FPS Smooth");
+        }
     }
 
     private void drawRow(Graphics g, int index, int y, String name, String value) {

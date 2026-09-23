@@ -2,7 +2,8 @@ POKE AUTO CHESS ME - OFFLINE REMAKE UPDATE
 ==========================================
 
 Device balance and performance pass (v1.3.1)
-- Added persisted Smooth/Battery frame pacing for real Java ME phones.
+- Added four persisted frame modes with explicit labels: Battery 10 FPS,
+  Legacy Smooth 16 FPS, Medium 20 FPS and High 25 FPS.
 - Reused synergy/family work buffers in Battle UI to avoid per-frame GC spikes.
 - Final-run synergy summary now counts each evolution family only once.
 - Save format v4 remains backward-compatible with v1-v3.

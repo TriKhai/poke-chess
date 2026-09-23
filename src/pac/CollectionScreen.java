@@ -6,6 +6,7 @@ import javax.microedition.lcdui.Graphics;
 public final class CollectionScreen extends Screen {
     private int sel = 0, top = 0;
     private int tab=0,typeSel=0,itemSel=0;
+    private int itemDescScroll=0;
     private boolean detail = false;
     private boolean itemDetail = false;
     private int animTime = 0, previewState = 0, previewDir = 0;
@@ -44,14 +45,16 @@ public final class CollectionScreen extends Screen {
             return;
         }
         switch (k) {
-            case Game.K_LEFT: tab=(tab+2)%3; top=0; break;
-            case Game.K_RIGHT: tab=(tab+1)%3; top=0; break;
+            case Game.K_LEFT: tab=(tab+2)%3; top=0; itemDescScroll=0; break;
+            case Game.K_RIGHT: tab=(tab+1)%3; top=0; itemDescScroll=0; break;
             case Game.K_UP:
-                if(tab==0&&sel>0)sel--; else if(tab==1&&typeSel>0)typeSel--; else if(tab==2&&itemSel>0)itemSel--;
+                if(tab==0&&sel>0)sel--; else if(tab==1&&typeSel>0)typeSel--; else if(tab==2&&itemSel>0){itemSel--;itemDescScroll=0;}
                 break;
             case Game.K_DOWN:
-                if(tab==0&&sel<Data.N-1)sel++; else if(tab==1&&typeSel<Data.NT-1)typeSel++; else if(tab==2&&itemSel<ItemData.count()-1)itemSel++;
+                if(tab==0&&sel<Data.N-1)sel++; else if(tab==1&&typeSel<Data.NT-1)typeSel++; else if(tab==2&&itemSel<ItemData.count()-1){itemSel++;itemDescScroll=0;}
                 break;
+            case Game.K_1: if(tab==2&&itemDescScroll>0)itemDescScroll--; break;
+            case Game.K_3: if(tab==2)itemDescScroll++; break;
             case Game.K_FIRE: case Game.K_SOFT1:
                 if (tab==0&&Save.has(sel)) { detail = true; animTime = 0; }
                 else if(tab==2)itemDetail=true;
@@ -145,7 +148,7 @@ public final class CollectionScreen extends Screen {
     }
 
     private void paintItems(Graphics g){
-        int W=game.W,H=game.H,fh=Art.fh,y0=fh+8,row=27,detailMinH=fh*5+5;
+        int W=game.W,H=game.H,fh=Art.fh,y0=fh+8,row=27,detailMinH=fh*7+8;
         int rows=(H-y0-detailMinH)/row;if(rows<1)rows=1;
         if(itemSel<top)top=itemSel;if(itemSel>=top+rows)top=itemSel-rows+1;
         for(int r=0;r<rows&&top+r<ItemData.count();r++){
@@ -156,7 +159,15 @@ public final class CollectionScreen extends Screen {
         int py=y0+rows*row,detailH=H-py;Art.box(g,2,py,W-4,detailH,0x101827,0x526780);
         Art.itemIcon(g,itemSel,5,py+4);Art.textB(g,ItemData.name(itemSel),34,py+4,0xFFD060);
         Art.textSmall(g,ItemData.kind(itemSel),34,py+fh+4,0x80D8FF);
-        Art.para(g,ItemData.desc(itemSel),5,py+fh*2+4,W-10,0xD8E0F0,2);
+        int textY=py+fh*2+4,visible=(H-textY-fh-3)/fh;if(visible<1)visible=1;
+        String[] wrapped=Art.wrap(ItemData.desc(itemSel),W-14,64);
+        int maxScroll=Math.max(0,wrapped.length-visible);if(itemDescScroll>maxScroll)itemDescScroll=maxScroll;
+        for(int line=0;line<visible&&itemDescScroll+line<wrapped.length;line++)Art.textSmall(g,wrapped[itemDescScroll+line],5,textY+line*fh,0xD8E0F0);
+        if(maxScroll>0){
+            Art.textSmallR(g,Lang.t("1/3 cuộn ","1/3 scroll ")+(itemDescScroll+1)+"/"+(maxScroll+1),W-5,H-fh-2,0x80A8D0);
+            int barH=Math.max(4,(H-textY)*visible/wrapped.length),barY=textY+(H-textY-barH)*itemDescScroll/Math.max(1,maxScroll);
+            g.setColor(0x607898);g.fillRect(W-3,barY,2,barH);
+        }
         Art.textR(g,(itemSel+1)+"/"+ItemData.count(),W-5,py+4,0x8090A8);
     }
 

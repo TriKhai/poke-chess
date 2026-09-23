@@ -35,6 +35,8 @@ v1.2.7
   sát thương phản/nảy không gọi lặp trigger để tránh vòng lặp vô hạn.
 - Collection và chi tiết item tự nối mô tả Nội tại/Passive cho các item đã port.
 - Nâng MIDlet-Version và tài liệu lên 1.2.7; bổ sung regression cho trigger item.
+- Hotfix Collection: preview item dùng nhiều dòng theo chiều cao còn trống; nội dung dài
+  cuộn bằng phím 1/3, có chỉ báo vị trí và tự về đầu khi đổi item.
 
 KE HOACH
 - v1.2.8: ability behavior system và status hoàn chỉnh.

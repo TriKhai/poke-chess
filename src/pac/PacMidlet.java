@@ -21,11 +21,11 @@ public final class PacMidlet extends MIDlet {
     }
 
     protected void pauseApp() {
-        if (game != null) game.stop();
+        if (game != null) {game.persist();game.stop();}
     }
 
     protected void destroyApp(boolean unconditional) {
-        if (game != null) game.stop();
+        if (game != null) {game.persist();game.stop();}
         Save.save();
     }
 

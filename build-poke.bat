@@ -17,7 +17,7 @@ if not exist "build.xml" (
     exit /b 1
 )
 
-call "%KVEM_HOME%\toolbar\java2\ant\bin\ant.bat" clean test dist
+call "%KVEM_HOME%\toolbar\java2\ant\bin\ant.bat" clean test dist-all
 
 if errorlevel 1 (
     echo.
@@ -28,6 +28,7 @@ if errorlevel 1 (
 
 echo.
 echo ============ BUILD SUCCESSFUL ============
-echo Output: %CD%\build\dist\PokeAutoChess.jar / .jad
+echo Full: %CD%\build\dist\PokeAutoChess-Full.jar / .jad
+echo Lite: %CD%\build\dist\PokeAutoChess-Lite.jar / .jad
 pause
 endlocal

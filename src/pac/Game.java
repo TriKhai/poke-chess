@@ -49,6 +49,8 @@ public final class Game extends GameCanvas implements Runnable {
         running = false;
     }
 
+    public void persist(){Screen s=screen;if(s instanceof ChessScreen)((ChessScreen)s).saveResume();}
+
     protected void sizeChanged(int w, int h) {
         sizeDirty = true;
     }

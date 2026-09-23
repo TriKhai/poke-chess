@@ -24,4 +24,7 @@ public final class Rng {
     public boolean pct(int p) {
         return nextInt(100) < p;
     }
+
+    int state(){return s;}
+    void restore(int value){s=value==0?0x2545F491:value;}
 }

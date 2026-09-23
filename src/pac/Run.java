@@ -43,6 +43,9 @@ public final class Run {
     public int lastDamage, lastGold, lastSurvivors, lastXp;
     public int lastBaseGold,lastInterest,lastStreakGold,lastVictoryGold,lastItemGold;
     public boolean over, victory;
+    /** Cumulative graph point after each completed round: win +1, loss -1. */
+    public int[] resultPath=new int[30];
+    public int resultCount=0;
 
     private static final String[] NAMES = { "Youngster Joey", "Lass Amy", "Hiker Tom", "Swimmer Kai",
             "Sage Ren", "Rocker Vic", "Scout Mia", "Ace Dan", "Ranger Sue", "Elder Gus", "Camper Lou", "Tamer Bo" };
@@ -326,6 +329,8 @@ public final class Run {
     /** applies the outcome of a finished battle to the run. */
     public void applyResult(Battle b) {
         lastWon = (b.winner == 0);
+        int previous=resultCount>0?resultPath[resultCount-1]:0;
+        if(resultCount<resultPath.length)resultPath[resultCount++]=previous+(lastWon?1:-1);
         lastSurvivors = b.alive(0);
         lastDamage = 0;
         lastGold = 0;

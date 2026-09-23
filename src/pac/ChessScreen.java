@@ -44,6 +44,7 @@ public final class ChessScreen extends Screen {
     private int reward = 0;
     private boolean finished = false;
     private int visualTime = 0;
+    private int saveClock = 0;
     private int watch = 0;
     private boolean rosterDetail = false;
     private boolean refreshItemsAsk=false;
@@ -69,7 +70,11 @@ public final class ChessScreen extends Screen {
         super(g);
         unlimitedGold = mode==Run.MODE_UNLIMITED;
         run = new Run((int) System.currentTimeMillis(),mode);
+        RunStorage.save(run);
     }
+
+    public ChessScreen(Game g,Run resumed){super(g);run=resumed;unlimitedGold=run.mode==Run.MODE_UNLIMITED;state=PREP;}
+    public void saveResume(){if(!finished&&state==PREP)RunStorage.save(run);}
 
     private void say(String s) {
         toast = s;
@@ -80,6 +85,7 @@ public final class ChessScreen extends Screen {
 
     public void update(int dt) {
         visualTime += dt;
+        if(state==PREP){saveClock+=dt;if(saveClock>=3000){saveClock=0;RunStorage.save(run);}}
         if (toastT > 0) toastT -= dt;
         if (state == BATTLE && !rosterDetail) {
             if (!bt.over) {
@@ -110,6 +116,8 @@ public final class ChessScreen extends Screen {
         if (run.victory) Save.wins++;
         if (run.round > Save.best) Save.best = run.round;
         Save.save();
+        HistoryStore.add(run);
+        RunStorage.clear();
     }
 
     // ---- input -----------------------------------------------------------
@@ -142,7 +150,7 @@ public final class ChessScreen extends Screen {
         }
     }
 
-    private void continueNextRound(){run.nextRound();state=PREP;warned=false;held=-1;}
+    private void continueNextRound(){run.nextRound();state=PREP;warned=false;held=-1;RunStorage.save(run);}
 
     private void keyRefreshItems(int k){
         if(k==Game.K_LEFT||k==Game.K_UP)refreshItemsChoice=0;
@@ -1444,11 +1452,13 @@ public final class ChessScreen extends Screen {
             if(p!=null){
                 if(av==20)Art.avatarMini(g,p.sp,2,y+(rowH-20)/2);else Art.avatarTiny(g,p.sp,2,y+(rowH-16)/2);
                 Art.textSmall(g,""+p.damageDealt,av+5,y,0xD8F0D8);
+                drawResultItems(g,p,half-29,y+1);
                 Art.bar(g,av+5,y+Math.min(fh,rowH-4),barW,4,p.damageDealt,max,0x76C442);
             }
             if(e!=null){
                 if(av==20)Art.avatarMini(g,e.sp,W-22,y+(rowH-20)/2);else Art.avatarTiny(g,e.sp,W-18,y+(rowH-16)/2);
                 Art.textSmallR(g,""+e.damageDealt,W-av-5,y,0xFFD0C8);
+                drawResultItems(g,e,half+2,y+1);
                 Art.barReverse(g,half+3,y+Math.min(fh,rowH-4),barW,4,e.damageDealt,max,0xE76E55);
             }
         }
@@ -1462,6 +1472,8 @@ public final class ChessScreen extends Screen {
         if(run.lastItem>=0)Art.textSmallC(g,Lang.t("Vật phẩm: ","Item: ")+ItemData.name(run.lastItem),W/2,fy+fh*3,0x80D8FF);
         Art.textSmallC(g,run.over?Lang.t("FIRE: xem tổng kết","FIRE: final summary"):Lang.t("FIRE: tiếp tục","FIRE: continue"),W/2,H-fh-2,0x8090B0);
     }
+
+    private void drawResultItems(Graphics g,Unit u,int x,int y){for(int s=0;s<3;s++){int id=u.items[s],px=x+s*9;g.setColor(id>=0?0x263448:0x172131);g.fillArc(px,y,8,8,0,360);g.setColor(id>=0?0x80D8FF:0x4B586C);g.drawArc(px,y,7,7,0,360);if(id>=0)Art.itemIconTiny(g,id,px, y);}}
 
     private void paintRefreshItemsAsk(Graphics g){
         int W=game.W,H=game.H,fh=Art.fh,w=Math.min(W-16,174),h=fh*6+14,x=(W-w)/2,y=(H-h)/2;
@@ -1482,7 +1494,8 @@ public final class ChessScreen extends Screen {
         Art.textBC(g, run.victory ? Lang.t("NHÀ VÔ ĐỊCH!","CHAMPION!") : Lang.t("KẾT THÚC","RUN OVER"), W / 2, y, run.victory ? 0xFFD030 : 0xFF6060);
         y+=fh+3;
         Art.textSmallC(g,Lang.t("Vòng ","Round ")+run.round+"/"+run.maxRound()+"   HP "+run.hp+"   "+Lang.t("Vàng ","Gold ")+run.gold,W/2,y,0xE0E8FF);
-        y+=fh+3;Art.textB(g,Lang.t("ĐỘI HÌNH CUỐI","FINAL TEAM"),4,y,0x80D8FF);y+=fh+2;
+        y+=fh+2;HistoryScreen.drawGraph(g,run.resultPath,run.resultCount,4,y,W-8,38);y+=41;
+        Art.textB(g,Lang.t("ĐỘI HÌNH CUỐI","FINAL TEAM"),4,y,0x80D8FF);y+=fh+2;
         int n=run.boardCount(),slot=0,per=H<250?7:5,step=H<250?23:34;
         for(int i=0;i<Run.BOARD;i++)if(run.board[i]>=0){
             int x=3+(slot%per)*step,ay=y+(slot/per)*step;

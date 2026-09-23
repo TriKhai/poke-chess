@@ -65,6 +65,16 @@ v1.2.9
 - Hotfix UI economy: bỏ ký hiệu kỹ thuật I/S/W; màn kết quả dùng nhãn đầy đủ
   Gốc, Lãi, Chuỗi, Thắng, Đồ (Base, Interest, Streak, Win, Item).
 
+v1.3.0
+- Thêm RunStorage RMS version riêng, lưu/resume vòng, RNG, HP, vàng, level/XP,
+  streak, đội hình, hàng chờ, shop/lock, pool, inventory, trang bị, địch và lịch sử kết quả.
+- Save tiến độ cũ v1-v3 giữ nguyên; snapshot hỏng bị bỏ an toàn, không làm mất collection.
+- Màn chọn mode có Tiếp tục và Lịch sử đấu. Lưu 5 run gần nhất gồm mode, kết quả,
+  đội hình cuối tối đa 9 pet, đủ 3 item/pet và biểu đồ thắng đi lên/thua đi xuống.
+- Màn kết thúc trận hiển thị 3 ô item theo từng hàng pet; tổng kết run có biểu đồ tiến trình.
+- build-poke.bat xuất cả Full và Lite. Lite bỏ raw atlas và sfx nặng, dùng sprite/fallback;
+  Full giữ toàn bộ tài nguyên.
+- Nâng MIDlet-Version lên 1.3.0 và bổ sung regression snapshot/history/build.
+
 KE HOACH
-- v1.3.0: save/resume run và build lite/full.
 - v1.3.1: cân bằng, tối ưu thiết bị thật và hoàn thiện nội dung offline.

@@ -143,6 +143,14 @@ public final class CombatSmokeTest {
         check(bossUnit!=null&&bossUnit.shield>=bossUnit.maxHp/5,"enemy held item passive missing");
         pve.round=20;pve.genEnemy();int legends=0;for(int i=0;i<Run.BOARD;i++)if(pve.enemy[i]>=0)legends++;
         check(legends==3&&pve.enemy[2*8+2]>=0&&pve.enemy[2*8+4]>=0&&pve.enemy[2*8+6]>=0,"legendary birds formation mismatch");
+        Run snapshot=new Run(1201,Run.MODE_THIRTY);snapshot.round=7;snapshot.hp=73;snapshot.gold=42;snapshot.level=5;snapshot.xp=9;snapshot.streak=-3;
+        snapshot.board[4]=25;snapshot.bench[2]=7;snapshot.shop[1]=18;snapshot.equip[4*3]=ItemData.indexOf("SHELL_BELL");snapshot.resultPath[0]=1;snapshot.resultPath[1]=0;snapshot.resultCount=2;
+        int expectedRng=snapshot.rng.state();byte[] snapshotBytes=RunStorage.encode(snapshot);Run restored=RunStorage.decode(snapshotBytes);
+        check(restored!=null&&restored.mode==Run.MODE_THIRTY&&restored.round==7&&restored.hp==73&&restored.gold==42,"run snapshot scalar mismatch");
+        check(restored.board[4]==25&&restored.bench[2]==7&&restored.shop[1]==18&&restored.equip[12]==ItemData.indexOf("SHELL_BELL"),"run snapshot arrays mismatch");
+        check(restored.resultCount==2&&restored.resultPath[1]==0&&restored.rng.state()==expectedRng,"run snapshot graph/RNG mismatch");RunStorage.clear();
+        snapshot.over=true;snapshot.victory=false;HistoryStore.add(snapshot);check(HistoryStore.count>0&&HistoryStore.round[0]==7,"history entry missing");
+        check(HistoryStore.team[0][0]==25&&HistoryStore.items[0][0]==ItemData.indexOf("SHELL_BELL"),"history final team/items mismatch");
 
         int[] player = new int[24];
         int[] enemy = new int[24];
@@ -165,6 +173,6 @@ public final class CombatSmokeTest {
             check(stress.over, "stress battle did not terminate at seed " + seed);
         }
 
-        System.out.println("CombatSmokeTest OK: 31 synergies, items, abilities/statuses, economy, PvE/boss formations, "+ItemData.recipeCount()+" crafted-item battles and 101 base battles");
+        System.out.println("CombatSmokeTest OK: synergies, items, abilities/statuses, economy, PvE/bosses, save/resume/history, "+ItemData.recipeCount()+" item battles and 101 base battles");
     }
 }

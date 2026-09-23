@@ -91,6 +91,7 @@ public final class Save {
                 try { rs.closeRecordStore(); } catch (Exception e) { }
             }
         }
+        HistoryStore.load();
     }
 
     public static void save() {

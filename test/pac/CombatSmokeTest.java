@@ -131,6 +131,18 @@ public final class CombatSmokeTest {
         check(new Run(1,Run.MODE_NORMAL).maxRound()==20,"normal mode round limit mismatch");
         check(new Run(1,Run.MODE_THIRTY).maxRound()==30,"thirty-round mode limit mismatch");
         check(new Run(1,Run.MODE_GEN1).maxRound()==30,"Gen 1 mode round limit mismatch");
+        check(EconomyRules.interest(59)==5,"interest cap mismatch");
+        check(EconomyRules.streakBonus(-6)==3&&EconomyRules.streakBonus(1)==0,"streak economy mismatch");
+        check(EconomyRules.income(20,4,true,2)==12,"income breakdown mismatch");
+        check(EconomyRules.playerDamage(8,5)==11,"player damage formula mismatch");
+        Run pve=new Run(990,Run.MODE_NORMAL);pve.round=8;pve.genEnemy();
+        int gyarados=-1;for(int i=0;i<Data.N;i++)if("Gyarados".equals(Data.name[i])){gyarados=i;break;}
+        check(pve.enemy[2*8+4]==gyarados,"source Gyarados formation mismatch");
+        check(pve.enemyEquip[(2*8+4)*3]==ItemData.indexOf("KINGS_ROCK"),"boss held item missing");
+        Battle pveBattle=pve.makeBattle();Unit bossUnit=null;for(int i=0;i<pveBattle.n;i++)if(pveBattle.units[i].side==1)bossUnit=pveBattle.units[i];
+        check(bossUnit!=null&&bossUnit.shield>=bossUnit.maxHp/5,"enemy held item passive missing");
+        pve.round=20;pve.genEnemy();int legends=0;for(int i=0;i<Run.BOARD;i++)if(pve.enemy[i]>=0)legends++;
+        check(legends==3&&pve.enemy[2*8+2]>=0&&pve.enemy[2*8+4]>=0&&pve.enemy[2*8+6]>=0,"legendary birds formation mismatch");
 
         int[] player = new int[24];
         int[] enemy = new int[24];
@@ -153,6 +165,6 @@ public final class CombatSmokeTest {
             check(stress.over, "stress battle did not terminate at seed " + seed);
         }
 
-        System.out.println("CombatSmokeTest OK: 31 synergies, item triggers, ability/status behaviors, "+ItemData.recipeCount()+" crafted-item battles and 101 base battles");
+        System.out.println("CombatSmokeTest OK: 31 synergies, items, abilities/statuses, economy, PvE/boss formations, "+ItemData.recipeCount()+" crafted-item battles and 101 base battles");
     }
 }

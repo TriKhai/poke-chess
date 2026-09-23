@@ -51,7 +51,18 @@ v1.2.8
   một trong 9 mẫu sát thương chung.
 - Nâng MIDlet-Version và tài liệu lên 1.2.8; bổ sung regression ability/status.
 
+v1.2.9
+- Tách EconomyRules.java: thu nhập 5 vàng cơ bản, lãi tối đa 5, thưởng chuỗi
+  thắng/thua, thưởng thắng, vàng từ item và sát thương người chơi đều có công thức
+  độc lập, deterministic và được hiển thị thành breakdown ở màn kết quả.
+- Thêm EnemyFormation.java, chuyển các vòng PvE sang đội hình cố định dựa trên
+  PVEStages gốc: Magikarp, Rattata, Spearow, Gyarados, Mewtwo + Mew,
+  Lugia + Ho-Oh và bộ ba Zapdos/Moltres/Articuno.
+- Boss giữ tọa độ, tên, scale riêng và held item đặc trưng từ source; Battle nhận
+  trang bị cho cả hai phía thay vì chỉ đội người chơi.
+- Sacred Ash hoạt động như hồi sinh một lần để bộ trang bị Tower Duo có hiệu lực.
+- Nâng MIDlet-Version và tài liệu lên 1.2.9; bổ sung regression economy/formation/boss.
+
 KE HOACH
-- v1.2.9: economy, enemy formation và boss parity.
 - v1.3.0: save/resume run và build lite/full.
 - v1.3.1: cân bằng, tối ưu thiết bị thật và hoàn thiện nội dung offline.

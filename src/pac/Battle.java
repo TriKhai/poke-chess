@@ -58,10 +58,14 @@ public final class Battle {
     }
 
     public Battle(int[] pBoard, int[] eBoard, int eScale, Rng rng, int[] pEquip) {
+        this(pBoard,eBoard,eScale,rng,pEquip,null);
+    }
+
+    public Battle(int[] pBoard, int[] eBoard, int eScale, Rng rng, int[] pEquip,int[] eEquip) {
         this.rng = rng;
         for (int i = 0; i < 24; i++) {
             if (pBoard[i] >= 0) addUnit(pBoard[i], 0, i % 8, 3 + i / 8, 100, pEquip, i);
-            if (eBoard[i] >= 0) addUnit(eBoard[i], 1, i % 8, 2 - i / 8, eScale, null, -1);
+            if (eBoard[i] >= 0) addUnit(eBoard[i], 1, i % 8, 2 - i / 8, eScale, eEquip, i);
         }
         countSyn(0, synP);
         countSyn(1, synE);

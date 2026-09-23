@@ -19,6 +19,7 @@ public final class ItemEffects {
     private static final int MACH_RIBBON=id("MACH_RIBBON"), EXPLOSIVE_BAND=id("EXPLOSIVE_BAND"), EFFICIENT_BANDANNA=id("EFFICIENT_BANDANNA");
     private static final int LUCKY_RIBBON=id("LUCKY_RIBBON"), WIDE_LENS=id("WIDE_LENS"), ELECTIRIZER=id("ELECTIRIZER");
     private static final int SPELL_TAG=id("SPELL_TAG"), BLACK_BELT=id("BLACK_BELT");
+    private static final int SACRED_ASH=id("SACRED_ASH");
 
     private static int id(String s){return ItemData.indexOf(s);}
     public static boolean has(Unit u,int id){for(int i=0;i<3;i++)if(u.items[i]==id)return true;return false;}
@@ -83,7 +84,7 @@ public final class ItemEffects {
 
     /** @return true when death was replaced by a one-time resurrection. */
     public static boolean onDeath(Battle b,Unit u,Unit killer){
-        if(has(u,MAX_REVIVE)&&!u.itemReviveUsed){u.itemReviveUsed=true;consume(u,MAX_REVIVE);u.hp=Math.max(1,u.maxHp/2);u.alive=true;shield(u,u.maxHp/5);return true;}
+        if((has(u,MAX_REVIVE)||has(u,SACRED_ASH))&&!u.itemReviveUsed){u.itemReviveUsed=true;if(has(u,MAX_REVIVE))consume(u,MAX_REVIVE);else consume(u,SACRED_ASH);u.hp=Math.max(1,u.maxHp/2);u.alive=true;shield(u,u.maxHp/5);return true;}
         if(has(u,SPELL_TAG)&&killer!=null)killer.status.silence=Math.max(killer.status.silence,100);
         return false;
     }
@@ -108,6 +109,7 @@ public final class ItemEffects {
         if(i==KINGS_ROCK)return Lang.t("Đầu trận nhận khiên bằng 20% HP tối đa.","Gain a 20% max-HP shield at battle start.");
         if(i==FLAME_ORB)return Lang.t("Đầu trận tự Bỏng nhưng cộng thêm ATK gốc.","Start Burned but gain base ATK again.");
         if(i==MAX_REVIVE)return Lang.t("Tử trận lần đầu: hồi sinh 50% HP và 20% khiên.","First death: revive with 50% HP and 20% shield.");
+        if(i==SACRED_ASH)return Lang.t("Tử trận lần đầu: hồi sinh 50% HP và 20% khiên.","First death: revive with 50% HP and 20% shield.");
         if(i==ROCKY_HELMET)return Lang.t("Phản 25% sát thương đánh cận chiến dưới dạng sát thương chuẩn.","Reflect 25% melee damage as true damage.");
         if(i==ELECTIRIZER)return Lang.t("Mỗi đòn đánh thứ 3 gây Tê liệt 2 giây.","Every 3rd attack Paralyses for 2s.");
         if(i==AQUA_EGG)return Lang.t("Sau khi dùng chiêu, hồi lại MP theo MP tối đa.","Regain MP after casting.");

@@ -33,12 +33,15 @@ public final class Run {
 
     // enemy for the current round
     public int[] enemy = new int[BOARD];
+    /** Three source-backed held-item slots for every enemy board cell. */
+    public int[] enemyEquip = new int[BOARD*3];
     public int enemyScale = 100;
     public String enemyName = "";
 
     // last result
     public boolean lastWon;
     public int lastDamage, lastGold, lastSurvivors, lastXp;
+    public int lastBaseGold,lastInterest,lastStreakGold,lastVictoryGold,lastItemGold;
     public boolean over, victory;
 
     private static final String[] NAMES = { "Youngster Joey", "Lass Amy", "Hiker Tom", "Swimmer Kai",
@@ -60,6 +63,7 @@ public final class Run {
         for (int i = 0; i < BOARD; i++) board[i] = -1;
         for (int i = 0; i < BENCH; i++) bench[i] = -1;
         for (int i = 0; i < equip.length; i++) equip[i] = -1;
+        for (int i = 0; i < enemyEquip.length; i++) enemyEquip[i] = -1;
         for (int i = 0; i < 5; i++) shop[i] = -1;
         for (int i = 0; i < Data.N; i++) {
             if (Data.isBase(i) && Save.unlocked[i] && (mode!=MODE_GEN1||i<151)) pool[i] = Data.POOL_COPIES[Data.cost[i]];
@@ -316,7 +320,7 @@ public final class Run {
     }
 
     public Battle makeBattle() {
-        return new Battle(board, enemy, enemyScale, rng, equip);
+        return new Battle(board, enemy, enemyScale, rng, equip,enemyEquip);
     }
 
     /** applies the outcome of a finished battle to the run. */
@@ -325,6 +329,7 @@ public final class Run {
         lastSurvivors = b.alive(0);
         lastDamage = 0;
         lastGold = 0;
+        lastBaseGold=lastInterest=lastStreakGold=lastVictoryGold=lastItemGold=0;
         lastItem = -1;
         lastXp = 2;
         gainXp(lastXp);
@@ -333,16 +338,15 @@ public final class Run {
             if (round >= maxRound()) { over = true; victory = true;if(mode==MODE_GEN1)unlockGen1(); }
         } else {
             streak = streak < 0 ? streak - 1 : -1;
-            lastDamage = 2 + round / 2 + b.aliveTierSum(1);
+            lastDamage = EconomyRules.playerDamage(round,b.aliveTierSum(1));
             hp -= lastDamage;
             if (hp <= 0) { hp = 0; over = true; }
             if (round >= maxRound()) over = true; // the final boss ends the run either way
         }
         if (!over) {
-            int interest = Math.min(5, gold / 10);
-            int s = Math.abs(streak);
-            int streakBonus = s >= 6 ? 3 : (s >= 4 ? 2 : (s >= 2 ? 1 : 0));
-            lastGold = 5 + interest + streakBonus + (lastWon ? 1 : 0) + b.itemGold;
+            lastBaseGold=EconomyRules.BASE_INCOME;lastInterest=EconomyRules.interest(gold);
+            lastStreakGold=EconomyRules.streakBonus(streak);lastVictoryGold=EconomyRules.victoryBonus(lastWon);lastItemGold=b.itemGold;
+            lastGold=EconomyRules.income(gold,streak,lastWon,b.itemGold);
         }
         if(mode==MODE_GEN1&&lastWon&&rng.pct(45)){
             int[] basic={5,2,8,6,7,3,4,1};lastItem=basic[rng.nextInt(basic.length)];giveItem(lastItem);
@@ -393,9 +397,11 @@ public final class Run {
     public void genEnemy() {
         int r = round;
         for (int i = 0; i < BOARD; i++) enemy[i] = -1;
+        for (int i = 0; i < enemyEquip.length; i++) enemyEquip[i] = -1;
         boolean boss = isBoss();
         int n;
         if(mode==MODE_GEN1&&boss){gen1Boss(r);return;}
+        if(EnemyFormation.apply(this))return;
         if (r == 1) n = 1;
         else if (r <= 3) n = 2;
         else n = 2 + (r * 2) / 5;

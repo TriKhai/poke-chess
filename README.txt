@@ -1,4 +1,4 @@
-POKE AUTO CHESS ME v1.2.8  (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
+POKE AUTO CHESS ME v1.2.9  (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
 =====================================================================
 
 CAU TRUC
@@ -14,6 +14,8 @@ CAU TRUC
   docs/CHI_SO_VA_TRANG_THAI_POKEMON.md  bang chu viet tat, chi so va trang thai combat
 
 PHIEN BAN
+  v1.2.9: economy tach base/lai/streak/thang/item; doi hinh PvE co dinh va boss
+          Gyarados, Mewtwo-Mew, Tower Duo, Legendary Birds kem held item goc.
   v1.2.8: them behavior phu theo ten move; hoan thien 16 status, cleanse, hard-CC,
           charm danh dong minh, confusion tu gay sat thuong va Locked chan di chuyen.
   v1.2.7: them item passive dispatcher va cac trigger khoi tran/theo nhip/di chuyen/

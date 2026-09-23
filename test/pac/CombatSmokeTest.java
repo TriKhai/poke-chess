@@ -62,6 +62,29 @@ public final class CombatSmokeTest {
         check(equipped!=null,"equipped unit missing from battle");
         check(equipped.atk==Data.atk[0]+3,"ItemStats ATK not applied");
         check(equipped.skillBonus==30,"ItemStats AP not applied");
+        check(ItemData.desc(book).indexOf("Nội tại")>=0,"ported item passive missing from Collection description");
+
+        int king=ItemData.indexOf("KINGS_ROCK"),upgrade=ItemData.indexOf("UPGRADE"),revive=ItemData.indexOf("MAX_REVIVE");
+        int[] triggerEquip=new int[24*3];for(int i=0;i<triggerEquip.length;i++)triggerEquip[i]=-1;
+        triggerEquip[0]=king;triggerEquip[1]=upgrade;triggerEquip[2]=revive;
+        Battle triggerBattle=new Battle(uniquePlayer,uniqueEnemy,100,new Rng(72),triggerEquip);
+        Unit triggerUnit=null,triggerEnemy=null;for(int i=0;i<triggerBattle.n;i++){if(triggerBattle.units[i].side==0&&triggerUnit==null)triggerUnit=triggerBattle.units[i];if(triggerBattle.units[i].side==1)triggerEnemy=triggerBattle.units[i];}
+        check(triggerUnit!=null&&triggerEnemy!=null,"item trigger fixture missing units");
+        check(triggerUnit.shield>=triggerUnit.maxHp/5,"King's Rock start trigger missing");
+        int speedBefore=triggerUnit.speed;ItemEffects.onBasicAttack(triggerBattle,triggerUnit,triggerEnemy,10,false,false);
+        check(triggerUnit.speed==speedBefore+5,"Upgrade attack trigger missing");
+        triggerUnit.hp=0;check(ItemEffects.onDeath(triggerBattle,triggerUnit,triggerEnemy),"Max Revive death trigger missing");
+        check(triggerUnit.hp==triggerUnit.maxHp/2&&triggerUnit.itemReviveUsed,"Max Revive state mismatch");
+        triggerUnit.items[0]=ItemData.indexOf("AMULET_COIN");ItemEffects.onKill(triggerBattle,triggerUnit,triggerEnemy);
+        check(triggerBattle.itemGold==1,"Amulet Coin kill reward missing");
+        int[] onePlayer=new int[24],oneEnemy=new int[24],oneEquip=new int[24*3];
+        for(int recipe=0;recipe<ItemData.recipeCount();recipe++){
+            for(int i=0;i<24;i++){onePlayer[i]=-1;oneEnemy[i]=-1;}for(int i=0;i<oneEquip.length;i++)oneEquip[i]=-1;
+            onePlayer[0]=0;oneEnemy[0]=3;oneEquip[0]=ItemData.recipeOutputAt(recipe);
+            Battle itemStress=new Battle(onePlayer,oneEnemy,100,new Rng(900+recipe),oneEquip);
+            for(int i=0;i<250&&!itemStress.over;i++)itemStress.step();
+            check(itemStress.tick>0,"crafted item battle did not run: "+ItemData.ID[oneEquip[0]]);
+        }
 
         Run direct = new Run(321, Run.MODE_NORMAL);
         direct.set(Run.BOARD, 0);
@@ -115,6 +138,6 @@ public final class CombatSmokeTest {
             check(stress.over, "stress battle did not terminate at seed " + seed);
         }
 
-        System.out.println("CombatSmokeTest OK: 31 synergies, roster, items, merge, shop lock, modes and 101 battles");
+        System.out.println("CombatSmokeTest OK: 31 synergies, item triggers, "+ItemData.recipeCount()+" crafted-item battles and 101 base battles");
     }
 }

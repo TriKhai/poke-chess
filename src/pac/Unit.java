@@ -11,6 +11,9 @@ public final class Unit {
     public int stun, shield;
     public int dodge, crit, lifesteal, skillBonus, regen;
     public int critPower, basicCount, damageBlockEvery, damageHitCount, flyCharges;
+    /** Per-battle counters/flags owned by ItemEffects. */
+    public int itemAttackCount, itemDamageCount, itemCastCount, itemKillCount, itemSoulClock, itemGreenClock, itemRibbonClock;
+    public boolean itemSmokeUsed, itemReviveUsed, itemShieldBurstUsed;
     public int[] synTier = new int[Data.NT];
     /** Live combat statistics used by the persistent team inspector. */
     public int damageDealt, damageTaken, damageBlocked, healingDone, shieldDone;

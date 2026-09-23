@@ -342,7 +342,7 @@ public final class Run {
             int interest = Math.min(5, gold / 10);
             int s = Math.abs(streak);
             int streakBonus = s >= 6 ? 3 : (s >= 4 ? 2 : (s >= 2 ? 1 : 0));
-            lastGold = 5 + interest + streakBonus + (lastWon ? 1 : 0);
+            lastGold = 5 + interest + streakBonus + (lastWon ? 1 : 0) + b.itemGold;
         }
         if(mode==MODE_GEN1&&lastWon&&rng.pct(45)){
             int[] basic={5,2,8,6,7,3,4,1};lastItem=basic[rng.nextInt(basic.length)];giveItem(lastItem);

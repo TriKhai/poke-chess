@@ -24,8 +24,19 @@ v1.2.6
 - Battle: phím 0 mở More; thêm INFO DEV hiển thị realtime thông số pet đang hover
   trong bảng dưới sàn đấu để kiểm tra buff/debuff khi test.
 
+v1.2.7
+- Tách ItemEffects.java thành dispatcher nội tại CLDC-safe với các trigger: đầu trận,
+  theo nhịp, di chuyển, đánh thường, gây/nhận sát thương, dùng chiêu, hạ gục và tử trận.
+- Port nhóm nội tại chiến đấu từ source gốc: Soul Dew, Shell Bell, Upgrade,
+  Pokemonomicon, Aqua Egg, Blue/Green Orb, Scope Lens, Star Dust, Deep Sea Tooth,
+  Smoke Ball, Loaded Dice, Muscle Band, Sticky Barb, King's Rock, Flame Orb,
+  Max Revive, Air Balloon, Wide Lens, các Band/Ribbon và trang bị liên quan.
+- Nội tại có state riêng trên từng pet, item dùng một lần được tiêu thụ trong combat;
+  sát thương phản/nảy không gọi lặp trigger để tránh vòng lặp vô hạn.
+- Collection và chi tiết item tự nối mô tả Nội tại/Passive cho các item đã port.
+- Nâng MIDlet-Version và tài liệu lên 1.2.7; bổ sung regression cho trigger item.
+
 KE HOACH
-- v1.2.7: item passive và trigger system.
 - v1.2.8: ability behavior system và status hoàn chỉnh.
 - v1.2.9: economy, enemy formation và boss parity.
 - v1.3.0: save/resume run và build lite/full.

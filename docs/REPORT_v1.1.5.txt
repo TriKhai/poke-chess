@@ -1,0 +1,10 @@
+POKE AUTO CHESS ME v1.1.5
+=========================
+
+- Defeated units always report HP 0 and draw an empty HP bar immediately.
+- The fix bypasses prevHp interpolation as soon as Unit.alive becomes false.
+- The combat statistics HP metric also guards against stale KO health values.
+- Synergy rows use the bundled type icons.
+- Rows show current count, 2/4/6 thresholds and compact localized descriptions.
+- Descriptions match the bonuses in Battle.applySyn.
+- build.xml/JAD/manifest version: 1.1.5.

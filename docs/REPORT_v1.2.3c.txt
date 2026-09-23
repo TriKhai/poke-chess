@@ -1,0 +1,8 @@
+POKE AUTO CHESS ME v1.2.3c - CRAFT CLOSE BUTTON
+===============================================
+
+- Them nut DONG cung hang voi GHEP va LAM MOI.
+- Trai/Phai chuyen tuan tu giua ca ba nut; FIRE tren DONG quay lai xep doi.
+- Phim 0 van la loi tat dong nhanh.
+- Dong huong dan duoi chi con 1/3 doi tab.
+- MIDlet-Version so: 1.2.3. Vendor: KhaiLy.

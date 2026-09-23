@@ -1,0 +1,8 @@
+Sprites in res/sp were cropped from the atlases of
+https://github.com/keldaanCommunity/pokemonAutoChess (app/public/src/assets/pokemons/<dex>.png).
+The repository code is GPL-3.0. The sprites come from the PMDCollab SpriteCollab project; the
+credits.txt next to each portrait in the original repo names the authors and lists CC BY-NC 4.0
+for some of them and Chunsoft/Nintendo/Pokemon IP for the rest. Personal, non-commercial use only.
+Do not redistribute the jar publicly without checking those terms.
+Compact Vietnamese bitmap font technique/assets: NRO reference source supplied by the project owner.
+Item source artwork: item{tps}.zip supplied by the project owner; converted to 24px PNG8 for J2ME.

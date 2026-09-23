@@ -1,0 +1,545 @@
+package pac;
+
+/**
+ * Auto-battle simulation. Pure logic (no MIDP classes) so it can be tested on a desktop JVM.
+ * Grid is 8 columns x 6 rows. Rows 0-2 = enemy half, rows 3-5 = player half.
+ * One step() = one deterministic 100 ms tick, matching the timing model of the web game.
+ */
+public final class Battle {
+    public static final int COLS = 8, ROWS = 6;
+    public static final int SUDDEN_DEATH = CombatRules.FIGHT_DURATION_TICKS;
+    public static final int HARD_LIMIT = CombatRules.HARD_LIMIT_TICKS;
+    private static final int PHYSICAL = 0, SPECIAL = 1, TRUE = 2;
+
+    public Unit[] units = new Unit[32];
+    public int n = 0;
+    public Unit[] grid = new Unit[COLS * ROWS];
+    public int tick = 0;
+    public boolean over = false;
+    public int winner = -1;               // 0 player, 1 enemy, -1 draw
+    public int[] synP = new int[Data.NT];
+    public int[] synE = new int[Data.NT];
+
+    public static final int MAXFX = 14;
+    public int[] fxX = new int[MAXFX], fxY = new int[MAXFX], fxVal = new int[MAXFX];
+    public int[] fxTtl = new int[MAXFX], fxCol = new int[MAXFX];
+    public int[] fxType = new int[MAXFX]; // 0 damage, 1 heal, 2 miss, 3 crit
+    private int fxNext = 0;
+
+    /** Lightweight missiles used by the renderer. Kept as primitive arrays for CLDC 1.0. */
+    public static final int MAXSHOT = 12;
+    public int[] shotX0 = new int[MAXSHOT], shotY0 = new int[MAXSHOT];
+    public int[] shotX1 = new int[MAXSHOT], shotY1 = new int[MAXSHOT];
+    public int[] shotTtl = new int[MAXSHOT], shotCol = new int[MAXSHOT], shotKind = new int[MAXSHOT];
+    public int[] shotType = new int[MAXSHOT];
+    private int shotNext = 0;
+    public static final int MAXSKILLFX = 12;
+    public int[] skillFxX = new int[MAXSKILLFX], skillFxY = new int[MAXSKILLFX];
+    public int[] skillFxId = new int[MAXSKILLFX], skillFxTtl = new int[MAXSKILLFX];
+    public int[] skillFxAge = new int[MAXSKILLFX];
+    private int skillFxNext = 0;
+    public static final int MAXBOARDFX = 16;
+    public int[] boardFxX=new int[MAXBOARDFX],boardFxY=new int[MAXBOARDFX];
+    public int[] boardFxSp=new int[MAXBOARDFX],boardFxTtl=new int[MAXBOARDFX];
+    private int boardFxNext=0;
+
+    private final Rng rng;
+
+    /**
+     * @param pBoard 24 species (-1 empty), index = row*8+col, row 0 = front row
+     * @param eBoard same layout for the enemy
+     * @param eScale enemy stat scale in percent
+     */
+    public Battle(int[] pBoard, int[] eBoard, int eScale, Rng rng) {
+        this(pBoard,eBoard,eScale,rng,null);
+    }
+
+    public Battle(int[] pBoard, int[] eBoard, int eScale, Rng rng, int[] pEquip) {
+        this.rng = rng;
+        for (int i = 0; i < 24; i++) {
+            if (pBoard[i] >= 0) addUnit(pBoard[i], 0, i % 8, 3 + i / 8, 100, pEquip, i);
+            if (eBoard[i] >= 0) addUnit(eBoard[i], 1, i % 8, 2 - i / 8, eScale, null, -1);
+        }
+        countSyn(0, synP);
+        countSyn(1, synE);
+        applySyn(0, synP);
+        applySyn(1, synE);
+        for (int i = 0; i < MAXFX; i++) fxTtl[i] = 0;
+    }
+
+    private void addUnit(int sp, int side, int x, int y, int scale, int[] held, int heldPos) {
+        Unit u = new Unit();
+        u.sp = sp; u.side = side; u.x = x; u.y = y; u.px = x; u.py = y;
+        u.facing = side == 0 ? 4 : 0;
+        u.maxHp = Data.hp[sp] * scale / 100;
+        if (u.maxHp < 1) u.maxHp = 1;
+        u.hp = u.maxHp;
+        u.prevHp = u.hp;
+        u.atk = Data.atk[sp] * scale / 100;
+        if (u.atk < 1) u.atk = 1;
+        u.def = Data.def[sp];
+        u.speDef = Data.speDef[sp];
+        u.speed = Data.speed[sp];
+        u.range = Data.range[sp];
+        u.cd = CombatRules.cooldownTicks(1000, u.speed);
+        u.maxMana = Data.mana[sp];
+        if(held!=null&&heldPos>=0)for(int s=0;s<3;s++){
+            int id=held[heldPos*3+s];if(id<0)continue;
+            u.items[s]=id;
+            u.maxHp+=ItemData.HP[id];u.hp=u.maxHp;u.atk+=ItemData.ATK[id];
+            u.def+=ItemData.DEF[id];u.speDef+=ItemData.SPE_DEF[id];u.speed+=ItemData.SPEED[id];
+            u.mana+=ItemData.MP[id];u.skillBonus+=ItemData.AP[id];u.crit+=ItemData.CRIT[id];
+            u.shield+=ItemData.SHIELD[id];u.shieldDone+=ItemData.SHIELD[id];
+        }
+        if(u.maxMana>0&&u.mana>u.maxMana)u.mana=u.maxMana;
+        units[n++] = u;
+        grid[y * COLS + x] = u;
+    }
+
+    /** counts units of each type for a side. */
+    public void countSyn(int side, int[] cnt) {
+        for (int i = 0; i < Data.NT; i++) cnt[i] = 0;
+        for (int i = 0; i < n; i++) {
+            Unit u = units[i];
+            if (u.side != side) continue;
+            cnt[Data.t1[u.sp]]++;
+            if (Data.t2[u.sp] >= 0) cnt[Data.t2[u.sp]]++;
+        }
+    }
+
+    private static boolean hasType(int sp, int t) {
+        return Data.t1[sp] == t || Data.t2[sp] == t;
+    }
+
+    private void applySyn(int side, int[] cnt) {
+        for (int t = 0; t < Data.NT; t++) {
+            int lv = Data.synLevel(cnt[t]);
+            if (lv == 0) continue;
+            for (int i = 0; i < n; i++) {
+                Unit u = units[i];
+                if (u.side != side || !hasType(u.sp, t)) continue;
+                switch (t) {
+                    case Data.T_NORMAL: {
+                        int p = lv == 1 ? 12 : (lv == 2 ? 25 : 45);
+                        u.maxHp += u.maxHp * p / 100; u.hp = u.maxHp;
+                        break;
+                    }
+                    case Data.T_FIRE:
+                        u.atk += u.atk * (lv == 1 ? 15 : (lv == 2 ? 35 : 60)) / 100;
+                        break;
+                    case Data.T_WATER:
+                        u.mana += (lv == 1 ? 20 : (lv == 2 ? 40 : 70));
+                        if (u.maxMana > 0 && u.mana > u.maxMana) u.mana = u.maxMana;
+                        break;
+                    case Data.T_GRASS:
+                        u.regen += (lv == 1 ? 2 : (lv == 2 ? 4 : 7));
+                        break;
+                    case Data.T_ELEC: {
+                        int p = lv == 1 ? 15 : (lv == 2 ? 30 : 50);
+                        u.speed += u.speed * p / 100;
+                        u.cd = CombatRules.cooldownTicks(1000, u.speed);
+                        if (u.cd < 2) u.cd = 2;
+                        break;
+                    }
+                    case Data.T_ROCK:
+                        u.def += (lv == 1 ? 2 : (lv == 2 ? 5 : 9));
+                        break;
+                    case Data.T_PSY:
+                        u.skillBonus += (lv == 1 ? 30 : (lv == 2 ? 60 : 120));
+                        break;
+                    case Data.T_FIGHT:
+                        u.crit += (lv == 1 ? 15 : (lv == 2 ? 30 : 50));
+                        break;
+                    case Data.T_FLY:
+                        u.dodge += (lv == 1 ? 10 : (lv == 2 ? 20 : 35));
+                        break;
+                    case Data.T_DRAGON: {
+                        int p = lv == 1 ? 10 : (lv == 2 ? 25 : 50);
+                        u.atk += u.atk * p / 100;
+                        u.maxHp += u.maxHp * p / 100; u.hp = u.maxHp;
+                        break;
+                    }
+                    case Data.T_GHOST:
+                        u.lifesteal += (lv == 1 ? 10 : (lv == 2 ? 20 : 35));
+                        break;
+                    default: {
+                        // Extra synergies used by the original client (Bug, Flora,
+                        // Field, Aquatic, etc.) share a compact offline bonus.
+                        int p = lv == 1 ? 8 : (lv == 2 ? 16 : 28);
+                        u.atk += u.atk * p / 100;
+                        u.maxHp += u.maxHp * p / 100;
+                        u.hp = u.maxHp;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // ---- simulation ------------------------------------------------------
+
+    public int alive(int side) {
+        int c = 0;
+        for (int i = 0; i < n; i++) if (units[i].alive && units[i].side == side) c++;
+        return c;
+    }
+
+    /** sum of evolution tiers of the living units of a side. */
+    public int aliveTierSum(int side) {
+        int c = 0;
+        for (int i = 0; i < n; i++) if (units[i].alive && units[i].side == side) c += Data.tier[units[i].sp];
+        return c;
+    }
+
+    public void step() {
+        if (over) return;
+        tick++;
+        for (int i = 0; i < n; i++) {
+            Unit u = units[i];
+            u.prevHp = u.hp; u.prevMana = u.mana;
+            if (u.hit > 0) u.hit--;
+            if (u.cast > 0) u.cast--;
+            if (u.attack > 0) u.attack--;
+            if (u.alive) {
+                u.status.update(this, u);
+                u.stun = u.status.stun;
+            }
+        }
+        for (int k = 0; k < MAXFX; k++) if (fxTtl[k] > 0) fxTtl[k]--;
+        for (int k = 0; k < MAXSHOT; k++) if (shotTtl[k] > 0) shotTtl[k]--;
+        for (int k = 0; k < MAXSKILLFX; k++) if (skillFxTtl[k] > 0) {
+            skillFxTtl[k]--;
+            skillFxAge[k]++;
+        }
+        for (int k = 0; k < MAXBOARDFX; k++) if (boardFxTtl[k] > 0) boardFxTtl[k]--;
+
+        boolean rev = (tick & 1) == 1;
+        for (int k = 0; k < n; k++) {
+            Unit u = units[rev ? n - 1 - k : k];
+            if (u.alive) act(u);
+        }
+
+        if (tick % 10 == 0) {
+            for (int i = 0; i < n; i++) {
+                Unit u = units[i];
+                if (u.alive && u.regen > 0 && u.hp < u.maxHp) {
+                    int h = u.maxHp * u.regen / 100;
+                    if (h < 1) h = 1;
+                    heal(u, h);
+                }
+            }
+        }
+        if (tick > SUDDEN_DEATH) {
+            for (int i = 0; i < n; i++) {
+                Unit u = units[i];
+                if (!u.alive) continue;
+                u.hp -= Math.max(1, u.maxHp * 4 / 100);
+                if (u.hp <= 0) kill(u);
+            }
+        }
+
+        int a = alive(0), b = alive(1);
+        if (a == 0 || b == 0) {
+            over = true;
+            winner = (a == 0 && b == 0) ? -1 : (a > 0 ? 0 : 1);
+        } else if (tick >= HARD_LIMIT) {
+            over = true;
+            winner = 1;
+        }
+    }
+
+    private static int dist(Unit a, Unit b) {
+        int dx = a.x - b.x; if (dx < 0) dx = -dx;
+        int dy = a.y - b.y; if (dy < 0) dy = -dy;
+        return dx > dy ? dx : dy;
+    }
+
+    private static int dist2(int ax, int ay, int bx, int by) {
+        int dx = ax - bx, dy = ay - by;
+        return dx * dx + dy * dy;
+    }
+
+    private Unit findTarget(Unit u) {
+        Unit best = null;
+        int bd = 99;
+        for (int i = 0; i < n; i++) {
+            Unit t = units[i];
+            if (!t.alive || t.side == u.side) continue;
+            int d = dist(u, t);
+            if (d < bd || (d == bd && best != null && t.hp < best.hp)) {
+                bd = d; best = t;
+            }
+        }
+        return best;
+    }
+
+    private void act(Unit u) {
+        if (u.status.blocksAction()) { u.state = Unit.IDLE; return; }
+        if (u.moveLeft > 0) { u.moveLeft--; u.state = Unit.MOVING; return; }
+        u.px=u.x; u.py=u.y;
+        if (u.cdLeft > 0) u.cdLeft--;
+        Unit t = u.target;
+        if (t == null || !t.alive || (tick % 3) == 0) t = findTarget(u);
+        u.target = t;
+        if (t == null) return;
+        if (dist(u, t) <= u.range) {
+            u.state = Unit.ATTACKING;
+            if (u.cdLeft <= 0) {
+                attackOrCast(u, t);
+                u.cd = CombatRules.cooldownTicks(1000, u.status.effectiveSpeed(u.speed));
+                u.cdLeft = u.cd;
+            }
+        } else {
+            u.state = Unit.MOVING;
+            move(u, t);
+        }
+    }
+
+    private void move(Unit u, Unit t) {
+        int curD = dist(u, t);
+        int curE = dist2(u.x, u.y, t.x, t.y);
+        int bx = -1, by = -1, bd = 99, be = 99999;
+        for (int dy = -1; dy <= 1; dy++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                if (dx == 0 && dy == 0) continue;
+                int nx = u.x + dx, ny = u.y + dy;
+                if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) continue;
+                if (grid[ny * COLS + nx] != null) continue;
+                int d = Math.max(Math.abs(nx - t.x), Math.abs(ny - t.y));
+                int e = dist2(nx, ny, t.x, t.y);
+                boolean better = d < bd || (d == bd && e < be);
+                if (better) { bd = d; be = e; bx = nx; by = ny; }
+            }
+        }
+        if (bx < 0) return;
+        // only move if it actually gets closer (or a sideways step that lowers euclid distance)
+        if (bd < curD || (bd == curD && be < curE)) {
+            u.px=u.x; u.py=u.y;
+            grid[u.y * COLS + u.x] = null;
+            u.x = bx; u.y = by;
+            u.facing = faceDir(bx - u.px, by - u.py);
+            grid[by * COLS + bx] = u;
+            // Original source: 500 / (0.5 + speed/100) ms per cell.
+            int effective=u.status.effectiveSpeed(u.speed),denom=50+effective;
+            u.moveTicks=Math.max(1,(500+denom/2)/denom);
+            u.moveLeft=u.moveTicks;
+        }
+    }
+
+    private void attackOrCast(Unit u, Unit t) {
+        u.attack = 3;
+        u.attackX = t.x;
+        u.attackY = t.y;
+        u.facing = faceDir(t.x - u.x, t.y - u.y);
+        if (u.maxMana > 0 && u.mana >= u.maxMana && u.status.silence <= 0) {
+            u.state = Unit.CASTING;
+            u.mana = 0;
+            u.cast = 2;
+            addShot(u, t, Data.TCOL[Data.t1[u.sp]], 1);
+            cast(u, t);
+        } else {
+            if (u.range > 1) addShot(u, t, u.side == 0 ? 0x80C8FF : 0xFF9070, 0);
+            boolean crit = u.crit > 0 && rng.pct(u.crit);
+            int raw = crit ? u.atk * CombatRules.CRIT_POWER_PERCENT / 100 : u.atk;
+            damage(u, t, raw, PHYSICAL, true, crit);
+            if (u.maxMana > 0) {
+                u.mana += CombatRules.ON_ATTACK_MANA;
+                if (u.mana > u.maxMana) u.mana = u.maxMana;
+            }
+        }
+    }
+
+    private void cast(Unit u, Unit t) {
+        addSkillFx(Data.abil[u.sp] == 1 || Data.abil[u.sp] == 3 || Data.abil[u.sp] == 6 ? u : t, u.sp);
+        int bonus = 100 + u.skillBonus;
+        int a = u.atk * bonus / 100;
+        switch (Data.abil[u.sp]) {
+            case 0:
+                damage(u, t, a * 250 / 100, SPECIAL, false, false);
+                break;
+            case 1: {
+                Unit w = null;
+                for (int i = 0; i < n; i++) {
+                    Unit o = units[i];
+                    if (!o.alive || o.side != u.side) continue;
+                    if (w == null || o.hp * 100 / o.maxHp < w.hp * 100 / w.maxHp) w = o;
+                }
+                if (w != null) heal(u, w, u.atk * 5 * bonus / 100);
+                damage(u, t, a, SPECIAL, false, false);
+                break;
+            }
+            case 2:
+                for (int i = 0; i < n; i++) {
+                    Unit o = units[i];
+                    if (o.alive && o.side != u.side && dist(o, t) <= 1) damage(u, o, a * 180 / 100, SPECIAL, false, false);
+                }
+                break;
+            case 3:
+                for (int i = 0; i < n; i++) {
+                    Unit o = units[i];
+                    if (o.alive && o.side == u.side && dist(o, u) <= 2) o.atk += o.atk * 30 / 100;
+                }
+                damage(u, t, a, SPECIAL, false, false);
+                break;
+            case 4:
+                damage(u, t, a * 120 / 100, SPECIAL, false, false);
+                if (t.alive) { t.status.stun = 12; t.stun = 12; }
+                break;
+            case 5: {
+                damage(u, t, a * 140 / 100, SPECIAL, false, false);
+                for (int k = 0; k < 2; k++) {
+                    Unit nb = null;
+                    int bd = 99;
+                    for (int i = 0; i < n; i++) {
+                        Unit o = units[i];
+                        if (!o.alive || o.side == u.side || o == t || o.hit == 3) continue;
+                        int d = dist(o, t);
+                        if (d < bd) { bd = d; nb = o; }
+                    }
+                    if (nb == null) break;
+                    damage(u, nb, a * 140 / 100, SPECIAL, false, false);
+                    nb.hit = 3;
+                }
+                break;
+            }
+            case 6: {
+                int shieldGain=u.maxHp * 35 / 100;
+                u.shield += shieldGain;
+                u.shieldDone += shieldGain;
+                addFx(u, shieldGain, 1, 0x60C0FF);
+                break;
+            }
+            case 7: {
+                int d = damageRet(u, t, a * 200 / 100, SPECIAL, false, false);
+                heal(u, d);
+                break;
+            }
+            case 8:
+                damage(u, t, a * 380 / 100, SPECIAL, false, false);
+                break;
+            default:
+                damage(u, t, a, SPECIAL, false, false);
+                break;
+        }
+        SkillEffects.apply(u, t);
+        String skill=Data.skillName[u.sp].toUpperCase();
+        if(skill.indexOf("SMOKE")>=0 || skill.indexOf("GAS")>=0 || skill.indexOf("SPIKE")>=0 ||
+           skill.indexOf("WEB")>=0 || skill.indexOf("TERRAIN")>=0 || skill.indexOf("EMBER")>=0 ||
+           skill.indexOf("FIRESTARTER")>=0) addBoardFx(t.x,t.y,u.sp,35);
+    }
+
+    private boolean damage(Unit src, Unit tgt, int raw, int attackType, boolean basic, boolean crit) {
+        return damageRet(src, tgt, raw, attackType, basic, crit) > 0;
+    }
+
+    /** applies damage, returns damage actually dealt (0 on dodge). */
+    private int damageRet(Unit src, Unit tgt, int raw, int attackType, boolean basic, boolean crit) {
+        if (!tgt.alive) return 0;
+        if (tgt.status.protect > 0) {
+            addFx(tgt, 0, 2, 0x80E8FF);
+            return 0;
+        }
+        if (basic && src.status.blinded > 0 && rng.pct(50)) {
+            addFx(tgt, 0, 2, 0xFFFFFF);
+            return 0;
+        }
+        if (basic && tgt.dodge > 0 && rng.pct(tgt.dodge)) {
+            addFx(tgt, 0, 2, 0xFFFFFF);
+            return 0;
+        }
+        int targetDef=tgt.status.armorBreak>0?tgt.def/2:tgt.def;
+        int targetSpeDef=tgt.status.armorBreak>0?tgt.speDef/2:tgt.speDef;
+        int dmg = attackType == TRUE ? raw : (attackType == SPECIAL
+                ? CombatRules.specialDamage(raw, targetSpeDef)
+                : CombatRules.physicalDamage(raw, targetDef));
+        int dealt = dmg;
+        int blocked = 0;
+        if (tgt.shield > 0) {
+            blocked = Math.min(tgt.shield, dmg);
+            tgt.shield -= blocked;
+            dmg -= blocked;
+        }
+        src.damageDealt += dealt;
+        tgt.damageTaken += dmg;
+        tgt.damageBlocked += blocked;
+        tgt.hp -= dmg;
+        tgt.hit = 2;
+        if (tgt.maxMana > 0 && tgt.mana < tgt.maxMana) {
+            tgt.mana += CombatRules.ON_DAMAGE_MANA;
+            if (tgt.mana > tgt.maxMana) tgt.mana = tgt.maxMana;
+        }
+        addFx(tgt, dealt, crit ? 3 : 0, crit ? 0xFFD030 : (src.side == 0 ? 0xFFFFFF : 0xFF8080));
+        if (src.lifesteal > 0) heal(src, dealt * src.lifesteal / 100);
+        if (tgt.hp <= 0) kill(tgt);
+        return dealt;
+    }
+
+    private void heal(Unit u, int amt) {
+        heal(u,u,amt);
+    }
+
+    private void heal(Unit source, Unit u, int amt) {
+        if (!u.alive || amt <= 0) return;
+        if (u.status.wound > 0) amt /= 2;
+        int before=u.hp;
+        u.hp += amt;
+        if (u.hp > u.maxHp) u.hp = u.maxHp;
+        int actual=u.hp-before;
+        source.healingDone += actual;
+        addFx(u, actual, 1, 0x60FF60);
+    }
+
+    private void kill(Unit u) {
+        u.alive = false;
+        u.state = Unit.DEAD;
+        u.hp = 0;
+        if (grid[u.y * COLS + u.x] == u) grid[u.y * COLS + u.x] = null;
+        addFx(u, 0, 4, u.side == 0 ? 0x80C8FF : 0xFF8060);
+    }
+
+    /** Called by CombatStatus; status damage is true damage and cannot grant mana. */
+    void statusDamage(Unit target, int amount) {
+        if (!target.alive || amount <= 0) return;
+        int absorbed = Math.min(target.shield, amount);
+        target.shield -= absorbed;
+        int dealt = amount - absorbed;
+        target.damageBlocked += absorbed;
+        target.damageTaken += dealt;
+        target.hp -= dealt;
+        target.hit = 2;
+        addFx(target, amount, 0, 0xC080D0);
+        if (target.hp <= 0) kill(target);
+    }
+
+    private void addShot(Unit a, Unit b, int col, int kind) {
+        int k = shotNext;
+        shotNext = (shotNext + 1) % MAXSHOT;
+        shotX0[k] = a.x; shotY0[k] = a.y;
+        shotX1[k] = b.x; shotY1[k] = b.y;
+        shotCol[k] = col; shotKind[k] = kind; shotType[k] = Data.t1[a.sp]; shotTtl[k] = 4;
+    }
+
+    private void addSkillFx(Unit u, int ability) {
+        int k = skillFxNext;
+        skillFxNext = (skillFxNext + 1) % MAXSKILLFX;
+        skillFxX[k] = u.x; skillFxY[k] = u.y; skillFxId[k] = ability;
+        skillFxAge[k] = 0; skillFxTtl[k] = 12;
+    }
+
+    private void addBoardFx(int x,int y,int sp,int ttl) {
+        int k=boardFxNext; boardFxNext=(boardFxNext+1)%MAXBOARDFX;
+        boardFxX[k]=x; boardFxY[k]=y; boardFxSp[k]=sp; boardFxTtl[k]=ttl;
+    }
+
+    private static int faceDir(int dx, int dy) {
+        if (dx > 0) return dy > 0 ? 1 : (dy < 0 ? 3 : 2);
+        if (dx < 0) return dy > 0 ? 7 : (dy < 0 ? 5 : 6);
+        return dy < 0 ? 4 : 0;
+    }
+
+    private void addFx(Unit u, int val, int type, int col) {
+        int k = fxNext;
+        fxNext = (fxNext + 1) % MAXFX;
+        fxX[k] = u.x; fxY[k] = u.y; fxVal[k] = val; fxType[k] = type; fxCol[k] = col; fxTtl[k] = 4;
+    }
+}

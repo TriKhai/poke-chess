@@ -1,0 +1,13 @@
+POKE AUTO CHESS ME v1.2.4a - SHOP INFO AND BATTLE TYPE VIEW
+==========================================================
+
+- Info Pokemon o shop co avatar truoc ten, gia viet lien `$1`, icon he xuong dong rieng.
+- Dong chi so va tien hoa duoc gian cach de khong de len icon he.
+- Thanh sat thuong doi dich o bang cuoi tran chay tu phai sang trai.
+- Battle Stats: DMG, HP, MP, He, hai o de danh.
+- Tab He chia 1/3 danh sach icon co vien chon va 2/3 the Pokemon phu hop.
+- The Pokemon trong tab He chi co avatar va icon he, khong co thanh tien trinh.
+- Phim mui ten doi he dang chon; phim 1/3 van doi tab.
+
+MIDlet-Version: 1.2.4
+MIDlet-Vendor: TriKhai

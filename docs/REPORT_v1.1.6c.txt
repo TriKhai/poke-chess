@@ -1,0 +1,11 @@
+POKE AUTO CHESS ME v1.1.6c
+==========================
+
+- Restored exact legacy UI colors while retaining the NRO-sized tahoma_7b face.
+- PixelFont recolors the white alpha atlas to the RGB requested by Art.text calls.
+- Six recently used colors are cached as Image atlases.
+- Synergy icon rows increased from 11px to 16px to prevent icon overlap.
+- Active synergy tiers are marked with parentheses around 2, 4, or 6.
+- Active and inactive synergies now have clearly different colors.
+- MIDlet-Vendor remains KhaiLy.
+- Numeric build.xml/JAD/manifest version remains 1.1.6.

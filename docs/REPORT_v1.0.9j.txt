@@ -1,0 +1,12 @@
+POKE AUTO CHESS ME v1.0.9j - SETTINGS UPDATE
+============================================
+
+- Main menu now contains Cài đặt / Settings.
+- Open Settings and select the Language row.
+- Use Left, Right or FIRE to switch Tiếng Việt / English.
+- Select Back, press 0 or the right softkey to return.
+- The selected language is saved immediately in RMS.
+- The old * shortcut was removed to avoid accidental language changes.
+- Main menu spacing was tightened to fit the additional entry at 176x208.
+
+Build note: run build-poke.bat on the configured Windows Java ME environment.

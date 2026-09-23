@@ -1,0 +1,9 @@
+POKE AUTO CHESS ME v1.2.2b - CRAFT RESET HOTFIX
+================================================
+
+- Tang icon trong hai hang Ghep voi / Thanh tu 8px len 16px.
+- Moi lan mo man GHEP DO, hai o nguyen lieu deu duoc lam sach.
+- Them nut LAM MOI nam canh nut GHEP.
+- Khi dang o nut, bam Trai/Phai de doi GHEP/LAM MOI; FIRE tren LAM MOI xoa ca hai lua chon.
+- Xoa lua chon khong tru vat pham; kho chi bi tru sau khi ghep thanh cong.
+- MIDlet-Version so: 1.2.2. Vendor: KhaiLy.

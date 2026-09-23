@@ -1,0 +1,11 @@
+POKE AUTO CHESS ME v1.2.3 - BATTLE EQUIPMENT AND PREP UI
+=========================================================
+
+- Battle Detail hien icon toi da 3 trang bi dang deo.
+- Cham xanh: cap tien hoa da dat; cham vang: cap con lai cua dong tien hoa.
+- Detail hien avatar cac giai doan, dang hien tai co vien vang.
+- Bang He dung mui ten chon; Pokemon tren ban dong gop vao he duoc vien sang.
+- Thu tu nut: XP, Doi, More, He, GO. Icon Doi chuyen vang de tang tuong phan.
+- More gom Khoa shop vong sau va Vat pham.
+- Shop bi khoa giu nguyen sang vong ke tiep, sau do tu mo khoa.
+- MIDlet-Version: 1.2.3. MIDlet-Vendor: KhaiLy.

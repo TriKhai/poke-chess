@@ -1,0 +1,19 @@
+POKE AUTO CHESS ME v1.1.6
+=========================
+
+GLOBAL FONT
+- All Art text helpers now use a 7px Vietnamese bitmap font based on the NRO technique.
+- Width measurement and paragraph wrapping use bitmap glyph widths.
+- The game no longer depends on emulator-specific MIDP font height for its main UI text.
+
+ITEM COLLECTION
+- Imported the first 10 app.zip crafting components.
+- Collection > Items shows 24px icon, bilingual name, original ID and description.
+- Original item artwork was normalized to a 96px square, point-scaled to 24px,
+  quantized to a 32-color PNG8 palette and kept transparent.
+- Source artwork was roughly 38-140 KB per ten icons; converted icons total about 3.8 KB.
+- Item combat effects and recipes are intentionally deferred to the next item phase.
+
+BUILD
+- MIDlet-Vendor: KhaiLy.
+- build.xml/JAD/manifest version: 1.1.6.

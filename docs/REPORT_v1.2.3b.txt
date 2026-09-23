@@ -1,0 +1,8 @@
+POKE AUTO CHESS ME v1.2.3b - PREPARATION DETAIL PARITY
+======================================================
+
+- Detail Pokemon luc xep doi Viet hoa Cong, Thu, Khang, Toc, Tam va Hoi chieu.
+- Moi nhan chi so co dau hai cham.
+- Trang bi chuyen xuong khoi cuoi va dung 3 o tron lien tiep.
+- Dong vang nhat ben duoi cong tong bonus that cua ca ba trang bi.
+- MIDlet-Version so: 1.2.3. Vendor: KhaiLy.

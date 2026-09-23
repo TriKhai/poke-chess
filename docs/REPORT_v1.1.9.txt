@@ -1,0 +1,18 @@
+POKE AUTO CHESS ME v1.1.9 - DETAILS AND RESULT FLOW
+===================================================
+
+ITEM COLLECTION
+- FIRE opens a dedicated full-screen item information panel.
+- Name, original ID, category and complete wrapped description are visible.
+- The old two-line preview remains only as a quick summary.
+- FIRE or 0 closes the panel.
+
+BATTLE END FLOW
+1. Combat ends but the arena remains visible.
+2. Surviving winners continue their victory animation.
+3. A bottom prompt announces THANG/BAI and asks for FIRE.
+4. FIRE opens THONG SO TRAN DAU - SAT THUONG TRAN DAU.
+5. Below the paired damage table are XP, surviving Pokemon and gold reward.
+
+MIDlet-Vendor: KhaiLy
+MIDlet-Version: 1.1.9

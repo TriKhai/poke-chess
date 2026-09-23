@@ -1,0 +1,8 @@
+POKE AUTO CHESS ME v1.2.3a - BATTLE DETAIL READABILITY
+======================================================
+
+- Cham tien hoa lon hon va khong bi vien toi che mat mau.
+- Viet hoa chi so Battle Detail: Cong, Thu, Khang, Toc, Tam, Hoi chieu; moi nhan co dau hai cham.
+- Trang thai doi sang mau do de danh san bo cuc cho phan phat trien sau.
+- Trang bi chuyen thanh khoi cuoi: 3 o tron lien tiep va dong tong chi so mau vang nhat.
+- MIDlet-Version so: 1.2.3. Vendor: KhaiLy.

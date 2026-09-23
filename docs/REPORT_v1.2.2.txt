@@ -1,0 +1,23 @@
+POKE AUTO CHESS ME v1.2.2 - ORIGINAL ITEM CRAFTING
+=================================================
+
+Man Item
+- Nhan nut Item mo giao dien rieng gom hai tab GHEP DO va CONG THUC.
+- Phim 1/3 doi tab; phim 0 hoac quay lai de dong.
+
+Tab Ghep do
+- Chon lan luot hai item trong kho bang FIRE.
+- Giao dien hien icon Nguyen lieu A + Nguyen lieu B = Ket qua.
+- Len/Xuong chuyen giua kho va nut GHEP.
+- Chi tru kho sau khi nhan FIRE tren nut GHEP va cong thuc hop le.
+- Item ket qua quay ve kho de nguoi choi tu mac cho Pokemon.
+
+Tab Cong thuc
+- Trai/Phai hoac Len/Xuong duyet tat ca cong thuc ItemRecipe goc.
+- Moi cong thuc co ba icon A + B = ket qua, ten va mo ta vat pham.
+- FIRE tren cong thuc mo Chi tiet cua item ket qua.
+
+Chi tiet item
+- Do thanh pham hien Ghép từ voi hai icon nguyen lieu.
+- Nguyen lieu hien Ghép ra va cac icon ket qua co the tao.
+- MIDlet-Version: 1.2.2. Vendor: KhaiLy.

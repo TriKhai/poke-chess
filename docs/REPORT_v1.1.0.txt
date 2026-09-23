@@ -1,0 +1,30 @@
+POKE AUTO CHESS ME v1.1.0 - COMBAT UI UPDATE
+============================================
+
+BASE
+- Continued directly from v1.0.9j, including Settings and persistent VI/EN.
+
+VIETNAMESE DATA
+- 31 full type names and their compact board labels support VI/EN.
+- All 194 unique move names used by the Gen 1-3 roster have Vietnamese labels.
+- Nine offline ability descriptions have Vietnamese versions.
+- Data.skillName remains canonical English because Battle.java and
+  SkillEffects.java use it as a rule key; translation is display-only.
+
+COMPACT INFORMATION FONT
+- Added Art.fontSmall/textSmall using the J2ME system small font without a
+  drop shadow, used for dense HP/ATK/DEF/SPD and battle inspector rows.
+
+SOURCE-STYLE BATTLE BARS
+- Reference: app.zip public/src/game/components/life-bar.ts.
+- Fixed width: 35 logical J2ME pixels, scaled from the source's 70px.
+- Ally HP #76C442; enemy HP #E76E55; empty HP #303030.
+- White shield, blue PP #209CEE, black outer frame.
+- Vertical segmentation every 25 max HP, matching the source rule.
+- HP/PP values retain interpolation between combat ticks.
+
+VERIFICATION
+- 194/194 unique roster move names have an exact Vietnamese display mapping.
+- 386 raw atlas PNG + 386 DAT remain present; res/anim remains absent.
+- Run build-poke.bat on the configured Windows Java ME SDK to compile and
+  preverify the final JAR.

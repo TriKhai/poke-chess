@@ -1,0 +1,14 @@
+POKE AUTO CHESS ME v1.1.7 - FULL ITEM COLLECTION
+=================================================
+
+- Tab VAT PHAM now contains all 358 item IDs from the original app.zip.
+- All original IDs have a matching icon from the supplied pixel item pack.
+- Each entry displays a VI/EN name, item group and readable description.
+- Original stat bonuses from ItemStats are included when present.
+- Original two-component crafting recipes from ItemRecipe are included when present.
+- Generic group descriptions cover berries, TMs, memories, synergy gems, wands,
+  stones, tickets, missions, gifts, bundles and boxes.
+- This release documents items in Collection only. Item inventory/equip/drop combat
+  mechanics are deliberately not activated yet.
+- MIDlet-Vendor: KhaiLy
+- MIDlet-Version: 1.1.7

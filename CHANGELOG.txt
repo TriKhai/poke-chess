@@ -1,0 +1,536 @@
+POKE AUTO CHESS ME - OFFLINE REMAKE UPDATE
+==========================================
+
+Legacy Java ME compiler hotfix (v1.2.4c)
+- Replaced the startup screen ternary with an explicit if/else because the legacy Java ME javac cannot infer the common Screen superclass for two different concrete operands.
+- Numeric MIDlet-Version remains 1.2.4; MIDlet-Vendor remains TriKhai.
+
+Battle focus, item tab and permanent play path (v1.2.4b)
+- Rebuilt shop details as a portrait-left, three-row content-right layout: name/types, stats, evolution.
+- Battle roster selection now uses a bright green hover border and remains navigable after combat ends.
+- DMG/HP/MP cards no longer show equipment; the new Item tab shows portrait plus three circular item slots and opens Pokemon detail with FIRE.
+- Battle Type uses a narrower scrolling type column and a fixed 3x3 Pokemon grid.
+- Removed the main-menu # cheat shortcut. A one-time RMS choice now offers Khổ dăm (normal progression) or Vạch đích (developer tools); normal progression hides Unlimited Gold.
+- Save format upgraded to v3 while preserving older saves. Numeric MIDlet-Version remains 1.2.4.
+
+Battle tabs and compact shop info hotfix (v1.2.4a)
+- Shop details now place a Pokemon portrait before its name, keep `$` attached to the price, and move type/evolution content onto spaced rows.
+- Enemy damage bars on the result screen now fill from right to left.
+- Battle tabs are now DMG, HP, MP, Type and two reserved slots.
+- Battle Type view uses a bordered type picker in the left third and matching Pokemon portrait/type cards in the right two thirds, without progress bars.
+- Numeric MIDlet-Version remains 1.2.4; MIDlet-Vendor remains TriKhai.
+
+Dock inventory/synergy modes (v1.2.4)
+- Vendor changed from KhaiLy to TriKhai, based on the developer name Ly Tri Khai.
+- Increased compact evolution portraits and moved the dollar symbol next to the actual gold value.
+- More now contains Shop Lock, Craft Items, Item Bag and Synergy Dock.
+- Item Bag restores the item row; Synergy Dock replaces that row with represented type icons.
+- Hovering a type highlights matching deployed Pokemon and shows count, 2/4/6 milestones and buff text below.
+- Removed the experimental board-edge synergy strip; the original Synergy popup remains separate.
+- Item quantities use x1 in cream yellow and x2+ in bright cyan with a dark shadow.
+- MIDlet-Version is 1.2.4; MIDlet-Vendor is TriKhai.
+
+Extended run modes foundation (v1.2.4 preview)
+- Compact preparation info uses Vietnamese stat labels, wider type-icon spacing and mini evolution portraits instead of the old 3x text.
+- The original Synergy dialog again lists every type represented on the board, including counts below activation thresholds.
+- The first edge-strip experiment was replaced by the Item/Synergy dock selector in the final v1.2.4 UI.
+- Added 30 Rounds mode: nine random components at start and after every completed round, with a Discard/Keep old items prompt; one strong boss every five rounds.
+- Added Generation 1 mode: Gen-1 shop pool, random item drops and fixed bosses at rounds 5/10/15/20/25/30 (Magikarp, Moltres, Articuno, Zapdos, two Mewtwo, Ho-Oh).
+- Defeating Ho-Oh unlocks all Generation-1 Pokemon families in Collection.
+- Shipped as part of MIDlet-Version 1.2.4; final vendor is TriKhai.
+
+Compilation hotfix (v1.2.3d)
+- Renamed the local item-bonus text buffer so it no longer collides with ingredient parameter b.
+- Numeric MIDlet-Version remains 1.2.3; MIDlet-Vendor remains KhaiLy.
+
+Visible Craft close action (v1.2.3c)
+- Added a Close button beside Craft and Reset.
+- Left/Right cycles through all three actions; FIRE on Close returns to preparation.
+- Key 0 remains the quick-close shortcut, while the footer now only shows the tab shortcut.
+- Numeric MIDlet-Version remains 1.2.3; MIDlet-Vendor remains KhaiLy.
+
+Preparation Pokemon Detail parity (v1.2.3b)
+- Preparation Detail now uses Vietnamese stat labels with colons, matching Battle Detail.
+- Evolution and move information appear before equipment.
+- Equipment is the final block with three adjacent circular sockets.
+- The pale-yellow line below the sockets totals the real bonuses of all equipped items.
+- Numeric MIDlet-Version remains 1.2.3; MIDlet-Vendor remains KhaiLy.
+
+Battle Detail readability pass (v1.2.3a)
+- Evolution dots use a larger solid center instead of a border that covered their color.
+- Vietnamese combat labels now use Công, Thủ, Kháng, Tốc, Tầm and Hồi chiêu with colons.
+- Status heading and values use red to reserve a clear area for future status expansion.
+- Equipment is the final detail block: three adjacent round sockets, then a pale-yellow aggregate bonus line.
+- Numeric MIDlet-Version remains 1.2.3; MIDlet-Vendor remains KhaiLy.
+
+Equipment, evolution and shop-control UI (v1.2.3)
+- Battle Pokemon Details now renders all three held-item slots from the combat snapshot.
+- Board and bench units use green dots for reached evolution stages and yellow dots for remaining stages.
+- Pokemon Details shows the whole evolution chain and highlights the current form.
+- Active synergy rows are arrow-selectable; the selected type highlights contributing board Pokemon.
+- Preparation buttons are reordered to XP, Roll, More, Synergy and GO; Roll uses a yellow icon.
+- More contains one-round Shop Lock and Items. A locked shop survives the next-round refresh, then unlocks.
+- MIDlet-Version is 1.2.3; MIDlet-Vendor remains KhaiLy.
+
+Duplicate ingredient selection hotfix (v1.2.2c)
+- A component can no longer occupy both sockets when the inventory owns only one copy.
+- Pressing FIRE again on a fully allocated component removes it from its selected socket.
+- The result socket remains empty until the inventory really contains both selected ingredients.
+- Numeric MIDlet-Version remains 1.2.2; MIDlet-Vendor remains KhaiLy.
+
+Craft selection reset and larger recipe icons (v1.2.2b)
+- Combine-with and result icons in component details are enlarged from 8px to 16px.
+- Opening the Craft screen starts with both ingredient sockets empty instead of restoring stale picks.
+- Added a Reset button beside Craft; Left/Right switches buttons and FIRE clears both sockets.
+- Clearing sockets never consumes inventory; inventory is still deducted only after a successful craft.
+- Numeric MIDlet-Version remains 1.2.2; MIDlet-Vendor remains KhaiLy.
+
+Recipe matrix and full arrow navigation (v1.2.2a)
+- Recipe tab now presents components and crafted results as a scrollable icon matrix.
+- All four arrow keys navigate the matrix; Up from its first row focuses the tab bar.
+- Left/Right on the focused tab bar switches Craft and Recipes; 1/3 remain shortcuts.
+- FIRE opens the selected icon's full details and closing returns to the same matrix position.
+- Component details show aligned Combine with ingredient icons and Creates result icons.
+- Crafted-item details keep full stats/description and both Crafted from ingredient icons.
+- Numeric MIDlet-Version remains 1.2.2; MIDlet-Vendor remains KhaiLy.
+
+Original-recipe crafting screen (v1.2.2)
+- Item button opens a dedicated two-tab screen: Craft and Recipes.
+- Craft tab selects exact ingredient A and B from inventory and previews A + B = result with icons.
+- Materials are consumed only after the player focuses and confirms the Craft button.
+- Recipe validation, unordered pairs and results come directly from ItemRecipe.
+- Recipes tab browses every original formula with ingredient/result icons, names and description.
+- Item Details shows Crafted from with both ingredient icons, or Crafts into with result icons.
+- Crafted results return to inventory and are equipped separately through the Pokemon target menu.
+- MIDlet-Version is 1.2.2; MIDlet-Vendor remains KhaiLy.
+
+Square pet targets and staged crafting (v1.2.1b)
+- Kept circular reserve items but changed deployed Pokemon targets to square white/soft-gray cards.
+- Increased preparation-row Pokemon portraits from 20px to 22px.
+- Replaced AutoChess coin pictures with a compact dollar symbol.
+- FIRE on a deployed Pokemon opens Details or Equip; Equip is dimmed without a held item.
+- Pokemon Details shows stats, types, three equipment slots, move and ability text.
+- Disabled automatic component combining in both the new dock and legacy equip route.
+- Crafting is reserved for the next dedicated Item-button flow.
+- Numeric MIDlet-Version remains 1.2.1; MIDlet-Vendor remains KhaiLy.
+
+Circular item UI and combat-card layout hotfix (v1.2.1a)
+- Item reserve uses dark circular sockets matching the original visual language.
+- Only the focused or picked item receives a bright double-ring highlight.
+- FIRE opens a two-action menu: Equip or Details.
+- Restored the original Pokemon/shop information panel below both new dock rows.
+- Formation equipment uses visible vertical circular sockets beside each Pokemon.
+- Increased the combat statistics panel and separated item icons, value/HP text and progress bar.
+- Numeric MIDlet-Version remains 1.2.1; MIDlet-Vendor remains KhaiLy.
+
+Manual item reserve and equipment dock (v1.2.1)
+- Added a persistent equipment reserve below the option buttons.
+- More items are browsed with left/right arrows and a proportional scrollbar.
+- Added a second row containing avatars for Pokemon currently deployed on board.
+- FIRE on an item opens its full information panel; FIRE again holds it.
+- Two explicitly selected recipe components remain pending until their result is dropped on a Pokemon.
+- Equipped item icons are larger and backed by a dark strip on formation units.
+- Combat-stat cards show equipped-item icons, then the selected value, then its progress bar.
+- MIDlet-Vendor remains KhaiLy; MIDlet-Version is 1.2.1.
+
+Item button and visible equipment hotfix (v1.2.0a)
+- Replaced the redundant Sell action button with Item.
+- Pick up a board/bench Pokemon, move to Item and press FIRE to open its bag.
+- Equipped items now appear as a compact real-icon strip on formation units.
+- Selling still works by carrying a Pokemon onto a shop card or by pressing 7.
+- MIDlet-Vendor remains KhaiLy; numeric MIDlet-Version remains 1.2.0.
+
+Original-source Item Core (v1.2.0)
+- Generated machine-readable ItemStats and ItemRecipe tables from app.zip.
+- Each board/bench Pokemon owns three held-item slots, matching the original cap.
+- Press # on a selected Pokemon to open the item bag; FIRE equips or combines.
+- Component pairs combine through the original ItemRecipe, independent of order.
+- Exact flat HP, ATK, DEF, SP.DEF, Speed, starting MP, AP, Crit and Shield stats apply in Battle.
+- Items follow moved Pokemon, survive evolution, and return to inventory when sold.
+- Early PvE rounds and boss victories grant one original basic component.
+- Complex event-driven passives remain staged for later ports from effects/items.ts.
+- MIDlet-Vendor remains KhaiLy; MIDlet-Version is 1.2.0.
+
+Interactive item details and staged battle result (v1.1.9)
+- FIRE on an item opens a full-screen detail panel with all wrapped description lines.
+- FIRE/0 closes item details and returns to the same Collection position.
+- A finished battle stays on the arena so winning Pokemon keep playing victory animation.
+- FIRE explicitly opens the result screen after the victory/defeat prompt appears.
+- Result heading is Battle Statistics, followed by Victory/Defeat - Battle Damage.
+- Footer reports XP received, surviving Pokemon and gold reward.
+- MIDlet-Vendor remains KhaiLy; MIDlet-Version is 1.1.9.
+
+Post-battle comparison and final formation (v1.1.8)
+- Every battle ends with a paired ALLY/ENEMY damage table.
+- Each row shows both Pokemon portraits, exact damage numbers and comparable bars.
+- Both team totals use the same damage scale, so bar lengths are directly comparable.
+- The final run screen shows round, HP, gold, reward, final board and active synergies.
+- Final portraits adapt between 32px and 20px layouts for short J2ME screens.
+- MIDlet-Vendor remains KhaiLy; MIDlet-Version is 1.1.8.
+
+Collection and empty-panel layout hotfix (v1.1.7a)
+- Collection detail panels now start directly after the last visible list row.
+- Removed the misleading generic "original game data" sentence from item details.
+- Exact stats and recipes remain; missing localized source text is now stated honestly.
+- Empty synergy popup reserves separate title, message and footer rows.
+- Battle Stats buttons use the requested Khiên and Chặn labels with centered compact text.
+- Numeric MIDlet-Version remains 1.1.7; MIDlet-Vendor remains KhaiLy.
+
+Full original item catalogue (v1.1.7)
+- Collection > Items now lists all 358 item IDs declared by app.zip.
+- Uses the supplied pixel artwork for every original item; all 358 IDs have an icon.
+- Shows bilingual names, item category, original stat bonuses and crafting recipes when available.
+- Catalogue data is generated from app/types/enum/Item.ts and app/config/game/items.ts.
+- MIDlet-Vendor remains KhaiLy; MIDlet-Version is 1.1.7.
+
+Exact UI colors and readable synergy thresholds (v1.1.6c)
+- Bitmap glyphs are tinted from their white alpha mask using the exact requested RGB.
+- A small LRU image cache avoids rebuilding the tall font atlas every frame.
+- Synergy rows are 16px high so 14px type icons no longer overlap adjacent rows.
+- Active threshold is explicit: (2) 4 6, 2 (4) 6, or 2 4 (6).
+- Active rows use gold/white; inactive rows use the original subdued gray palette.
+- MIDlet-Vendor remains KhaiLy; numeric MIDlet-Version remains 1.1.6.
+
+NRO-sized text and supplied pixel item sources (v1.1.6b)
+- Changed normal UI text from thin tahoma_7 to NRO-style bold tahoma_7b.
+- Keeps the corrected 11px line height: between v1.1.6 and old MIDP text sizes.
+- Replaced generated 24px item files with the supplied item_tps_pixel originals.
+- Original 90px pixel icons are loaded directly and nearest-scaled once to a cached 24px icon.
+- Item IDs and descriptions remain based on app.zip's original TypeScript data.
+- MIDlet-Vendor remains KhaiLy; numeric MIDlet-Version remains 1.1.6.
+
+Bitmap font emergency layout fix (v1.1.6a)
+- Fixed global line height incorrectly using the 1px SPACE glyph.
+- Line height is now calculated from the tallest glyph in the bitmap metadata.
+- Restores menu, HUD and footer spacing while keeping the compact bitmap font.
+- Numeric MIDlet-Version remains 1.1.6 for strict JAD compatibility.
+
+Compact global font and item collection foundation (v1.1.6)
+- Replaced MIDP system text drawing with the Vietnamese NRO-style 7px bitmap font.
+- Centralized text measurement/wrapping on the compact renderer across all screens.
+- Added the first 10 original crafting components to Collection > Items.
+- Added bilingual names, stat descriptions and component classification.
+- Converted supplied 90px item artwork to transparent 24px PNG8, 32-color icons.
+- Ten optimized icons total only about 3.8 KB; bitmap font assets total about 20 KB.
+- Changed MIDlet-Vendor to KhaiLy for all future Ant/JAD/manifest builds.
+
+Compact synergy rows (v1.1.5a)
+- Removed redundant type names after the type icons.
+- Count/threshold and bonus descriptions now use the compact small font.
+- Added explicit spacing between icon, count/threshold and description.
+- Numeric MIDlet-Version remains 1.1.5 for strict JAD compatibility.
+
+KO HP and synergy information fixes (v1.1.5)
+- A defeated Pokemon now immediately renders HP 0 on both the board and roster.
+- Removed the stale prevHp interpolation frame that could show a full KO HP bar.
+- Synergy rows now use the original type icons instead of text-only type chips.
+- Each row shows current count, 2/4/6 thresholds and the exact combat bonus.
+- Localized the short synergy descriptions in Vietnamese and English.
+
+Compact combat roster and KO portraits (v1.1.4a)
+- Removed the bottom help row and gave its height back to the 3x3 stat grid.
+- Team tabs now show alive/total Pokemon counts instead of the [7] key hint.
+- Defeated Pokemon remain in their slots, but their mini portraits turn gray.
+- The numeric MIDlet-Version remains 1.1.4 for strict JAD compatibility.
+
+Arrow navigation and correct resource bars (v1.1.4)
+- Replaced NHẬN with KHIÊN, meaning the total shield created by each Pokemon.
+- CHẶN remains the actual damage absorbed by shields.
+- UP from the roster enters the metric row; LEFT/RIGHT selects all six metrics;
+  DOWN returns to the 3x3 roster. Existing 1/3/7/FIRE/*/9 keys are unchanged.
+- HP and MP bars now use each Pokemon's maxHp/maxMana instead of the highest
+  current value in the team, so a full MP bar accurately means the move is ready.
+
+Combat totals and clearer shop portraits (v1.1.3)
+- Added a live Total row below the 3x3 roster for the selected side/metric.
+- Replaced the sixth KHIÊN metric with current MP; MP bars use source blue.
+- Removed type icons over shop portraits; type icons remain in information views.
+- Increased the responsive combat panel slightly to preserve the controls row.
+
+Persistent on-screen combat statistics (v1.1.2)
+- Replaced the full-screen roster list with a persistent panel below the board.
+- Added visible ally/enemy tab buttons and six visible metric buttons.
+- Selected side, metric and Pokemon all have explicit highlighted states.
+- 3x3 cells use cached 20px mini portraits, live values and comparison bars.
+- Metrics: damage dealt, damage taken, damage blocked, healing, HP and shield.
+- Added per-Unit combat counters and updated damage/heal/shield paths at source.
+- FIRE opens the selected Pokemon detail; the detail page also shows counters.
+- Responsive panel reserves 118px on tall screens and 92px on short screens.
+
+Rarity cards and combat team inspector (v1.1.1)
+- Renamed the Vietnamese main-menu entry to "Chơi AutoChess".
+- Replaced text type chips in Pokemon information panels with original type icons.
+- Shop cards now use app.zip's exact rarity palette and show type icons on-card.
+- FIRE during combat opens a paused 3x3 team inspector; tabs separate ally/enemy.
+- 1 selects ally tab, 3 selects enemy tab; arrows select; FIRE opens full details.
+- Details show live HP/PP, ATK, DEF/Sp.DEF, speed, range, cooldown, shield,
+  crit, dodge, move, localized description and simultaneous status icons/names.
+- Battle speed moved from FIRE to * while combat is active.
+
+Vietnamese combat UI and source-style life bars (v1.1.0)
+- Based directly on v1.0.9j.
+- Localized all 31 type names/abbreviations and all 194 unique Gen 1-3 move names.
+- Localized the nine offline combat ability descriptions without altering the
+  canonical English strings used by Battle and SkillEffects rules.
+- Added a compact system-font renderer for dense HP/ATK/DEF/SPD information.
+- Rebuilt battle HP/PP bars from app.zip life-bar.ts: fixed 35px J2ME width
+  (scaled from 70px), black border, #303030 background, #76C442 ally HP,
+  #E76E55 enemy HP, white shield, blue PP and one divider per 25 HP.
+
+Settings screen (v1.0.9j)
+- Added Cài đặt / Settings to the main menu.
+- Language is selected explicitly inside Settings with Left/Right or FIRE.
+- Removed the main-menu * language shortcut to prevent accidental switching.
+- The choice is still saved immediately in RMS.
+
+Vietnamese/English and raw-only package (v1.0.9i)
+- Vietnamese is now the default; press * on the main menu to switch VI/EN.
+- Language is stored in RMS and old v1 saves are migrated automatically.
+- Main player flows have bilingual text; Pokemon and move names stay canonical.
+- Removed 386 obsolete res/anim strips (about 9.36 MB uncompressed).
+- Removed Art.java's legacy /anim loader/cache. RawAtlas is authoritative and
+  res/sp/procedural art is the emergency fallback.
+
+Raw-frame HUD anchoring and Collection portraits (v1.0.9h)
+- Battle selection, hit/cast outlines, team marker and HP/MP bars now follow the
+  exact visible rectangle of the current raw frame instead of its logical cell.
+- Large/offset Pokemon such as Rayquaza and Groudon keep pet, selection and bars
+  aligned while changing direction, moving, attacking or taking damage.
+- Collection Pokemon rows now use clear 32px portraits and 34px rows instead of
+  tiny padded static sprites that appeared as coloured dots.
+
+Raw world UI and Items preparation (v1.0.9g)
+- Menu parade and Explore wild Pokemon now use animated raw-atlas idle frames,
+  removing the nearly invisible bodies caused by padded static thumbnails.
+- Enlarged and rebalanced the main-menu Pokemon parade above the menu entries.
+- Replaced the Collection DEBUG tab with an ITEMS preparation tab containing
+  Weapons, Armor, Held Items, Evolution, Consumables and Recipes categories.
+- Items are intentionally inventory/UI placeholders in this version and do not
+  alter combat until the equipment rules are implemented.
+
+Complete Gen 1-3 raw atlases (v1.0.9f)
+- Expanded direct original-atlas rendering from Gen 1 to all 386 Pokemon from
+  Bulbasaur through Deoxys.
+- Every species uses its byte-identical source PNG plus compact frame index for
+  Idle, Walk, combat attack, Hop, Hurt and Pose in all available directions.
+- The former 96-frame strips remain bundled only as a safe loading fallback.
+- Formation keeps two-pass painting, visible-body centring and DOWN-LEFT facing;
+  combat keeps the original sourceSize offsets and dynamic facing.
+
+Two-pass formation renderer (v1.0.9e)
+- Fixed large Pokemon in the first/early board cells being erased by background
+  fills for cells painted later in the same row.
+- Preparation now paints all board and bench backgrounds first, then draws all
+  Pokemon in row depth order; wings, tails and oversized bodies remain complete.
+- Setup, bench and held previews now face DOWN-LEFT (original direction 7).
+
+Formation-cell centring fix (v1.0.9d)
+- Board, brown bench row and held-unit previews now centre the visible raw frame
+  instead of the original transparent source canvas.
+- Formation Pokemon share one bottom baseline, so asymmetric atlas padding no
+  longer makes units appear scattered between cells.
+- Combat keeps original sourceSize/spriteSourceSize offsets so attack movement,
+  flight and lunges remain faithful to the source.
+
+Held-unit raw preview fix (v1.0.9c)
+- Fixed the setup drag preview still calling the small static icon renderer.
+- A picked Pokemon now uses the exact same raw-atlas animation, visual canvas,
+  size and bottom anchor as its board/bench representation.
+- Source selection and destination cursor remain outlined independently.
+
+Generation 1 raw-atlas performance build (v1.0.9b)
+- Expanded the proven direct spritesheet renderer from three Pokemon to all 151
+  Generation 1 Pokemon; Generation 2-3 retain v1.0.9 strips for A/B comparison.
+- Bundles 151 original atlas PNGs byte-for-byte and compact indexes for every
+  Idle, Walk, chosen combat attack, Hop, Hurt and Pose frame in eight directions.
+- Added an Auto Chess mode chooser before a run: NORMAL RUN or UNLIMITED GOLD.
+- Unlimited mode displays INF and makes reroll, purchases and XP free while
+  preserving the normal shop pool, merging, combat and round rules.
+- The JAD manifest remains numeric 1.0.9; v1.0.9b is the package label.
+
+Raw spritesheet proof of concept (v1.0.9a)
+- Pikachu, Mewtwo and Mew now load their original atlas PNG byte-for-byte.
+- Added a compact CLDC binary index carrying the original JSON frame rectangle,
+  sourceSize, spriteSourceSize, rotation, direction and sequence order.
+- Runtime uses drawRegion directly on the large source sheet; it does not create,
+  crop, resize or save separate Pokemon frame images.
+- Includes all original Normal frames for Idle, Walk, species attack, Hop, Hurt
+  and Pose across all eight available directions: 960 indexed frames in total.
+- Battle now selects Walk while moving, Hurt after damage, full Attack while
+  attacking/casting, and Hop for victory. Collection plays the complete clips.
+- Other 383 Pokemon deliberately retain the v1.0.9 strip renderer for comparison.
+- The JAD manifest remains numeric 1.0.9 because MIDlet-Version does not permit
+  an alphabetic suffix; v1.0.9a is the source/demo package label.
+
+Unclipped atlas animation and visible casts (v1.0.9)
+- Removed the v1.0.8 species-wide alpha crop that could shrink a Pokemon into
+  fragments when one action contained a distant pixel or a larger source canvas.
+- Rebuilds every direction/action from its complete TexturePacker sourceSize,
+  bottom-centred on one stable species canvas with transparent safety padding.
+- Uses one scale for all 96 frames; no frame is independently cropped or resized.
+- Raised the natural body scale to 1.00, maximum body dimension to 72px and tier
+  height floors to 36/48/60px before adding the safety border.
+- Skill casts now keep their own sequential frame age and remain visible for 12
+  ticks instead of selecting frames from global time for only eight ticks.
+- Added a type-coloured cast ring behind every original skill animation, ensuring
+  the cast remains visible even when a MIDP device cannot decode its source PNG.
+- Regenerated and validated all 386 strips: 37,056 frames, no empty frames,
+  invalid dimensions or alpha touching the frame boundary.
+
+Centered directional sprites (v1.0.8)
+- Computes one alpha bounding box across all 96 frames of each Pokemon.
+- Every direction/action is cropped with that same box, preserving a stable scale
+  while centering the visible Pokemon instead of its asymmetric transparent canvas.
+- Setup and combat renderers clamp oversized sprites at the left/right screen edge,
+  preventing large Pokemon in the first or last column from being cut off.
+- Regenerated and validated all 386 animation strips; every setup Idle frame is present.
+- Intentional attack lunges and pose offsets from the original assets remain intact.
+
+Original-style UI and collection tabs (v1.0.7)
+- Imported the supplied original UI, stat and all 31 synergy/type icon packs.
+- Restyled the preparation HUD with heart, gold, XP and reroll icon language.
+- Added Collection tabs: POKEMON, TYPES and DEBUG.
+- TYPES shows the original icon, 2/4/6 thresholds and the offline bonus description.
+- DEBUG documents Pokemon animation, skill, attack, status and board VFX previews.
+- Removed status icons above combat Pokemon; status text remains in the lower inspector.
+- Fixed movement timing to the original 500/(0.5+Speed/100) milliseconds per cell.
+- Movement now interpolates for its full travel time instead of teleporting in 100ms.
+- Normalized every directional frame against one species source canvas so facing
+  direction no longer changes the Pokemon's apparent size.
+- Collection now uses the original CSV Category rather than treating every cost-5
+  Pokemon as Legendary; Gen 1-3 contains exactly 19 Legendary-category entries.
+- Map and map assets remain unchanged.
+
+Original ability VFX pipeline (v1.0.6)
+- Replaced the nine shared generic skill strips with 386 per-Pokemon strips.
+- Converted eight sampled frames directly from app.zip's original ability assets.
+- 270 Pokemon use the exact animation folder named by their source ability;
+  abilities without a dedicated source animation fall back to their elemental VFX.
+- Skill animations now last eight frames and are selected by species during combat.
+- Smoke, gas, spikes, web, terrain, ember and Firestarter skills leave an animated
+  board-layer effect below Pokemon for 3.5 seconds.
+- Up to three simultaneous buff/debuff/status overlays are drawn per Pokemon.
+- Collection detail now previews the selected Pokemon's real skill animation.
+- Added make_species_skill_sprites.py so all VFX can be regenerated reproducibly.
+
+Larger natural sprites (v1.0.5)
+- Increased atlas base scale from 0.55 to 0.70 after device-size feedback.
+- Added a 16px minimum frame dimension so naturally tiny Pokemon stay readable.
+- Raised the safe maximum from 46px to 52px for large/tall Pokemon.
+- Added visible progression floors: tier 1=28px, tier 2=36px, tier 3/final=44px.
+- Natural width/height ratios remain intact and natural giants can exceed their tier floor.
+- This matches the larger DragonBoy-style on-screen presence while preserving
+  room for future HP/equipment growth from the original square-root scale rule.
+
+Natural atlas sizing (v1.0.4)
+- Removed visual sizing based on CSV Tier, rarity and hard-coded Legendary lists.
+- Audited all 386 Gen 1-3 Pokemon against their original atlas sourceSize.
+- Generated independent width/height metadata in VisualSize.java.
+- Preserved natural aspect ratios instead of forcing every frame into a square.
+- Normalized ordinary 40px atlas height to roughly 22px on J2ME and allowed
+  naturally large Pokemon to overflow cells up to a safe 46px maximum.
+- Onix, Steelix, Gyarados, Wailord and Rayquaza now retain their tall/large
+  silhouettes, while small Pokemon such as Mew and Celebi remain smaller.
+- World/list scaling now letterboxes and bottom-aligns rectangular sprites.
+- Version numbering returns to the requested v1.0.x sequence.
+
+Collection animation debugger (v1.3.0)
+- FIRE on an unlocked Collection entry now opens a full Pokemon detail screen.
+- Preview plays the original directional battle strip continuously.
+- Left/right changes all eight directions; up/down switches Idle/Attack/Victory.
+- 1/3 cycles all 16 converted status animations.
+- 7/9 cycles melee, ranged and hit effects for the Pokemon's primary type.
+- Detail view includes types, rarity, HP, ATK, DEF/SpeDef, Speed, range, PP,
+  stage, tier, cost, original ability name and current offline behavior.
+- FIRE/softkey/back closes the detail view without leaving Collection.
+
+Original combat assets and status rules (v1.2.0)
+- Regenerated all 386 Pokemon animation strips, static sprites and portraits
+  directly from the six user-supplied original asset archives.
+- Added make_combat_fx.py to reproducibly convert attack and status frame folders.
+- Added 16 animated status overlays from the original status TexturePacker frames.
+- Added 80 compact melee/ranged/hit strips covering the source attack types.
+- Ranged attacks and skill projectiles now use the original type animation when present.
+- Added Confusion, Charm, Wound, Blind, Armor Break, Silence and Protect timers.
+- Protect blocks damage; Silence prevents casting; Blind can miss basic attacks;
+  Armor Break halves defenses; Wound halves healing.
+- Expanded original ability-name matching to trigger the new status rules.
+- The converter output adds under 400 KB while source archives remain outside the JAR.
+
+Gameplay parity foundation (v1.1.0)
+- Rebuilt the active project from the newly supplied app(2).zip and
+  PokeAutoChess_v1.0.1(1).zip instead of continuing the previous work tree.
+- Restored Speed and Special Defense for all 386 Pokemon from the source CSV.
+- Preserved every Pokemon's original ability name in Data.skillName.
+- Changed simulation resolution from 200ms to deterministic 100ms ticks.
+- Ported the original attack cooldown formula: base / (0.4 + speed * 0.007).
+- Ported ARMOR_FACTOR=0.05 and split physical Defense from Special Defense.
+- Ported ON_ATTACK_MANA=5, default 10% critical chance and 200% critical power.
+- Added explicit moving, attacking, casting, idle and dead unit states.
+- Added maintainable CombatRules, CombatStatus and SkillEffects modules.
+- Added timed Burn, Poison, Freeze, Sleep and Paralysis with board/HUD feedback.
+- Collection and battle inspector now display original ability names and source stats.
+- Added desktop-only CombatSmokeTest; it validates roster data, formulas and a full battle.
+- Updated MIDlet version to 1.1.0 and vendor to mih.
+
+Gen 1-3 complete roster (v13)
+- Expanded the roster from 41 to all 386 standard Pokemon, Bulbasaur through
+  Deoxys, in National Pokedex order.
+- Imported HP, attack, speed, defense, range, PP, rarity and original synergy
+  assignments from app/models/precomputed/pokemons-data.csv.
+- Added 31 source-game types/synergies, including Flora, Field, Aquatic, Baby,
+  Artificial, Amorphous, Fossil, Human, Light, Monster, Sound and Wild.
+- Added 171 direct evolution links read from the original TypeScript classes.
+  Alternate branch results remain standalone shop families so every one of the
+  386 species is obtainable in offline mode.
+- Added 386 original animated strips, 386 crisp world sprites and 386 individual
+  official portraits. Large species and Legendary Pokemon keep larger frames.
+- Added tools/generate_gen123_roster.py so Data.java can be regenerated from the
+  supplied online source instead of maintaining hundreds of entries by hand.
+- The MIDlet application icon now uses the official Mega Rayquaza portrait and
+  is declared in both MIDlet-1 and MIDlet-Icon for emulator compatibility.
+
+Battle presentation
+- Replaced static battle portraits with original web-game Pokemon animation frames.
+- Added compact directional strips, reconstructed from the
+  supplied trimmed TexturePacker multi-atlases.
+- Pokemon now animate on the preparation board and bench as well as in combat.
+- Winners play four original Hop frames after Battle.over instead of returning to idle.
+- Battle sprites use the larger 28px RGBA presentation from v3 while retaining
+  setup, skill and victory animation states.
+- Species now scale by progression: stage 1=20px, stage 2=24px, stage 3=28px,
+  and cost-5 Legendary Pokemon=32px.
+- Pokemon now use all eight original directional atlas sets and face their move
+  or attack target instead of staying locked to direction 0.
+- HP and mana bars interpolate between simulation ticks, with black frames and
+  green/yellow/red HP thresholds closer to the original client presentation.
+- HP color identifies the team like the original client: player is always green
+  and enemy is always red, both on a black framed background.
+- Added an in-battle inspector below the board with Pokemon/team, HP, mana,
+  ATK, DEF, ability, shield/stun/cast state and left/right unit selection.
+- Replaced temporary atlas-derived avatars with the supplied official 40x40
+  Normal portraits, converted to crisp 32x32 UI images in res/av.
+- Added main-menu # cheat: unlock every family and grant 9999 balls for testing.
+- Oversized species now read as giants: Gyarados=40px; Dragonite, Tyranitar and
+  Legendary Pokemon=36px.
+- Added nine 4-frame skill effects sampled from the supplied original ability
+  frames and triggered directly by Battle.cast().
+- Smooth interpolation between logical grid cells.
+- Small idle bob so units no longer look completely static.
+- Melee attack lunge towards the current target.
+- Ranged basic-attack projectiles.
+- Type-coloured skill projectiles and casting rings.
+- Existing damage/heal/critical/miss text retained; KO is now shown explicitly.
+- HP, mana, shield, stun and hit feedback remain visible at small resolutions.
+
+Compatibility
+- No floating point, collections, timers, alpha APIs or MIDP 2.1-only calls added.
+- New runtime state uses fixed-size primitive arrays to remain CLDC 1.0 friendly.
+- Original Ant + preverify build flow and build-poke.bat are unchanged.
+- Runtime animation assets now live under res/raw and res/fx; the 440MB source assets are not
+  copied into the JAR and do not need to be unpacked into src.
+
+Validation
+- All Java source files compile together against a minimal MIDP/CLDC API surface.
+- A real device/emulator JAR must still be produced by build-poke.bat so Java ME
+  SDK preverify can create CLDC-verifiable class files.

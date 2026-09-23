@@ -1,0 +1,18 @@
+POKE AUTO CHESS ME v1.2.1a - ITEM UI HOTFIX
+===========================================
+
+Kho trang bi
+- O vuong doi thanh socket tron nen toi theo giao dien game goc.
+- Socket chi co vien sang khi con tro dang chon hoac item dang duoc cam.
+- FIRE mo menu gom hai lua chon: Trang bi va Chi tiet.
+- Chi tiet hien ten, nhom, so luong va mo ta; FIRE/0 de dong.
+
+Bo cuc chuan bi
+- Item da trang bi hien thanh cum socket tron doc canh Pokemon tren san.
+- Khoi phuc phan thong tin Pokemon/shop cu o duoi cung.
+- Layout tu giam kich thuoc cell de giu du cho kho, doi hinh va thong tin.
+
+Combat
+- Tang chieu cao bang thong ke.
+- Moi the tach thanh: icon item o tren, gia tri/HP o dong duoi, progress cuoi the.
+- MIDlet-Version so: 1.2.1. Vendor: KhaiLy.

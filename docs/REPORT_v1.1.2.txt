@@ -1,0 +1,28 @@
+POKE AUTO CHESS ME v1.1.2 - PERSISTENT COMBAT STATISTICS
+=======================================================
+
+VISIBLE CONTROLS
+- The combat panel is always visible below the board.
+- Top row: TA / ĐỊCH side buttons; selected side has a green/red underline.
+- Second row: six metric buttons; selected metric has yellow fill and outline.
+- Grid: three columns x three rows; selected Pokemon has a yellow outline.
+- Footer always states the active controls.
+
+METRICS
+- DMG: damage dealt after defense, including the portion absorbed by shields.
+- NHẬN: HP damage actually received after shield absorption.
+- CHẶN: incoming damage absorbed by shields.
+- HỒI: effective healing, excluding overheal.
+- HP: current HP.
+- KHIÊN: current virtual HP/shield.
+
+CONTROLS
+- 1/3 previous/next metric; 7 switches side; arrows select a Pokemon.
+- FIRE opens live details; FIRE/0 returns; * cycles speed; 9 skips battle.
+
+IMPLEMENTATION
+- Unit owns fixed integer counters: damageDealt, damageTaken, damageBlocked,
+  healingDone and shieldDone.
+- Battle updates counters at the authoritative damage/heal/shield paths.
+- Mini portraits are generated once at 20px and cached for the active species.
+- Version metadata is 1.1.2.

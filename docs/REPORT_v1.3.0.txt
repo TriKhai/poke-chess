@@ -1,0 +1,11 @@
+POKE AUTO CHESS ME v1.2.4 PREVIEW - EXTENDED MODES
+==================================================
+
+- Viet hoa bang info nho, gian hai icon he va thay dong 3x bang icon cac giai doan tien hoa.
+- Bang He cu hien tat ca he dang co, ke ca he chua dat moc 2/4/6.
+- Thu nghiem dai he o mep ban da duoc thay bang che do He cong huong trong hang dock.
+- Mode 30 Vong: nhan 9 manh dau run va sau moi tran; hoi Bo do cu/Giu do cu; boss moi 5 vong.
+- Mode The he 1: shop chi Gen 1, roi item ngau nhien, boss 5 Magikarp, 10 Moltres, 15 Articuno,
+  20 Zapdos, 25 hai Mewtwo, 30 Ho-Oh. Thang Ho-Oh mo toan bo gia dinh Pokemon Gen 1.
+- Hai mode cu Choi thuong va Vang vo han duoc giu nguyen.
+- Phat hanh chung trong MIDlet-Version 1.2.4. MIDlet-Vendor: TriKhai.

@@ -1,6 +1,6 @@
 # Chỉ số và trạng thái Pokémon
 
-Tài liệu này mô tả các chữ viết tắt, thống kê trận đấu và trạng thái đang được sử dụng trong Poke Auto Chess ME v1.1.9.
+Tài liệu này mô tả các chữ viết tắt, thống kê trận đấu và trạng thái đang được sử dụng trong Poke Auto Chess ME v1.2.8.
 
 ## 1. Chỉ số cơ bản
 
@@ -60,8 +60,12 @@ Các nhãn bổ sung:
 | Phá giáp | Armor Break | Giảm `DEF` và `SP.DEF` còn một nửa. |
 | Mù | Blinded | Đánh thường có 50% khả năng trượt. |
 | Bỏng | Burn | Mỗi giây mất khoảng 4% HP tối đa. |
-| Mê hoặc | Charm | Không thể hành động trong thời gian hiệu lực. |
-| Hoang mang | Confusion | Có thời lượng và hiệu ứng hình ảnh; chưa có cơ chế đánh nhầm mục tiêu. |
+| Mê hoặc | Charm | Đổi mục tiêu sang Pokémon đồng minh gần nhất trong thời gian hiệu lực. |
+| Hoang mang | Confusion | Mỗi lượt hành động có 25% khả năng tự nhận 5% HP tối đa và mất lượt. |
+| Nguyền rủa | Curse | Mỗi giây mất khoảng 6,25% HP tối đa. |
+| Mệt mỏi | Fatigue | Tốc độ hiệu dụng còn khoảng hai phần ba. |
+| Nao núng | Flinch | Không thể hành động trong thời gian hiệu lực. |
+| Khóa | Locked | Không thể di chuyển nhưng vẫn có thể đánh hoặc tung chiêu nếu mục tiêu trong tầm. |
 | Đóng băng | Freeze | Không thể hành động. |
 | Tê liệt | Paralysis | Tốc độ hiệu dụng giảm còn một nửa. |
 | Nhiễm độc | Poison | Mỗi giây mất khoảng 5% HP tối đa. |
@@ -70,28 +74,26 @@ Các nhãn bổ sung:
 | Ngủ | Sleep | Không thể hành động. |
 | Vết thương | Wound | Lượng hồi máu nhận được giảm 50%. |
 
-## 4. Trạng thái đã khai báo nhưng chưa hoàn chỉnh
+## 4. Behavior kỹ năng
 
-| Trạng thái | Tiếng Anh | Tình trạng hiện tại |
-|---|---|---|
-| Nguyền rủa | Curse | Có ID và tên nhưng chưa có biến thời lượng/công thức tác động riêng. |
-| Mệt mỏi | Fatigue | Có ID và tên nhưng chưa có hiệu ứng chiến đấu. |
-| Nao núng | Flinch | Có ID và tên nhưng chưa được xử lý như trạng thái ngắt hành động. |
-| Khóa | Locked | Có ID và tên nhưng chưa có cơ chế khóa mục tiêu hoặc kỹ năng. |
+- `Data.abil` tiếp tục quyết định mẫu sát thương chính của kỹ năng.
+- `AbilityBehavior` đọc tên move gốc để áp dụng hành vi phụ như buff, hồi phục,
+  Protect, dịch chuyển, cleanse, khiên đội, vàng Payday và trạng thái diện rộng.
+- `SkillEffects` ánh xạ move sang một hoặc nhiều trạng thái; ví dụ Lick có thể gây
+  đồng thời Hoang mang và Tê liệt.
 
 ## 5. Tóm tắt mức độ hoàn thiện
 
-- Danh sách dữ liệu khai báo 16 trạng thái có icon.
-- Có 12 trạng thái được lưu và hiển thị trong `CombatStatus`.
-- `Confusion` mới có thời lượng và hình ảnh, chưa thay đổi hành vi chiến đấu.
+- Danh sách 16 trạng thái đều có state, thời lượng, icon và hành vi gameplay.
+- Một Pokémon có thể mang và hiển thị đồng thời nhiều trạng thái.
 - `Stun` hoạt động đầy đủ nhưng được quản lý riêng ngoài danh sách 16 icon.
-- `Curse`, `Fatigue`, `Flinch` và `Locked` vẫn cần bổ sung logic gameplay.
 
 ## 6. Nguồn mã liên quan
 
 - `src/pac/Unit.java`: chỉ số hiện tại của từng Pokémon.
 - `src/pac/CombatStatus.java`: thời lượng và xử lý trạng thái.
 - `src/pac/SkillEffects.java`: ánh xạ chiêu thức sang hiệu ứng phụ.
+- `src/pac/AbilityBehavior.java`: hành vi đặc thù theo tên move.
 - `src/pac/Battle.java`: công thức sát thương, hồi máu, khiên và hành động.
 - `src/pac/CombatRules.java`: hằng số MP, chí mạng, tốc độ và giảm sát thương.
 - `src/pac/ChessScreen.java`: bảng Battle Stats và bảng chi tiết Pokémon.

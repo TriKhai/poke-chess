@@ -113,7 +113,7 @@ public final class CollectionScreen extends Screen {
             if (Data.t2[sel] >= 0) Art.typeIcon(g,Data.t2[sel],x,dy+1);
             Art.textSmall(g, "HP " + Data.hp[sel] + " AT " + Data.atk[sel] + " DF " + Data.def[sel]
                     + "/" + Data.speDef[sel] + " SP " + Data.speed[sel], 38, dy + fh + 3, 0xE0E8FF);
-            int yy = Art.para(g, Lang.moveName(Data.skillName[sel]) + ": " + Lang.abilityDesc(Data.abil[sel]),
+            int yy = Art.para(g, Lang.moveName(Data.skillName[sel]) + ": " + AbilityBehavior.description(sel),
                     38, dy + fh * 2 + 3, W - 42, 0xA0FFA0, 2);
             String evo = Data.evo[sel] >= 0 ? Lang.t("Tiến hóa: ", "Evolves: ") + Data.name[Data.evo[sel]] : Lang.t("Dạng cuối", "Final form");
             Art.text(g, evo, 4, yy, 0xC0C0C0);
@@ -216,7 +216,7 @@ public final class CollectionScreen extends Screen {
         Art.textSmall(g,"HP "+Data.hp[sel]+"  ATK "+Data.atk[sel]+"  DEF "+Data.def[sel]+"/"+Data.speDef[sel],4,y,0xE0E8FF); y+=fh;
         Art.textSmall(g,"SPD "+Data.speed[sel]+"  RNG "+Data.range[sel]+"  PP "+Data.mana[sel],4,y,0xE0E8FF); y+=fh;
         Art.text(g,"Stage "+Data.stage[sel]+"  Tier "+Data.tier[sel]+"  Cost "+Data.cost[sel],4,y,0xC0C8D8); y+=fh;
-        Art.para(g,Lang.moveName(Data.skillName[sel])+": "+Lang.abilityDesc(Data.abil[sel]),4,y,W-8,0xA0FFA0,1);
+        Art.para(g,Lang.moveName(Data.skillName[sel])+": "+AbilityBehavior.description(sel),4,y,W-8,0xA0FFA0,1);
 
         Art.textC(g,"< > direction   2/8 clip",W/2,H-fh*2-2,0x8090B0);
         Art.textC(g,"1/3 status  7/9 attack  FIRE back",W/2,H-fh-1,0x8090B0);

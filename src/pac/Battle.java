@@ -221,13 +221,21 @@ public final class Battle {
         return best;
     }
 
+    private Unit findCharmedTarget(Unit u){
+        Unit best=null;int bd=99;
+        for(int i=0;i<n;i++){Unit a=units[i];if(!a.alive||a.side!=u.side||a==u)continue;int d=dist(u,a);if(d<bd){bd=d;best=a;}}
+        return best;
+    }
+
     private void act(Unit u) {
         if (u.status.blocksAction()) { u.state = Unit.IDLE; return; }
+        if(u.status.confusion>0&&rng.pct(25)){statusDamage(u,Math.max(1,u.maxHp/20));u.state=Unit.IDLE;return;}
         if (u.moveLeft > 0) { u.moveLeft--; u.state = Unit.MOVING; return; }
         u.px=u.x; u.py=u.y;
         if (u.cdLeft > 0) u.cdLeft--;
         Unit t = u.target;
-        if (t == null || !t.alive || (tick % 3) == 0) t = findTarget(u);
+        if(u.status.charm>0)t=findCharmedTarget(u);
+        else if (t == null || !t.alive || t.side==u.side || (tick % 3) == 0) t = findTarget(u);
         u.target = t;
         if (t == null) return;
         if (dist(u, t) <= u.range) {
@@ -239,7 +247,7 @@ public final class Battle {
             }
         } else {
             u.state = Unit.MOVING;
-            move(u, t);
+            if(!u.status.blocksMove())move(u, t);
         }
     }
 
@@ -375,6 +383,7 @@ public final class Battle {
                 break;
         }
         SkillEffects.apply(u, t);
+        AbilityBehavior.apply(this,u,t);
         ItemEffects.onCast(this,u);
         String skill=Data.skillName[u.sp].toUpperCase();
         if(skill.indexOf("SMOKE")>=0 || skill.indexOf("GAS")>=0 || skill.indexOf("SPIKE")>=0 ||

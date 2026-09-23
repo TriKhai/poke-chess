@@ -32,6 +32,21 @@ public final class CombatSmokeTest {
         Battle uniqueFamilyBattle=new Battle(uniquePlayer,uniqueEnemy,100,new Rng(71));
         int[] uniqueCounts=new int[Data.NT];uniqueFamilyBattle.countSyn(0,uniqueCounts);
         check(uniqueCounts[Data.T_GRASS]==1,"copies/evolution stages must count as one synergy family");
+        Unit statusUnit=new Unit();statusUnit.maxHp=statusUnit.hp=160;statusUnit.alive=true;
+        statusUnit.status.curse=11;statusUnit.status.fatigue=5;statusUnit.status.flinch=3;statusUnit.status.locked=4;
+        check(statusUnit.status.effectiveSpeed(60)==40,"Fatigue speed reduction missing");
+        check(statusUnit.status.blocksAction()&&statusUnit.status.blocksMove(),"Flinch/Locked behavior missing");
+        for(int i=0;i<10;i++)statusUnit.status.update(uniqueFamilyBattle,statusUnit);
+        check(statusUnit.hp==150,"Curse periodic damage mismatch");
+        check(statusUnit.status.visualAt(0)!=CombatStatus.NONE,"new status visuals missing");
+        statusUnit.status.clearNegative();check(!statusUnit.status.hasNegative(),"status cleanse incomplete");
+        Unit agilityUser=new Unit();agilityUser.sp=18;agilityUser.speed=Data.speed[18];agilityUser.alive=true;
+        AbilityBehavior.apply(uniqueFamilyBattle,agilityUser,uniqueFamilyBattle.units[uniqueFamilyBattle.n-1]);
+        check(agilityUser.speed==Data.speed[18]+20,"Agility behavior missing");
+        check(AbilityBehavior.description(18).length()>Lang.abilityDesc(Data.abil[18]).length(),"specific ability description missing");
+        int lick=-1;for(int i=0;i<Data.N;i++)if("Lick".equals(Data.skillName[i])){lick=i;break;}
+        check(lick>=0,"Lick fixture missing");Unit lickUser=new Unit();lickUser.sp=lick;Unit lickTarget=new Unit();lickTarget.alive=true;
+        SkillEffects.apply(lickUser,lickTarget);check(lickTarget.status.confusion>0&&lickTarget.status.paralysis>0,"multi-status move behavior missing");
         for(int language=Lang.VI;language<=Lang.EN;language++){
             Save.language=language;
             for(int type=0;type<Data.NT;type++)
@@ -138,6 +153,6 @@ public final class CombatSmokeTest {
             check(stress.over, "stress battle did not terminate at seed " + seed);
         }
 
-        System.out.println("CombatSmokeTest OK: 31 synergies, item triggers, "+ItemData.recipeCount()+" crafted-item battles and 101 base battles");
+        System.out.println("CombatSmokeTest OK: 31 synergies, item triggers, ability/status behaviors, "+ItemData.recipeCount()+" crafted-item battles and 101 base battles");
     }
 }

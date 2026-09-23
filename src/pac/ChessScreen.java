@@ -870,7 +870,7 @@ public final class ChessScreen extends Screen {
         Art.textSmall(g,"PP: "+Data.mana[sp]+Lang.t("  Tốc: ","  SPD: ")+Data.speed[sp]+Lang.t("  Tầm: ","  RNG: ")+Data.range[sp]+Lang.t("  Hồi chiêu: ","  CD: ")+Data.cd[sp],8,y,0xD8E0F0);y+=fh+2;
         drawEvolutionChain(g,sp,8,y);y+=27;
         Art.textB(g,Lang.moveName(Data.skillName[sp]),8,y,0xA0FFA0);y+=fh;
-        y=Art.para(g,Lang.abilityDesc(Data.abil[sp]),8,y,W-16,0xA0D8A0,2)+3;
+        y=Art.para(g,AbilityBehavior.description(sp),8,y,W-16,0xA0D8A0,2)+3;
         paintEquipmentBlock(g,8,y,run.itemAt(p,0),run.itemAt(p,1),run.itemAt(p,2));
         Art.textSmallC(g,Lang.t("FIRE / 0: đóng","FIRE / 0: close"),W/2,H-fh-6,0x8090B0);
     }
@@ -1362,7 +1362,7 @@ public final class ChessScreen extends Screen {
         Art.textSmall(g,Lang.t("Hồi: ","Heal: ")+u.healingDone+Lang.t("  Khiên tạo: ","  Shield made: ")+u.shieldDone,5,y,0xA0E8B0);y+=fh+2;
         drawEvolutionChain(g,u.sp,5,y);y+=27;
         Art.textB(g,Lang.moveName(Data.skillName[u.sp]),5,y,0xA0FFA0);y+=fh;
-        y=Art.para(g,Lang.abilityDesc(Data.abil[u.sp]),5,y,W-10,0xA0D8A0,2)+2;
+        y=Art.para(g,AbilityBehavior.description(u.sp),5,y,W-10,0xA0D8A0,2)+2;
         int first=u.status.visual();
         Art.textB(g,Lang.t("Trạng thái:","Status:"),5,y,0xFF6868);y+=fh;
         if(first<0&&u.stun<=0){Art.text(g,Lang.t("Bình thường","Normal"),5,y,0xFF9090);y+=fh;}

@@ -1,4 +1,4 @@
-POKE AUTO CHESS ME v1.3.0  (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
+POKE AUTO CHESS ME v1.3.1  (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
 =====================================================================
 
 CAU TRUC
@@ -14,6 +14,8 @@ CAU TRUC
   docs/CHI_SO_VA_TRANG_THAI_POKEMON.md  bang chu viet tat, chi so va trang thai combat
 
 PHIEN BAN
+  v1.3.1: them che do hieu nang Muot/Tiet kiem cho may that; giam cap phat RAM
+          trong UI Battle, sua thong ke he cuoi run va khoa can bang bang regression.
   v1.3.0: save/resume run bang RMS rieng; lich su 5 run gom doi hinh, 3 item/pet
           va bieu do thang/thua; build Full va Lite (bo raw/sfx nang).
   v1.2.9: economy tach base/lai/streak/thang/item; doi hinh PvE co dinh va boss
@@ -113,7 +115,7 @@ CACH BUILD
   1. Giai nen vao vd D:\PokeAutoChessME
   2. Sua 2 dong JAVA_HOME / KVEM_HOME trong build-poke.bat neu can
   3. Chay build-poke.bat (tu dong chay regression suite truoc khi dong goi)
-  4. Ket qua: build\dist\PokeAutoChess.jar va PokeAutoChess.jad
+  4. Ket qua: build\dist\PokeAutoChess-Full.jar/.jad va PokeAutoChess-Lite.jar/.jad
 
   build.xml tu tim cldcapi*.jar, midpapi*.jar va preverify.exe ben trong KVEM_HOME.
   Neu bao "Could not find ...", bo comment cac dong tuong ung trong build.properties.

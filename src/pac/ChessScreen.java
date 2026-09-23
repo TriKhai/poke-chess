@@ -54,6 +54,9 @@ public final class ChessScreen extends Screen {
     /** True while the arrow-key cursor is on the combat-stat tabs. */
     private boolean statFocus = false;
     private final int[] spriteBounds = new int[4];
+    /** Reused by paint/input paths to avoid garbage-collector spikes on CLDC phones. */
+    private final int[] synCounts = new int[Data.NT];
+    private final boolean[] synFamilies = new boolean[Data.N];
 
     // layout (recomputed every frame)
     private int cell, hudH, boardY, benchY, shopY, shopH, btnY, btnH, infoY, cw;
@@ -741,7 +744,7 @@ public final class ChessScreen extends Screen {
             }
             g.setColor(0x303B50);g.fillRect(12,sy,trackW,2);if(total>0){int thumb=Math.max(8,trackW*Math.min(visible,total)/total);int max=trackW-thumb;int tx=12+(total<=visible?0:max*dockItemScroll/Math.max(1,total-visible));g.setColor(0x70A8FF);g.fillRect(tx,sy,thumb,2);}
         }else{
-            int[] cnt=new int[Data.NT];fillSynCounts(cnt);int total=presentSynCount(),visible=Math.max(1,(W-24)/25);if(dockSynCursor>=total)dockSynCursor=Math.max(0,total-1);
+            int[] cnt=synCounts;fillSynCounts(cnt);int total=countPresentSyn(cnt),visible=Math.max(1,(W-24)/25);if(dockSynCursor>=total)dockSynCursor=Math.max(0,total-1);
             Art.text(g,"<",2,y+5,dockSynCursor>0?0xFFFFFF:0x586478);Art.textR(g,">",W-2,y+5,dockSynCursor+1<total?0xFFFFFF:0x586478);
             int first=Math.max(0,Math.min(dockSynCursor-visible+1,total-visible));
             for(int i=0;i<visible&&first+i<total;i++){int rank=first+i,t=presentSynTypeAt(rank,cnt),x=12+i*25,lv=Data.synLevel(t,cnt[t]);g.setColor(lv>0?Art.dark(Data.TCOL[t]):0x202735);g.fillArc(x,y,24,24,0,360);Art.typeIcon(g,t,x+4,y+4);g.setColor(rank==dockSynCursor&&zone==4?0xFFE060:(lv>0?Data.TCOL[t]:0x596578));g.drawArc(x,y,23,23,0,360);if(rank==dockSynCursor&&zone==4)g.drawArc(x+1,y+1,21,21,0,360);Art.textSmallR(g,""+cnt[t],x+23,y+14,lv>0?0xFFFFFF:0xA8B5C8);}
@@ -771,7 +774,7 @@ public final class ChessScreen extends Screen {
         else if(zone==5){int p=boardPosAt(dockTeamCursor);if(p>=0)sp=run.get(p);}
         if(sp>=0&&avail>=2)drawInfo(g,sp,y,avail,shop);
         else if(zone==4&&dockMode==0&&ownedItemCount()>0&&avail>0){int id=ownedItemAt(dockItemCursor);Art.textSmall(g,ItemData.name(id)+" x"+run.itemCount(id),3,y,0xD8E0F0);}
-        else if(zone==4&&dockMode==1&&avail>0){int[] cnt=new int[Data.NT];fillSynCounts(cnt);int t=presentSynTypeAt(dockSynCursor,cnt);if(t>=0){int lv=Data.synLevel(t,cnt[t]);String mark=SynergyEffects.marks(t,cnt[t]);Art.textSmall(g,Lang.typeName(t)+"  "+cnt[t]+"  "+mark,3,y,lv>0?0xFFD060:0xA8B5C8);if(avail>1)Art.para(g,Lang.synergyLongDesc(t),3,y+fh,game.W-6,lv>0?0xD8E8FF:0x8090A8,avail-1);}}
+        else if(zone==4&&dockMode==1&&avail>0){int[] cnt=synCounts;fillSynCounts(cnt);int t=presentSynTypeAt(dockSynCursor,cnt);if(t>=0){int lv=Data.synLevel(t,cnt[t]);String mark=SynergyEffects.marks(t,cnt[t]);Art.textSmall(g,Lang.typeName(t)+"  "+cnt[t]+"  "+mark,3,y,lv>0?0xFFD060:0xA8B5C8);if(avail>1)Art.para(g,Lang.synergyLongDesc(t),3,y+fh,game.W-6,lv>0?0xD8E8FF:0x8090A8,avail-1);}}
         else if(zone==3&&avail>0){String[] d={Lang.t("Mua 4 XP (4 vàng)","Buy 4 XP (4 gold)"),Lang.t("Đổi shop (2 vàng)","Reroll shop (2 gold)"),Lang.t("Khóa shop / Vật phẩm","Lock shop / Items"),Lang.t("Xem cộng hưởng (*)","Show synergies (*)"),Lang.t("Bắt đầu chiến đấu! (9)","Start the fight! (9)")};Art.textSmall(g,d[col],3,y,0xD8E0F0);}
     }
 
@@ -942,7 +945,7 @@ public final class ChessScreen extends Screen {
     private void fillSynCounts(int[] cnt){
         for(int i=0;i<Data.NT;i++)cnt[i]=0;
         if(bt!=null&&state!=PREP)bt.countSyn(0,cnt);
-        else{boolean[] seen=new boolean[Data.N];for(int i=0;i<Run.BOARD;i++){int sp=run.board[i];if(sp<0)continue;int family=Data.fam[sp];if(seen[family])continue;seen[family]=true;cnt[Data.t1[sp]]++;if(Data.t2[sp]>=0)cnt[Data.t2[sp]]++;}}
+        else{for(int i=0;i<Data.N;i++)synFamilies[i]=false;for(int i=0;i<Run.BOARD;i++){int sp=run.board[i];if(sp<0)continue;int family=Data.fam[sp];if(synFamilies[family])continue;synFamilies[family]=true;cnt[Data.t1[sp]]++;if(Data.t2[sp]>=0)cnt[Data.t2[sp]]++;}}
     }
 
     private void paintDockSynHighlight(Graphics g,int type){
@@ -950,12 +953,13 @@ public final class ChessScreen extends Screen {
         for(int p=0;p<Run.BOARD;p++){int sp=run.board[p];if(sp>=0&&(Data.t1[sp]==type||Data.t2[sp]==type)){int x=bx+(p%8)*cell,y=boardY+(p/8)*cell;g.setColor(0xFFE060);g.drawRect(x,y,cell-1,cell-1);g.drawRect(x+1,y+1,cell-3,cell-3);}}
     }
 
-    private int presentSynCount(){int[] cnt=new int[Data.NT];fillSynCounts(cnt);int n=0;for(int t=0;t<Data.NT;t++)if(cnt[t]>0)n++;return n;}
+    private int countPresentSyn(int[] cnt){int n=0;for(int t=0;t<Data.NT;t++)if(cnt[t]>0)n++;return n;}
+    private int presentSynCount(){fillSynCounts(synCounts);return countPresentSyn(synCounts);}
     private int presentSynTypeAt(int rank,int[] cnt){for(int t=0,n=0;t<Data.NT;t++)if(cnt[t]>0){if(n==rank)return t;n++;}return -1;}
 
     private void paintSyn(Graphics g) {
         int W = game.W, H = game.H, fh = Art.fh;
-        int[] cnt = new int[Data.NT];
+        int[] cnt = synCounts;
         fillSynCounts(cnt);
         int rows = 0;
         for (int t = 0; t < Data.NT; t++) if (cnt[t] > 0) rows++;
@@ -1293,13 +1297,13 @@ public final class ChessScreen extends Screen {
     }
 
     private int battleSynCount(){
-        int[] cnt=new int[Data.NT];fillBattleSynCounts(rosterSide,cnt);int n=0;
+        int[] cnt=synCounts;fillBattleSynCounts(rosterSide,cnt);int n=0;
         for(int t=0;t<Data.NT;t++)if(cnt[t]>0)n++;
         return n;
     }
 
     private int battleSynType(int rank){
-        int[] cnt=new int[Data.NT];fillBattleSynCounts(rosterSide,cnt);int n=0;
+        int[] cnt=synCounts;fillBattleSynCounts(rosterSide,cnt);int n=0;
         for(int t=0;t<Data.NT;t++)if(cnt[t]>0){if(n==rank)return t;n++;}
         return -1;
     }
@@ -1312,9 +1316,9 @@ public final class ChessScreen extends Screen {
     /** Compact scrolling type picker and a fixed 3x3 matching-Pokémon grid. */
     private void paintBattleSynergies(Graphics g,int y,int h,int footerY,int footerH){
         int W=game.W,leftW=Math.max(42,W/4),rightX=leftW+1,rightW=W-rightX;
-        int[] cnt=new int[Data.NT];fillBattleSynCounts(rosterSide,cnt);
-        int n=battleSynCount();if(n<=0){battleSynCursor=0;}else if(battleSynCursor>=n)battleSynCursor=n-1;
-        int type=n>0?battleSynType(battleSynCursor):-1;
+        int[] cnt=synCounts;fillBattleSynCounts(rosterSide,cnt);
+        int n=countPresentSyn(cnt);if(n<=0){battleSynCursor=0;}else if(battleSynCursor>=n)battleSynCursor=n-1;
+        int type=n>0?presentSynTypeAt(battleSynCursor,cnt):-1;
         g.setColor(0x172235);g.fillRect(0,y,leftW,h);
         g.setColor(0x1B2638);g.fillRect(rightX,y,rightW,h);
         g.setColor(0x40506A);g.drawLine(leftW,y,leftW,y+h-1);
@@ -1502,8 +1506,7 @@ public final class ChessScreen extends Screen {
             if(H<250)Art.avatarMini(g,run.board[i],x,ay);else Art.avatar(g,run.board[i],x,ay);slot++;
         }
         y+=((n+per-1)/per)*step;
-        int[] cnt=new int[Data.NT];
-        for(int i=0;i<Run.BOARD;i++)if(run.board[i]>=0){int sp=run.board[i];cnt[Data.t1[sp]]++;if(Data.t2[sp]>=0)cnt[Data.t2[sp]]++;}
+        int[] cnt=synCounts;fillSynCounts(cnt);
         Art.textB(g,Lang.t("CỘNG HƯỞNG","SYNERGIES"),4,y,0x80D8FF);y+=fh+1;
         int sx=4,sy=y;
         for(int t=0;t<Data.NT;t++)if(Data.synLevel(t,cnt[t])>0){

@@ -11,7 +11,7 @@ public final class Save {
     private Save() {}
 
     private static final String STORE = "pacsave1";
-    private static final int VERSION = 3;
+    private static final int VERSION = 4;
 
     public static int balls = 15;
     public static int best = 0;
@@ -24,6 +24,8 @@ public final class Save {
     public static int playPath = -1;
     /** 0 Vietnamese (default), 1 English. */
     public static int language = Lang.VI;
+    /** 0 = smooth ~16 FPS, 1 = battery/RAM friendly ~10 FPS. */
+    public static int performance = 0;
 
     public static void enableCheat() {
         cheatMode = true;
@@ -33,7 +35,7 @@ public final class Save {
     }
 
     public static void reset() {
-        balls = 15; best = 0; runs = 0; wins = 0; caught = 0;
+        balls = 15; best = 0; runs = 0; wins = 0; caught = 0; performance = 0;
         unlocked = new boolean[Data.N];
         // starter families
         unlocked[Data.fam[find("Charmander")]] = true;
@@ -81,6 +83,8 @@ public final class Save {
                     language = ver >= 2 ? in.readInt() : Lang.VI;
                     if (language != Lang.EN) language = Lang.VI;
                     playPath = ver >= 3 ? in.readInt() : -1;
+                    performance = ver >= 4 ? in.readInt() : 0;
+                    if (performance < 0 || performance > 1) performance = 0;
                     cheatMode = playPath == 1;
                 }
             }
@@ -109,6 +113,7 @@ public final class Save {
             for (int i = 0; i < Data.N; i++) out.writeBoolean(unlocked[i]);
             out.writeInt(language);
             out.writeInt(playPath);
+            out.writeInt(performance);
             out.flush();
             byte[] b = bo.toByteArray();
             rs = RecordStore.openRecordStore(STORE, true);

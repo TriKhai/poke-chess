@@ -158,7 +158,8 @@ public final class Game extends GameCanvas implements Runnable {
                 lastError = e.toString();
             }
             long spent = System.currentTimeMillis() - now;
-            long wait = 60 - spent;
+            // Real phones can trade animation cadence for lower CPU/battery usage.
+            long wait = (Save.performance == 1 ? 100 : 60) - spent;
             try {
                 Thread.sleep(wait > 5 ? wait : 5);
             } catch (InterruptedException e) { }

@@ -12,9 +12,10 @@ public final class SettingsScreen extends Screen {
 
     public void key(int key) {
         if (key == Game.K_UP || key == Game.K_DOWN)
-            selected = (selected + 1) % 2;
+            selected = (selected + 1) % 3;
         else if (key == Game.K_LEFT || key == Game.K_RIGHT || key == Game.K_FIRE || key == Game.K_SOFT1) {
             if (selected == 0) Lang.toggle();
+            else if (selected == 1) { Save.performance=1-Save.performance;Save.save(); }
             else game.setScreen(new MenuScreen(game));
         } else if (key == Game.K_SOFT2 || key == Game.K_0)
             game.setScreen(new MenuScreen(game));
@@ -28,7 +29,9 @@ public final class SettingsScreen extends Screen {
         int y = H / 3;
         drawRow(g, 0, y, Lang.t("Ngôn ngữ", "Language"),
                 Save.language == Lang.VI ? "Tiếng Việt" : "English");
-        drawRow(g, 1, y + fh * 2 + 8, Lang.t("Quay lại", "Back"), "");
+        drawRow(g, 1, y + fh * 2 + 8, Lang.t("Hiệu năng", "Performance"),
+                Save.performance==0?Lang.t("Mượt","Smooth"):Lang.t("Tiết kiệm","Battery"));
+        drawRow(g, 2, y + (fh * 2 + 8)*2, Lang.t("Quay lại", "Back"), "");
 
         Art.textC(g, selected == 0
                 ? Lang.t("TRÁI/PHẢI hoặc FIRE để đổi", "LEFT/RIGHT or FIRE to change")

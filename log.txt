@@ -78,4 +78,11 @@ v1.3.0
 - Nâng MIDlet-Version lên 1.3.0 và bổ sung regression snapshot/history/build.
 
 KE HOACH
-- v1.3.1: cân bằng, tối ưu thiết bị thật và hoàn thiện nội dung offline.
+v1.3.1
+- Thêm cấu hình Hiệu năng: Mượt (~16 FPS) và Tiết kiệm (~10 FPS) cho máy thật;
+  lựa chọn được lưu trong RMS và save v1-v3 vẫn tương thích.
+- Loại cấp phát mảng synergy/family lặp lại trong luồng paint và điều khiển Battle,
+  giảm giật do garbage collector trên thiết bị RAM thấp.
+- Màn tổng kết dùng đúng quy tắc mỗi family tiến hóa chỉ đóng góp hệ một lần.
+- Nâng MIDlet-Version lên 1.3.1; regression tiếp tục khóa combat, economy,
+  boss, item/status, save/resume và lịch sử đấu.

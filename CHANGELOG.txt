@@ -1,6 +1,12 @@
 POKE AUTO CHESS ME - OFFLINE REMAKE UPDATE
 ==========================================
 
+Device balance and performance pass (v1.3.1)
+- Added persisted Smooth/Battery frame pacing for real Java ME phones.
+- Reused synergy/family work buffers in Battle UI to avoid per-frame GC spikes.
+- Final-run synergy summary now counts each evolution family only once.
+- Save format v4 remains backward-compatible with v1-v3.
+
 Legacy Java ME compiler hotfix (v1.2.4c)
 - Replaced the startup screen ternary with an explicit if/else because the legacy Java ME javac cannot infer the common Screen superclass for two different concrete operands.
 - Numeric MIDlet-Version remains 1.2.4; MIDlet-Vendor remains TriKhai.

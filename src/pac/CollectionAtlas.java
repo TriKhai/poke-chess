@@ -9,7 +9,10 @@ import javax.microedition.lcdui.Image;
 public final class CollectionAtlas {
     private static final int TRANS_NONE=0,TRANS_ROT270=6;
     private static final CollectionAtlas[] CACHE=new CollectionAtlas[CollectionDex.COUNT];
-    private static final boolean[] TRIED=new boolean[CollectionDex.COUNT];
+    private static final boolean[] FAILED=new boolean[CollectionDex.COUNT];
+    private static final int[] AGE=new int[CollectionDex.COUNT];
+    private static final int MAX_CACHE=6;
+    private static int clock;
     private Image sheet;
     private short[][][] frames=new short[6][8][];
     private byte[][][] rotated=new byte[6][8][];
@@ -32,7 +35,15 @@ public final class CollectionAtlas {
 
     private static CollectionAtlas get(int index){
         if(index<0||index>=CACHE.length)return null;
-        if(!TRIED[index]){TRIED[index]=true;try{CACHE[index]=new CollectionAtlas(index);}catch(Exception e){CACHE[index]=null;}}
+        if(CACHE[index]!=null){AGE[index]=++clock;return CACHE[index];}
+        if(FAILED[index])return null;
+        int count=0,old=-1,oldAge=Integer.MAX_VALUE;
+        for(int i=0;i<CACHE.length;i++)if(CACHE[i]!=null){
+            count++;if(AGE[i]<oldAge){oldAge=AGE[i];old=i;}
+        }
+        if(count>=MAX_CACHE&&old>=0){CACHE[old]=null;AGE[old]=0;}
+        try{CACHE[index]=new CollectionAtlas(index);AGE[index]=++clock;}
+        catch(Exception e){FAILED[index]=true;CACHE[index]=null;}
         return CACHE[index];
     }
 

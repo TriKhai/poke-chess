@@ -269,6 +269,15 @@ Nội dung UX trong v1.3.8
 - Rà toàn bộ Việt hóa/English, tên nút, mô tả dài, scroll, xác nhận thao tác nguy hiểm.
 - Chuẩn hóa phản hồi âm thanh/hình ảnh, trạng thái focus và điều khiển phím/cảm ứng.
 
+v1.3.9a - Device QA và release candidate (bản tối ưu đầu tiên)
+- Giới hạn cache raw animation Battle/Map/Farm còn tối đa 8 Pokémon gần nhất.
+- Giới hạn cache animation Gen 4-9 trong Collection còn tối đa 6 Pokémon gần nhất.
+- Dùng cơ chế LRU: ảnh ít dùng nhất được giải phóng và tự nạp lại khi cần.
+- Ghi nhớ tài nguyên bị thiếu để bản Lite không mở file lỗi và phát sinh exception
+  lặp lại ở từng khung hình; giảm giật và rác bộ nhớ khi model dùng sprite fallback.
+- Metadata phát hành dùng nhãn PAC-Build 1.3.9a. MIDlet-Version giữ dạng số 1.3.9
+  để tương thích trình cài đặt Java ME/Nokia nghiêm ngặt.
+
 v1.3.9 - Device QA và release candidate
 - Test Full/Lite trên emulator và thiết bị thật ở nhiều RAM, độ phân giải và orientation.
 - Soak test run dài, save/resume lặp lại, RMS đầy/hỏng, pause/resume MIDlet và thiếu asset.

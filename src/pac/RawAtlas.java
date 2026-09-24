@@ -13,6 +13,10 @@ public final class RawAtlas {
     public static final int IDLE=0, WALK=1, ATTACK=2, VICTORY=3, HURT=4, POSE=5;
     private static final int RAW_COUNT=Data.N;
     private static final RawAtlas[] CACHE=new RawAtlas[RAW_COUNT];
+    private static final boolean[] FAILED=new boolean[RAW_COUNT];
+    private static final int[] AGE=new int[RAW_COUNT];
+    private static final int MAX_CACHE=8;
+    private static int clock;
     private Image sheet;
     /** action/direction -> packed x,y,w,h,offsetX,offsetY,sourceW,sourceH */
     private short[][][] frames=new short[6][8][];
@@ -40,7 +44,17 @@ public final class RawAtlas {
 
     private static RawAtlas get(int sp){
         if(sp<0||sp>=RAW_COUNT)return null;
-        if(CACHE[sp]==null)try{CACHE[sp]=new RawAtlas(sp);}catch(Exception e){return null;}
+        if(CACHE[sp]!=null){AGE[sp]=++clock;return CACHE[sp];}
+        // Lite intentionally omits /raw. Remember that miss so every paint does
+        // not throw another exception and reopen the same absent resource.
+        if(FAILED[sp])return null;
+        int count=0,old=-1,oldAge=Integer.MAX_VALUE;
+        for(int i=0;i<RAW_COUNT;i++)if(CACHE[i]!=null){
+            count++;if(AGE[i]<oldAge){oldAge=AGE[i];old=i;}
+        }
+        if(count>=MAX_CACHE&&old>=0){CACHE[old]=null;AGE[old]=0;}
+        try{CACHE[sp]=new RawAtlas(sp);AGE[sp]=++clock;}
+        catch(Exception e){FAILED[sp]=true;return null;}
         return CACHE[sp];
     }
 

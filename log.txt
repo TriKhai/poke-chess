@@ -86,6 +86,8 @@ v1.3.1
 - Hotfix save/UI: Cài đặt có Chơi lại từ đầu với bước xác nhận, xóa tiến độ,
   run đang lưu và lịch sử; Lịch sử đấu đổi thành mỗi run một hàng gồm kết quả,
   tên chế độ, HP, vàng và 9 avatar đội hình cuối.
+- Hotfix Lịch sử: avatar đội hình tăng lên 20px, danh sách tự cuộn; kết quả thắng
+  đổi thành Nhà Vô Địch màu vàng, kết quả thua đổi thành Kẻ bại trận màu đỏ.
 - Loại cấp phát mảng synergy/family lặp lại trong luồng paint và điều khiển Battle,
   giảm giật do garbage collector trên thiết bị RAM thấp.
 - Màn tổng kết dùng đúng quy tắc mỗi family tiến hóa chỉ đóng góp hệ một lần.

@@ -239,6 +239,10 @@ v1.3.8 - Tiến trình offline và UX hoàn chỉnh
   khung chọn avatar đồng bộ với model đang được điều khiển trên map.
 - Farm Pet tái sử dụng species skill VFX từ trận cờ: khi hai bên đủ năng lượng/tung
   skill sẽ có projectile màu hệ, animation kỹ năng tại mục tiêu và hiện tên skill.
+- Farm Pet đồng bộ renderer skill với Battle: attack sprite màu hệ bay theo đường đạn,
+  vòng cast co/giãn, species VFX và tên chiêu. Pet tự cast khi đủ 100 MP như cờ.
+- Phím * đổi tốc độ Farm x1/x2/x4; toàn bộ spawn, di chuyển, đánh, hồi MP và VFX đều
+  chạy theo hệ số, đồng thời mức hiện ngay trên tiêu đề.
 
 Nội dung UX trong v1.3.8
 - History/tổng kết giữ bố cục responsive; đã hoàn thiện hướng dẫn điều khiển,

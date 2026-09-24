@@ -44,9 +44,10 @@ public final class Game extends GameCanvas implements Runnable {
 
     public synchronized void start() {
         if (running) return;
+        Thread next = new Thread(this);
+        thread = next;
         running = true;
-        thread = new Thread(this);
-        thread.start();
+        next.start();
     }
 
     public synchronized void stop() {
@@ -133,9 +134,12 @@ public final class Game extends GameCanvas implements Runnable {
     // ---- loop ----------------------------------------------------------
 
     public void run() {
+        Thread owner=Thread.currentThread();
         long last = System.currentTimeMillis();
         long fpsStart=last;int fpsFrames=0;
-        while (running) {
+        // A quick pause/resume may start a replacement before the old phone thread
+        // leaves sleep. Ownership prevents both loops from updating the same screen.
+        while (running&&thread==owner) {
             long now = System.currentTimeMillis();
             int dt = (int) (now - last);
             last = now;
@@ -173,5 +177,6 @@ public final class Game extends GameCanvas implements Runnable {
                 Thread.sleep(wait > 5 ? wait : 5);
             } catch (InterruptedException e) { }
         }
+        synchronized(this){if(thread==owner)thread=null;}
     }
 }

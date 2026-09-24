@@ -269,6 +269,17 @@ Nội dung UX trong v1.3.8
 - Rà toàn bộ Việt hóa/English, tên nút, mô tả dài, scroll, xác nhận thao tác nguy hiểm.
 - Chuẩn hóa phản hồi âm thanh/hình ảnh, trạng thái focus và điều khiển phím/cảm ứng.
 
+v1.3.9b - Device QA và release candidate (tối ưu RAM vòng hai)
+- Cache sprite fallback giới hạn 24 Pokémon, đồng thời giải phóng bản scale đi kèm.
+- Cache avatar Gen 1-3 giới hạn 24 family gần nhất và dọn đồng bộ các biến thể
+  16/20/22/24px để tránh giữ nhiều bản sao của cùng một portrait trong RAM.
+- Cache portrait Collection Gen 4-9 giới hạn 24 Pokémon gần nhất.
+- Cache hiệu ứng kỹ năng riêng theo species giới hạn 10 hiệu ứng gần nhất.
+- Các cache dùng LRU và vẫn ghi nhớ asset thực sự bị thiếu, tránh tải lỗi lặp lại.
+- Game loop có kiểm tra quyền sở hữu thread khi pause; resume nhanh
+  không thể để loop cũ và loop mới cùng update/paint một màn hình.
+- PAC-Build đổi thành 1.3.9b; MIDlet-Version tiếp tục giữ 1.3.9 để tương thích Nokia.
+
 v1.3.9a - Device QA và release candidate (bản tối ưu đầu tiên)
 - Giới hạn cache raw animation Battle/Map/Farm còn tối đa 8 Pokémon gần nhất.
 - Giới hạn cache animation Gen 4-9 trong Collection còn tối đa 6 Pokémon gần nhất.

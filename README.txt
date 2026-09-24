@@ -1,4 +1,4 @@
-POKE AUTO CHESS ME v1.3.9a (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
+POKE AUTO CHESS ME v1.3.9b (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
 =====================================================================
 
 CAU TRUC
@@ -14,6 +14,8 @@ CAU TRUC
   docs/CHI_SO_VA_TRANG_THAI_POKEMON.md  bang chu viet tat, chi so va trang thai combat
 
 PHIEN BAN
+  v1.3.9b: gioi han them cache sprite fallback, avatar, avatar Gen 4-9 va skill
+           rieng; giam dinh RAM khi cuon Collection va choi run dai.
   v1.3.9a: ban toi uu RAM dau tien; gioi han cache animation theo LRU va ghi nho
            asset thieu de Lite khong thu nap lai moi frame. MIDlet-Version 1.3.9.
   v1.3.7: Explore Hub, Farm Pet, Gacha, Bai Pokemon va Collection MAP 143 dungeon.

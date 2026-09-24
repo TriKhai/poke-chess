@@ -18,6 +18,9 @@ public final class Art {
     public static int fh = 12;
     private static Image[] png = new Image[Data.N];
     private static boolean[] tried = new boolean[Data.N];
+    private static int[] pngAge = new int[Data.N];
+    private static int pngClock;
+    private static final int PNG_CACHE_LIMIT=24;
     /** cache of the source image scaled to the size it was last drawn at */
     private static Image[] scl = new Image[Data.N];
     private static int[] sclS = new int[Data.N];
@@ -27,6 +30,9 @@ public final class Art {
     private static boolean[] statusTried = new boolean[CombatStatus.COUNT];
     private static Image[] speciesSkill = new Image[Data.MAX];
     private static boolean[] speciesSkillTried = new boolean[Data.MAX];
+    private static int[] speciesSkillAge = new int[Data.MAX];
+    private static int speciesSkillClock;
+    private static final int SPECIES_SKILL_CACHE_LIMIT=10;
     private static Image[] typeIcon = new Image[Data.NT];
     private static boolean[] typeIconTried = new boolean[Data.NT];
     private static Image[] uiIcon = new Image[12];
@@ -35,6 +41,9 @@ public final class Art {
     private static boolean[][] attackFxTried = new boolean[Data.NT][3];
     private static Image[] avatar = new Image[Data.N];
     private static boolean[] avatarTried = new boolean[Data.N];
+    private static int[] avatarAge = new int[Data.N];
+    private static int avatarClock;
+    private static final int AVATAR_CACHE_LIMIT=24;
     private static Image[] avatarMini = new Image[Data.N];
     private static Image[] avatarMiniGray = new Image[Data.N];
     private static Image[] avatarTiny = new Image[Data.N];
@@ -42,6 +51,9 @@ public final class Art {
     private static Image[] avatarHistory = new Image[Data.N];
     private static Image[] dexAvatar = new Image[CollectionDex.COUNT];
     private static boolean[] dexAvatarTried = new boolean[CollectionDex.COUNT];
+    private static int[] dexAvatarAge = new int[CollectionDex.COUNT];
+    private static int dexAvatarClock;
+    private static final int DEX_AVATAR_CACHE_LIMIT=24;
     private static Image[] itemIcon = new Image[ItemData.ID.length];
     private static boolean[] itemIconTried = new boolean[ItemData.ID.length];
     private static Image[] itemIconTiny = new Image[ItemData.ID.length];
@@ -234,10 +246,19 @@ public final class Art {
     // ---- creatures -------------------------------------------------------
 
     private static Image loadPng(int sp) {
+        if(png[sp]!=null){pngAge[sp]=++pngClock;return png[sp];}
         if (!tried[sp]) {
+            int count=0,old=-1,age=Integer.MAX_VALUE;
+            for(int i=0;i<png.length;i++)if(png[i]!=null){
+                count++;if(pngAge[i]<age){age=pngAge[i];old=i;}
+            }
+            if(count>=PNG_CACHE_LIMIT&&old>=0){
+                png[old]=null;scl[old]=null;sclS[old]=0;pngAge[old]=0;tried[old]=false;
+            }
             tried[sp] = true;
             try {
                 png[sp] = Image.createImage("/sp/" + sp + ".png");
+                pngAge[sp]=++pngClock;
             } catch (Exception e) {
                 png[sp] = null;
             }
@@ -416,9 +437,17 @@ public final class Art {
     /** Eight-frame ability animation selected by Pokemon, sourced from app.zip. */
     public static void speciesSkillSprite(Graphics g, int sp, int x, int y, int frame) {
         if (sp < 0 || sp >= Data.MAX) return;
+        if(speciesSkill[sp]!=null)speciesSkillAge[sp]=++speciesSkillClock;
         if (!speciesSkillTried[sp]) {
+            int count=0,old=-1,age=Integer.MAX_VALUE;
+            for(int i=0;i<speciesSkill.length;i++)if(speciesSkill[i]!=null){
+                count++;if(speciesSkillAge[i]<age){age=speciesSkillAge[i];old=i;}
+            }
+            if(count>=SPECIES_SKILL_CACHE_LIMIT&&old>=0){
+                speciesSkill[old]=null;speciesSkillAge[old]=0;speciesSkillTried[old]=false;
+            }
             speciesSkillTried[sp] = true;
-            try { speciesSkill[sp] = Image.createImage("/sfx/" + sp + ".png"); }
+            try { speciesSkill[sp] = Image.createImage("/sfx/" + sp + ".png");speciesSkillAge[sp]=++speciesSkillClock; }
             catch (Exception e) { speciesSkill[sp] = null; }
         }
         if (speciesSkill[sp] != null)
@@ -527,24 +556,35 @@ public final class Art {
         return true;
     }
 
-    public static void avatar(Graphics g, int sp, int x, int y) {
+    private static Image loadAvatar(int sp){
+        if(avatar[sp]!=null){avatarAge[sp]=++avatarClock;return avatar[sp];}
         if (!avatarTried[sp]) {
+            int count=0,old=-1,age=Integer.MAX_VALUE;
+            for(int i=0;i<avatar.length;i++)if(avatar[i]!=null){
+                count++;if(avatarAge[i]<age){age=avatarAge[i];old=i;}
+            }
+            if(count>=AVATAR_CACHE_LIMIT&&old>=0){
+                avatar[old]=null;avatarMini[old]=null;avatarMiniGray[old]=null;
+                avatarTiny[old]=null;avatarDock[old]=null;avatarHistory[old]=null;
+                avatarAge[old]=0;avatarTried[old]=false;
+            }
             avatarTried[sp] = true;
-            try { avatar[sp] = Image.createImage("/av/" + sp + ".png"); }
+            try { avatar[sp] = Image.createImage("/av/" + sp + ".png");avatarAge[sp]=++avatarClock; }
             catch (Exception e) { avatar[sp] = null; }
         }
-        if (avatar[sp] != null) g.drawImage(avatar[sp], x, y, TL);
+        return avatar[sp];
+    }
+
+    public static void avatar(Graphics g, int sp, int x, int y) {
+        Image im=loadAvatar(sp);
+        if (im != null) g.drawImage(im, x, y, TL);
         else sprite(g, sp, x, y, 32);
     }
 
     /** 20px cached portrait used by the compact 3x3 combat statistics panel. */
     public static void avatarMini(Graphics g,int sp,int x,int y){
         if(avatarMini[sp]==null){
-            if(!avatarTried[sp]){
-                avatarTried[sp]=true;
-                try{avatar[sp]=Image.createImage("/av/"+sp+".png");}catch(Exception e){avatar[sp]=null;}
-            }
-            Image im=avatar[sp];
+            Image im=loadAvatar(sp);
             if(im!=null)try{
                 int sw=im.getWidth(),sh=im.getHeight(),s=20;
                 int[] src=new int[sw*sh],dst=new int[s*s];
@@ -559,8 +599,7 @@ public final class Art {
     /** 22px portrait for the preparation equipment target row. */
     public static void avatarDock(Graphics g,int sp,int x,int y){
         if(avatarDock[sp]==null){
-            if(!avatarTried[sp]){avatarTried[sp]=true;try{avatar[sp]=Image.createImage("/av/"+sp+".png");}catch(Exception e){avatar[sp]=null;}}
-            Image im=avatar[sp];
+            Image im=loadAvatar(sp);
             if(im!=null)try{
                 int sw=im.getWidth(),sh=im.getHeight(),s=22;int[] src=new int[sw*sh],dst=new int[s*s];
                 im.getRGB(src,0,sw,0,0,sw,sh);
@@ -574,8 +613,7 @@ public final class Art {
     /** 24px portrait used by history rows on screens wide enough for nine slots. */
     public static void avatarHistory(Graphics g,int sp,int x,int y){
         if(avatarHistory[sp]==null){
-            if(!avatarTried[sp]){avatarTried[sp]=true;try{avatar[sp]=Image.createImage("/av/"+sp+".png");}catch(Exception e){avatar[sp]=null;}}
-            Image im=avatar[sp];
+            Image im=loadAvatar(sp);
             if(im!=null)try{
                 int sw=im.getWidth(),sh=im.getHeight(),s=24;int[] src=new int[sw*sh],dst=new int[s*s];
                 im.getRGB(src,0,sw,0,0,sw,sh);
@@ -589,9 +627,17 @@ public final class Art {
     /** Collection-only portrait for Gen 4-9; index belongs to CollectionDex, not Battle Data. */
     public static void dexAvatar(Graphics g,int index,int x,int y){
         if(index<0||index>=CollectionDex.COUNT)return;
+        if(dexAvatar[index]!=null)dexAvatarAge[index]=++dexAvatarClock;
         if(!dexAvatarTried[index]){
+            int count=0,old=-1,age=Integer.MAX_VALUE;
+            for(int i=0;i<dexAvatar.length;i++)if(dexAvatar[i]!=null){
+                count++;if(dexAvatarAge[i]<age){age=dexAvatarAge[i];old=i;}
+            }
+            if(count>=DEX_AVATAR_CACHE_LIMIT&&old>=0){
+                dexAvatar[old]=null;dexAvatarAge[old]=0;dexAvatarTried[old]=false;
+            }
             dexAvatarTried[index]=true;
-            try{dexAvatar[index]=Image.createImage("/dex/"+CollectionDex.DEX[index]+".png");}
+            try{dexAvatar[index]=Image.createImage("/dex/"+CollectionDex.DEX[index]+".png");dexAvatarAge[index]=++dexAvatarClock;}
             catch(Exception e){dexAvatar[index]=null;}
         }
         if(dexAvatar[index]!=null)g.drawImage(dexAvatar[index],x,y,TL);
@@ -617,11 +663,7 @@ public final class Art {
     /** 16px portrait for dense nine-row post-battle comparisons. */
     public static void avatarTiny(Graphics g,int sp,int x,int y){
         if(avatarTiny[sp]==null){
-            if(!avatarTried[sp]){
-                avatarTried[sp]=true;
-                try{avatar[sp]=Image.createImage("/av/"+sp+".png");}catch(Exception e){avatar[sp]=null;}
-            }
-            Image im=avatar[sp];
+            Image im=loadAvatar(sp);
             if(im!=null)try{
                 int sw=im.getWidth(),sh=im.getHeight(),s=16;
                 int[] src=new int[sw*sh],dst=new int[s*s];im.getRGB(src,0,sw,0,0,sw,sh);

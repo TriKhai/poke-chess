@@ -53,6 +53,9 @@ public final class ChessScreen extends Screen {
     /** Shared vertical choice card; first use is the five-round crafted-item reward. */
     private boolean rewardChoice=false;
     private int rewardChoiceSel=0;
+    private int rewardChoiceScroll=0;
+    private int choiceTouchX,choiceTouchY,choiceTouchW,choiceTouchH,choiceTouchTop,choiceTouchView;
+    private final int[] choiceTouchRows={0,0,0};
     private final int[] rewardChoiceIds={-1,-1,-1};
     private final int[] poolChoiceTypes={-1,-1,-1,-1,-1,-1,-1,-1,-1};
     private int rewardChoiceKind=0,postChoiceMask=0;
@@ -202,7 +205,7 @@ public final class ChessScreen extends Screen {
 
     private void ensureDraftChoice(){if(run.draftStage==0)openTypeChoice();else if(run.draftStage==1)openStarterChoice();}
 
-    private void openChoice(int kind){rewardChoiceKind=kind;rewardChoiceSel=0;rewardChoice=true;}
+    private void openChoice(int kind){rewardChoiceKind=kind;rewardChoiceSel=0;rewardChoiceScroll=0;rewardChoice=true;}
     private void openTypeChoice(){run.typePackageChoices(poolChoiceTypes);for(int i=0;i<3;i++)rewardChoiceIds[i]=i;openChoice(CH_TYPE);}
     private void openStarterChoice(){run.starterChoices(rewardChoiceIds);openChoice(CH_STARTER);}
     private void openRewardChoice(){run.craftedChoices(rewardChoiceIds);openChoice(CH_ITEM);}
@@ -233,11 +236,20 @@ public final class ChessScreen extends Screen {
         else if(k==Game.K_FIRE||k==Game.K_SOFT1){
             int id=rewardChoiceIds[rewardChoiceSel];
             if(rewardChoiceKind==CH_TYPE){run.choosePoolTypes(poolChoiceTypes,id*3);RunStorage.save(run);openStarterChoice();return;}
-            if(rewardChoiceKind==CH_STARTER){run.chooseStarter(id);rewardChoice=false;RunStorage.save(run);return;}
+            if(id<0){say(Lang.t("Lựa chọn này không hợp lệ","This choice is unavailable"));return;}
+            if(rewardChoiceKind==CH_STARTER){run.chooseStarter(id);rewardChoice=false;RunStorage.save(run);say(Lang.t("Đã chọn ","Selected ")+Data.name[id]);return;}
             if(rewardChoiceKind==CH_ITEM){run.giveItem(id);run.lastItem=id;}
-            else run.chooseAdditional(id);
+            else{run.chooseAdditional(id);say(Lang.t("Đã nhận ","Received ")+Data.name[id]);}
             rewardChoice=false;openNextPostChoice();
         }
+    }
+
+    public boolean pointer(int px,int py){
+        if(!rewardChoice)return false;
+        if(px<choiceTouchX||px>=choiceTouchX+choiceTouchW||py<choiceTouchTop||py>=choiceTouchTop+choiceTouchView)return true;
+        int cy=py-choiceTouchTop+rewardChoiceScroll,at=0;
+        for(int i=0;i<3;i++){int bottom=at+choiceTouchRows[i];if(cy>=at&&cy<bottom){if(rewardChoiceSel==i)keyRewardChoice(Game.K_FIRE);else rewardChoiceSel=i;return true;}at=bottom;}
+        return true;
     }
 
     private void keyRefreshItems(int k){
@@ -1672,10 +1684,17 @@ public final class ChessScreen extends Screen {
 
     /** Reusable row-based choice presentation for items, starters, pools and Legendaries. */
     private void paintRewardChoice(Graphics g){
-        int W=game.W,H=game.H,fh=Art.fh,w=Math.min(W-12,286);
-        int desiredRow=rewardChoiceKind==CH_ITEM?fh*3+7:fh*4+7;
-        int chrome=fh*2+17,h=desiredRow*3+chrome;if(h>H-8)h=H-8;
-        int x=(W-w)/2,y=(H-h)/2,top=y+fh+8,footer=fh+6,rowH=(h-(top-y)-footer)/3;
+        int W=game.W,H=game.H,fh=Art.fh,w=Math.min(W-12,286),textW=w-55;
+        int[] rh={choiceRowHeight(0,textW),choiceRowHeight(1,textW),choiceRowHeight(2,textW)};
+        int content=rh[0]+rh[1]+rh[2],chrome=fh*2+17,h=content+chrome;if(h>H-8)h=H-8;
+        int x=(W-w)/2,y=(H-h)/2,top=y+fh+8,footer=fh+6,view=h-(top-y)-footer;
+        choiceTouchX=x;choiceTouchY=y;choiceTouchW=w;choiceTouchH=h;choiceTouchTop=top;choiceTouchView=view;
+        for(int i=0;i<3;i++)choiceTouchRows[i]=rh[i];
+        int selectedTop=rewardChoiceSel==0?0:(rewardChoiceSel==1?rh[0]:rh[0]+rh[1]);
+        int selectedBottom=selectedTop+rh[rewardChoiceSel];
+        if(selectedTop<rewardChoiceScroll)rewardChoiceScroll=selectedTop;
+        if(selectedBottom>rewardChoiceScroll+view)rewardChoiceScroll=selectedBottom-view;
+        int maxScroll=Math.max(0,content-view);if(rewardChoiceScroll>maxScroll)rewardChoiceScroll=maxScroll;if(rewardChoiceScroll<0)rewardChoiceScroll=0;
         Art.box(g,x,y,w,h,0x101830,0xFFD030);
         String title=rewardChoiceKind==CH_TYPE?Lang.t("CHỌN POOL HỆ","CHOOSE TYPE POOL"):
             (rewardChoiceKind==CH_STARTER?Lang.t("CHỌN POKÉMON KHỞI ĐẦU","CHOOSE A STARTER"):
@@ -1683,37 +1702,55 @@ public final class ChessScreen extends Screen {
             (rewardChoiceKind==CH_ADD?Lang.t("CHỌN FAMILY BỔ SUNG","CHOOSE AN EXTRA FAMILY"):
             (rewardChoiceKind==CH_UNIQUE?Lang.t("CHỌN UNIQUE","CHOOSE A UNIQUE"):Lang.t("CHỌN LEGENDARY","CHOOSE A LEGENDARY")))));
         Art.textBC(g,title,W/2,y+3,0xFFD030);
+        int oldX=g.getClipX(),oldY=g.getClipY(),oldW=g.getClipWidth(),oldH=g.getClipHeight();
+        g.setClip(x+3,top,w-6,view);
+        int ry=top-rewardChoiceScroll;
         for(int i=0;i<3;i++){
-            int ry=top+i*rowH,id=rewardChoiceIds[i];
+            int rowH=rh[i],id=rewardChoiceIds[i];
             g.setColor(i==rewardChoiceSel?0x405273:((i&1)==0?0x202B40:0x192338));
             g.fillRect(x+3,ry,w-6,rowH-2);
             if(i==rewardChoiceSel){g.setColor(0xFFE060);g.drawRect(x+3,ry,w-7,rowH-3);}
             if(rewardChoiceKind==CH_ITEM){
-                Art.itemIcon(g,id,x+7,ry+(rowH-24)/2);
+                Art.itemIcon(g,id,x+7,ry+5);
                 Art.textB(g,ItemData.name(id),x+36,ry+2,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
-                Art.para(g,ItemData.desc(id),x+36,ry+fh+2,w-43,0x9FB5CE,rowH>=44?2:1);
+                Art.para(g,"• "+ItemData.desc(id),x+36,ry+fh+2,w-43,0x9FB5CE,20);
             }else if(rewardChoiceKind==CH_TYPE){
                 int px=x+7;
                 for(int t=0;t<3;t++){int type=poolChoiceTypes[i*3+t];Art.typeIcon(g,type,px,ry+3);px+=18;}
                 int a=poolChoiceTypes[i*3],b=poolChoiceTypes[i*3+1],c=poolChoiceTypes[i*3+2];
                 Art.textB(g,Lang.typeName(a)+" / "+Lang.typeName(b)+" / "+Lang.typeName(c),x+62,ry+3,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
                 int by=ry+fh+4;
-                Art.textSmall(g,fitHud(Lang.typeName(a)+": "+Lang.synergyLongDesc(a),w-14),x+7,by,0xAFC8E0);
-                if(rowH>=fh*3+5)Art.textSmall(g,fitHud(Lang.typeName(b)+": "+Lang.synergyLongDesc(b),w-14),x+7,by+fh,0xAFC8E0);
-                if(rowH>=fh*4+3)Art.textSmall(g,fitHud(Lang.typeName(c)+": "+Lang.synergyLongDesc(c),w-14),x+7,by+fh*2,0xAFC8E0);
+                by=drawChoiceBullet(g,Lang.typeName(a)+": "+Lang.synergyLongDesc(a),x+7,by,w-14,0xAFC8E0);
+                by=drawChoiceBullet(g,Lang.typeName(b)+": "+Lang.synergyLongDesc(b),x+7,by,w-14,0xAFC8E0);
+                drawChoiceBullet(g,Lang.typeName(c)+": "+Lang.synergyLongDesc(c),x+7,by,w-14,0xAFC8E0);
             }else{
-                if(id>=0)Art.avatar(g,id,x+5,ry+Math.max(1,(rowH-34)/2));
+                if(id>=0)Art.avatar(g,id,x+5,ry+5);
                 String name=id>=0?Data.name[id]:"-";
                 Art.textB(g,name+"  ["+rarityVi(id)+"]",x+43,ry+1,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
                 if(id>=0){
                     Art.typeIcon(g,Data.t1[id],x+43,ry+fh+1);Art.typeIcon(g,Data.t2[id],x+59,ry+fh+1);
                     Art.textSmall(g,Lang.typeName(Data.t1[id])+" / "+Lang.typeName(Data.t2[id]),x+77,ry+fh+3,0x9FC5E0);
-                    if(rowH>=fh*3+4)Art.textSmall(g,"HP: "+Data.hp[id]+Lang.t("  Công: ","  ATK: ")+Data.atk[id]+Lang.t("  Thủ: ","  DEF: ")+Data.def[id]+Lang.t("  Kháng: ","  RES: ")+Data.speDef[id]+Lang.t("  Tốc: ","  SPD: ")+Data.speed[id],x+43,ry+fh*2+3,0xD5DEE8);
-                    if(rowH>=fh*4+2)Art.textSmall(g,fitHud(Lang.t("Tuyệt kỹ: ","Ultimate: ")+Lang.moveName(Data.skillName[id])+" - "+AbilityBehavior.description(id),w-50),x+43,ry+fh*3+3,0xA0FFA0);
+                    int py=ry+fh*2+3;
+                    py=drawChoiceBullet(g,"HP: "+Data.hp[id]+Lang.t("  Công: ","  ATK: ")+Data.atk[id]+Lang.t("  Thủ: ","  DEF: ")+Data.def[id]+Lang.t("  Kháng: ","  RES: ")+Data.speDef[id]+Lang.t("  Tốc: ","  SPD: ")+Data.speed[id],x+43,py,w-50,0xD5DEE8);
+                    drawChoiceBullet(g,Lang.t("Tuyệt kỹ: ","Ultimate: ")+Lang.moveName(Data.skillName[id])+" - "+AbilityBehavior.description(id),x+43,py,w-50,0xA0FFA0);
                 }
             }
+            ry+=rowH;
         }
+        g.setClip(oldX,oldY,oldW,oldH);
         Art.textSmallC(g,Lang.t("↑↓ chọn  •  FIRE xác nhận","↑↓ choose  •  FIRE confirm"),W/2,y+h-fh-3,0x90A8C8);
+    }
+
+    private int choiceRowHeight(int i,int textW){
+        int fh=Art.fh,id=rewardChoiceIds[i],lines=1;
+        if(rewardChoiceKind==CH_ITEM)lines+=Art.wrap("• "+ItemData.desc(id),textW,20).length;
+        else if(rewardChoiceKind==CH_TYPE){lines=1;for(int t=0;t<3;t++){int type=poolChoiceTypes[i*3+t];lines+=Art.wrap("• "+Lang.typeName(type)+": "+Lang.synergyLongDesc(type),textW+41,20).length;}}
+        else if(id>=0){String stats="• HP: "+Data.hp[id]+Lang.t("  Công: ","  ATK: ")+Data.atk[id]+Lang.t("  Thủ: ","  DEF: ")+Data.def[id]+Lang.t("  Kháng: ","  RES: ")+Data.speDef[id]+Lang.t("  Tốc: ","  SPD: ")+Data.speed[id];String skill="• "+Lang.t("Tuyệt kỹ: ","Ultimate: ")+Lang.moveName(Data.skillName[id])+" - "+AbilityBehavior.description(id);lines=2+Art.wrap(stats,textW,20).length+Art.wrap(skill,textW,20).length;}
+        int h=lines*fh+8;if(h<42)h=42;return h;
+    }
+
+    private int drawChoiceBullet(Graphics g,String value,int x,int y,int width,int color){
+        String[] lines=Art.wrap("• "+value,width,20);for(int i=0;i<lines.length;i++){Art.textSmall(g,lines[i],x,y,color);y+=Art.fh;}return y;
     }
 
     private String rarityVi(int sp){

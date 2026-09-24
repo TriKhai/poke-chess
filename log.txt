@@ -38,6 +38,13 @@ v1.4.4 - 40-Stage Road
 - Chỉ trận thắng mới nhận mảnh và mở lựa chọn phần thưởng. Trận thua chỉ nhận vàng
   thua, không nhận XP/mảnh/quà mốc, không tăng vòng và phải đấu lại đúng ải đó;
   kể cả thua ải cuối vẫn được thử lại nếu HP còn trên 0.
+- Sửa lại popup lần hai: bỏ hoàn toàn cắt chuỗi bằng dấu ba chấm. Mỗi mô tả được
+  word-wrap thành các bullet, chiều cao từng hàng tính từ số dòng thật; hàng kế
+  tiếp chỉ bắt đầu sau khi nội dung trước đã vẽ xong. Khi dài hơn màn hình, con
+  trỏ tự cuộn để đưa lựa chọn hiện tại vào vùng nhìn thấy.
+- Popup hỗ trợ click/chạm trực tiếp: chạm một hàng để chọn, chạm lại hàng đang sáng
+  để xác nhận. Phím 5/FIRE và phím mềm trái vẫn xác nhận như cũ; sau khi nhận
+  Pokémon có thông báo tên để người chơi biết thao tác đã thành công.
 
 v1.4.3 - Legendary Purchase Light Waves
 - Giữ nguyên 5 frame SPAWN khi mua pet. Nếu pet mua có category Legendary, cộng

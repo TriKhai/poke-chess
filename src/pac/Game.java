@@ -122,6 +122,7 @@ public final class Game extends GameCanvas implements Runnable {
 
     /** touch fallback: screen acts as a big d-pad, bottom-left = back. */
     protected void pointerPressed(int x, int y) {
+        if(screen!=null&&screen.pointer(x,y))return;
         int cx = W / 2, cy = H / 2;
         int dx = x - cx, dy = y - cy;
         if (x < W / 5 && y > H * 4 / 5) { push(K_SOFT2); return; }

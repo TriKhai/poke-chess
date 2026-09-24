@@ -18,4 +18,7 @@ public abstract class Screen {
 
     /** logical key, see Game.K_* */
     public abstract void key(int k);
+
+    /** Optional direct touch/click handling before the global d-pad fallback. */
+    public boolean pointer(int x,int y){return false;}
 }

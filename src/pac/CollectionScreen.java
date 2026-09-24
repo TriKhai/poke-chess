@@ -153,7 +153,7 @@ public final class CollectionScreen extends Screen {
             }
         } else {
             Art.text(g, Lang.t("Chưa được khám phá.", "Not discovered yet."), 4, dy + 3, 0x9090A0);
-            Art.text(g, Lang.t("Hãy bắt trong chế độ Khám phá!", "Catch it in Explore mode!"), 4, dy + fh + 3, 0x9090A0);
+            Art.text(g, Lang.t("Hãy bắt cóc trong chế độ Khám phá!", "Catch it in Explore mode!"), 4, dy + fh + 3, 0x9090A0);
         }
         Art.textR(g, Lang.t("FIRE chi tiết", "FIRE detail"), W - 3, fh+7, 0x80A8D0);
         Art.textSmallR(g,Lang.t("1/3: đổi thế hệ","1/3: change Gen"),W-3,H-fh-2,0x80A8D0);

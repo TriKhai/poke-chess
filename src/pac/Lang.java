@@ -23,7 +23,7 @@ public final class Lang {
     public static String[] menu() {
         return Save.language == EN
             ? new String[] { "Explore & Catch", "Auto Chess Run", "Collection", "My Profile", "Settings", "Help", "About", "Exit" }
-            : new String[] { "Khám phá & Bắt", "Chơi AutoChess", "Bộ sưu tập", "Hồ sơ cá nhân", "Cài đặt", "Hướng dẫn", "Về game", "Thoát" };
+            : new String[] { "Khám phá và bắt cóc Pokémon", "Chơi AutoChess", "Bộ sưu tập", "Hồ sơ cá nhân", "Cài đặt", "Hướng dẫn", "Về game", "Thoát" };
     }
 
     private static final String[] TYPE_VI = {"Thường","Lửa","Nước","Cỏ","Điện","Đá","Tâm linh","Chiến đấu","Bay","Rồng","Ma","Bọ","Độc","Đất","Băng","Bóng tối","Thép","Tiên","Vô định hình","Thủy sinh","Nhân tạo","Trẻ nhỏ","Đồng cỏ","Thực vật","Hóa thạch","Ẩm thực","Con người","Ánh sáng","Quái thú","Âm thanh","Hoang dã"};
@@ -192,7 +192,7 @@ public final class Lang {
           + "MODE 2 - AUTO CHESS: Buy Pokemon from the shop, move them to the board (cursor + FIRE), then press GO. Units fight automatically. 3 identical Pokemon merge and evolve. Units of the same type grant synergy bonuses. Board size equals your level. Interest: +1 gold per 10 saved (max 5). Survive 20 rounds.\n"
           + "KEYS: 1 Reroll, 3 Buy XP, 7 Sell, 9 Fight, * Synergies, # Item bag on selected Pokemon, 0/right softkey Back. In battle the 3x3 panel is always visible: 1/3 changes metric, 7 changes side, arrows select, FIRE opens details, * changes speed and 9 skips.";
         return
-            "CHẾ ĐỘ 1 - KHÁM PHÁ: Di chuyển bằng phím hướng (2/4/6/8). Pokemon hoang dã đi lại trên bản đồ. Đứng cạnh chúng và nhấn FIRE (5) để ném bóng, sau đó nhấn FIRE khi kim nằm trong vùng xanh. Pokemon càng hiếm thì vùng xanh càng nhỏ. Bắt được Pokemon sẽ mở cả chuỗi tiến hóa trong Auto Chess. Bóng hồi chậm theo thời gian và cũng là phần thưởng Auto Chess.\n"
+            "CHẾ ĐỘ 1 - KHÁM PHÁ VÀ BẮT CÓC POKÉMON: Di chuyển bằng phím hướng (2/4/6/8). Pokémon hoang dã đi lại trên bản đồ. Đứng cạnh chúng và nhấn FIRE (5) để ném bóng, sau đó nhấn FIRE khi kim nằm trong vùng xanh. Pokémon càng hiếm thì vùng xanh càng nhỏ. Bắt được Pokémon sẽ mở cả chuỗi tiến hóa trong Auto Chess. Bóng hồi chậm theo thời gian và cũng là phần thưởng Auto Chess.\n"
           + "CHẾ ĐỘ 2 - AUTO CHESS: Mua Pokemon trong cửa hàng, đưa lên bàn bằng con trỏ + FIRE rồi nhấn GO. Các đơn vị tự chiến đấu. 3 Pokemon giống nhau sẽ hợp nhất và tiến hóa. Pokemon cùng hệ tạo cộng hưởng. Số ô được triển khai bằng cấp người chơi. Mỗi 10 vàng giữ lại nhận thêm 1 vàng lãi, tối đa 5. Hãy sống sót qua 20 vòng.\n"
           + "PHÍM: 1 Đổi shop, 3 Mua XP, 7 Bán, 9 Chiến đấu, * Cộng hưởng, # mở túi đồ trên Pokemon đang chọn, 0/phím phải Quay lại. Trong trận, bảng 3x3 luôn hiện: 1/3 đổi chỉ số, 7 đổi phe, phím hướng chọn pet, FIRE xem chi tiết, * đổi tốc độ và 9 bỏ qua.";
     }

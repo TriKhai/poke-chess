@@ -229,6 +229,8 @@ v1.3.8 - Tiến trình offline và UX hoàn chỉnh
 - Farm có ba nút Thay pet/Xác nhận-Tung kỹ năng/Tổng kết. Mỗi 5 KO đổi 1 Bóng,
   phần dư bỏ; pet gục tự tổng kết và hỏi Đi tiếp hoặc Thoát. Thưởng không ảnh hưởng
   tiến trình các mode chiến đấu khác. Lite có sprite fallback khi thiếu raw atlas.
+- Đổi tên hiển thị mode đầu thành “Khám phá và bắt cóc Pokémon” ở menu chính,
+  Explore Hub, hướng dẫn và lời nhắc trong Collection.
 
 Nội dung UX trong v1.3.8
 - History/tổng kết giữ bố cục responsive; đã hoàn thiện hướng dẫn điều khiển,

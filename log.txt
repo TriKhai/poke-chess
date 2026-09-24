@@ -14,6 +14,8 @@ v1.4.3 - Legendary Purchase Light Waves
   hàng chờ và battle mà không nạp/loại ảnh mỗi frame; avatar cache 24 -> 96 để
   roll shop ít đọc lại PNG. Cấp tiến hóa được tính sẵn một lần thay vì quét 386 pet
   cho từng model ở từng frame. Không cắt animation hay hiệu ứng.
+- Khi trận kết thúc, toàn bộ Pokémon thuộc phe thắng phát animation VICTORY theo
+  hướng DOWN-LEFT về phía người xem, thay vì giữ hướng của mục tiêu cuối cùng.
 
 v1.4.2 - Evolution Visual Effects
 - Bám trực tiếp mergeCopies/mergeAll để phát hiệu ứng đúng vị trí pet vừa tiến hóa,

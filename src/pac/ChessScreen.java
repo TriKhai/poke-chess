@@ -1163,10 +1163,12 @@ public final class ChessScreen extends Screen {
                 (u.attack > 0 || u.cast > 0 ? RawAtlas.ATTACK :
                 ((bt.over && bt.winner == u.side) ? RawAtlas.VICTORY :
                 (u.state == Unit.MOVING ? RawAtlas.WALK : RawAtlas.IDLE)));
-            boolean raw=RawAtlas.bounds(u.sp,ax,ay,vw,vh,animState,u.facing,animFrame,spriteBounds);
+            // Winners stop facing their last target and celebrate toward the viewer.
+            int renderFacing=(bt.over&&bt.winner==u.side)?7:u.facing; // 7 = DOWN-LEFT
+            boolean raw=RawAtlas.bounds(u.sp,ax,ay,vw,vh,animState,renderFacing,animFrame,spriteBounds);
             int bodyX=raw?spriteBounds[0]:ax,bodyY=raw?spriteBounds[1]:ay;
             int bodyW=raw?spriteBounds[2]:vw,bodyH=raw?spriteBounds[3]:vh;
-            Art.battleSprite(g, u.sp, ax, ay, animFrame, animState, u.facing);
+            Art.battleSprite(g, u.sp, ax, ay, animFrame, animState, renderFacing);
             // Status icons are intentionally kept off the board. The upcoming
             // bottom inspector owns status names/timers so Pokemon stay readable.
             // team marker

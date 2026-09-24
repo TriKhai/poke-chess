@@ -22,7 +22,7 @@ public final class WorldScreen extends Screen {
     private int wn = 0;
 
     private final Rng rng;
-    private int acc = 0, tick = 0, time = 0;
+    private int acc = 0, tick = 0, time = 0,playerDir=0,playerWalk=0;
     private String hud = "";
     private int hudT = 0;
 
@@ -160,6 +160,7 @@ public final class WorldScreen extends Screen {
 
     public void update(int dt) {
         time += dt;
+        if(playerWalk>0)playerWalk-=dt;
         if (hudT > 0) hudT -= dt;
         acc += dt;
         while (acc >= 200) {
@@ -180,7 +181,7 @@ public final class WorldScreen extends Screen {
     private void tryMove(int dx, int dy) {
         int nx = px + dx, ny = py + dy;
         if (walkable(nx, ny) && wildAt(nx, ny) < 0) {
-            px = nx; py = ny;
+            px = nx; py = ny;playerDir=dx>0?2:(dx<0?6:(dy<0?4:0));playerWalk=260;
         }
     }
 
@@ -316,16 +317,9 @@ public final class WorldScreen extends Screen {
             }
         }
 
-        // player
+        // Profile Pokemon is the player's exploration actor.
         int sx = px * ts - camX, sy = py * ts - camY;
-        g.setColor(0x2050C0);
-        g.fillRect(sx + ts / 4, sy + ts / 2, ts / 2, ts / 2 - 1);
-        g.setColor(0xF0C090);
-        g.fillArc(sx + ts / 4, sy + ts / 6, ts / 2, ts / 2, 0, 360);
-        g.setColor(0xD02020);
-        g.fillRect(sx + ts / 4, sy + ts / 6, ts / 2, ts / 5);
-        g.setColor(0x000000);
-        g.drawRect(sx + ts / 4, sy + ts / 6, ts / 2 - 1, ts - ts / 6 - 2);
+        drawProfilePokemon(g,sx,sy,ts);
 
         // HUD
         g.setColor(0x101820);
@@ -341,4 +335,5 @@ public final class WorldScreen extends Screen {
         else bottom = "Find wild Pokemon!   0: menu";
         Art.text(g, bottom, 3, H - fh - 1, near >= 0 && hudT <= 0 ? 0xFFE060 : 0xE0E8FF);
     }
+    private void drawProfilePokemon(Graphics g,int x,int y,int size){int dex=Save.profileAvatarDex,action=playerWalk>0?RawAtlas.WALK:RawAtlas.IDLE,box=Math.max(32,size+12),bx=x-(box-size)/2,by=y-(box-size);if(dex<=Data.N){int sp=dex-1;if(!RawAtlas.draw(g,sp,bx,by,box,box,action,playerDir,time/90))Art.sprite(g,sp,x,y,size);}else{int di=-1;for(int i=0;i<CollectionDex.COUNT;i++)if(CollectionDex.DEX[i]==dex){di=i;break;}if(di<0||!CollectionAtlas.draw(g,di,bx,by,box,box,action,playerDir,time/90))if(di>=0)Art.dexAvatar(g,di,x+(size-32)/2,y+(size-32)/2);}}
 }

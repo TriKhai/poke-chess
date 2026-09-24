@@ -9,13 +9,17 @@ public final class GachaScreen extends Screen{
     private final Rng rng=new Rng((int)System.currentTimeMillis());
     private final int group;
     private final int[] featured;
-    private int state=0,time=0,lastDex=-1;private boolean lastNew,lastPity;private String msg="";
+    private int state=0,time=0,lastDex=-1;private boolean lastNew,lastPity,help,autoRoll;private String msg="";
     public GachaScreen(Game g){super(g);group=GachaRules.todayGroup();featured=GachaRules.dailyFeaturedLegendaries(group,5);}
-    public void update(int dt){time+=dt;if(state==1&&time>=2200)resolve();}
+    public void update(int dt){if(help)return;time+=dt;if(state==1&&time>=2200)resolve();else if(autoRoll&&state==2&&time>=650)startRoll();}
     public void key(int k){
+        if(help){if(k==Game.K_STAR||k==Game.K_0||k==Game.K_SOFT2||k==Game.K_FIRE||k==Game.K_SOFT1)help=false;return;}
+        if(k==Game.K_STAR){help=true;return;}
+        if(k==Game.K_POUND){autoRoll=!autoRoll;if(autoRoll&&state!=1)startRoll();else if(!autoRoll)msg=Lang.t("Đã tắt tự động quay","Auto-roll stopped");return;}
         if(k==Game.K_0||k==Game.K_SOFT2){if(state!=1)game.setScreen(new ExploreHubScreen(game));return;}
-        if((k==Game.K_FIRE||k==Game.K_SOFT1)&&state!=1){if(Save.balls<=0){msg=Lang.t("Không đủ Bóng!","Not enough Balls!");state=2;return;}Save.balls--;Save.save();state=1;time=0;lastDex=-1;msg="";}
+        if((k==Game.K_FIRE||k==Game.K_SOFT1)&&state!=1)startRoll();
     }
+    private void startRoll(){if(state==1)return;if(Save.balls<=0){autoRoll=false;msg=Lang.t("Hết Bóng - đã dừng tự động quay","Out of Balls - auto-roll stopped");state=2;return;}Save.balls--;Save.save();state=1;time=0;lastDex=-1;msg="";}
     private void resolve(){
         int candidate=GachaRules.pick(rng,group,false);boolean candidateNew=!Save.ownsDex(candidate);int gain=candidateNew?1:2;
         lastPity=Save.gachaPoints+gain>=100;lastDex=lastPity?GachaRules.pick(rng,group,true):candidate;
@@ -57,6 +61,7 @@ public final class GachaScreen extends Screen{
         int a=group==0?25:(group==1?387:(group==2?722:25)),b=group==0?150:(group==1?493:(group==2?810:387));
         if(!compact&&W>=220){drawPokemon(g,a,2,H-fh*4-24,40,36,RawAtlas.WALK,time/90);drawPokemon(g,b,W-42,H-fh*4-24,40,36,RawAtlas.WALK,time/90+2);}
         if(msg.length()>0)Art.textSmallC(g,msg,cx,H-fh*3-2,0xFFE070);
-        Art.textSmallC(g,state==1?Lang.t("Các hệ đang bị hút vào...","Types are being pulled in..."):Lang.t("FIRE: quay 1 Bóng   0: về","FIRE: draw 1 Ball   0: back"),cx,H-fh-1,0xD0D8F0);
+        Art.textSmallC(g,state==1?Lang.t("Các hệ đang bị hút vào...","Types are being pulled in..."):Lang.t("FIRE quay  * hướng dẫn  # tự động","FIRE draw  * help  # auto"),cx,H-fh-1,autoRoll?0x80FF90:0xD0D8F0);if(help)paintHelp(g);
     }
+    private void paintHelp(Graphics g){int W=game.W,H=game.H,fh=Art.fh,m=8,w=W-16,h=H-24,x=8,y=12;Art.box(g,x,y,w,h,0x101526,0xFFD060);Art.textBC(g,Lang.t("HƯỚNG DẪN GACHA","GACHA GUIDE"),W/2,y+4,0xFFD030);String s=Lang.t("Mỗi lượt tốn 1 Bóng. Pool đổi theo lịch Gen ghi trên màn hình. Pokémon mới: +1 điểm. Pokémon trùng: +2 điểm, không hoàn Bóng. Đủ 100 điểm: chắc chắn nhận Huyền thoại chưa sở hữu. Trúng Huyền thoại sớm sẽ đưa điểm về 0. Phím # bật tự động quay đến khi hết Bóng; nhấn # lần nữa để dừng.","Each draw costs 1 Ball. The Gen pool follows the schedule shown on screen. New Pokémon: +1 point. Duplicate: +2 points, no Ball refund. At 100 points: guaranteed unowned Legendary. An early Legendary resets points to 0. Press # to auto-roll until Balls run out; press # again to stop.");String[] lines=Art.wrap(s,w-2*m,30);int yy=y+fh+9;for(int i=0;i<lines.length&&yy<y+h-fh*2;i++){Art.textSmall(g,lines[i],x+m,yy,0xD8E4F2);yy+=fh;}Art.textSmallC(g,Lang.t("*/FIRE/0: đóng","*/FIRE/0: close"),W/2,y+h-fh-2,0x80A8D0);}
 }

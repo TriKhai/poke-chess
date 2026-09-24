@@ -35,9 +35,9 @@ public final class ProfileScreen extends Screen {
         int W=game.W,H=game.H,fh=Art.fh;
         g.setColor(0x101827);g.fillRect(0,0,W,H);
         Art.textBC(g,Lang.t("HỒ SƠ CÁ NHÂN","MY PROFILE"),W/2,2,0xFFD030);
-        int modelY=fh+5,dex=Save.profileAvatarDex;
-        if(dex<=Data.N){int sp=dex-1,vw=Data.visualWidth(sp),vh=Data.visualHeight(sp);if(!RawAtlas.draw(g,sp,W/2-32,modelY,64,48,RawAtlas.WALK,7,anim/90))Art.battleSprite(g,sp,W/2-vw/2,modelY,anim/90,RawAtlas.WALK,7);modelY+=Math.max(vh,42);}
-        else{int di=dexCollectionIndex(dex);if(di>=0&&!CollectionAtlas.draw(g,di,W/2-32,modelY,64,48,RawAtlas.WALK,7,anim/90))Art.dexAvatar(g,di,W/2-16,modelY+8);modelY+=50;}
+        int modelY=fh+5,dex=Save.profileAvatarDex,groupX=W/2-50;drawProfileAvatar(g,dex,groupX,modelY+8);
+        if(dex<=Data.N){int sp=dex-1,vw=Data.visualWidth(sp),vh=Data.visualHeight(sp);if(!RawAtlas.draw(g,sp,groupX+36,modelY,64,48,RawAtlas.WALK,7,anim/90))Art.battleSprite(g,sp,groupX+68-vw/2,modelY,anim/90,RawAtlas.WALK,7);modelY+=Math.max(vh,42);}
+        else{int di=dexCollectionIndex(dex);if(di>=0&&!CollectionAtlas.draw(g,di,groupX+36,modelY,64,48,RawAtlas.WALK,7,anim/90))Art.dexAvatar(g,di,groupX+52,modelY+8);modelY+=50;}
         Art.textBC(g,Save.displayName(),W/2,modelY,0xFFFFFF);modelY+=fh+1;
         if(Save.profileName.length()==0)Art.textSmallC(g,Lang.t("#: đặt tên một lần","#: set name once"),W/2,modelY,0x80D8FF);
         else Art.textSmallC(g,Lang.t("Tên đã được xác nhận","Name confirmed"),W/2,modelY,0x708098);
@@ -62,4 +62,5 @@ public final class ProfileScreen extends Screen {
         Art.textSmallC(g,label+"  #"+current,W/2,H-fh*2,Save.ownsDex(current)?0xFFFFFF:0x788398);
         Art.textSmallC(g,Lang.t("1/3: Gen  FIRE: chọn  0: về","1/3: Gen  FIRE: choose  0: back"),W/2,H-fh-1,0x80A8D0);
     }
+    private void drawProfileAvatar(Graphics g,int dex,int x,int y){g.setColor(0x26354D);g.fillRect(x-2,y-2,36,36);g.setColor(0x60D8FF);g.drawRect(x-2,y-2,35,35);if(dex<=Data.N)Art.avatar(g,dex-1,x,y);else{int di=dexCollectionIndex(dex);if(di>=0)Art.dexAvatar(g,di,x,y);}}
 }

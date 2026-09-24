@@ -251,6 +251,10 @@ v1.3.8 - Tiến trình offline và UX hoàn chỉnh
   bắt đầu tạo Bóng; chưa hết đếm ngược thì không thể mở, thay hoặc gỡ pet.
 - Footer hiện tổng Bóng/giờ, thưởng đang nhận được, ba avatar và nút khóa/countdown.
   Save schema v9 lưu lockUntil/claimAt từng slot, giữ phần phút lẻ khi nhận thưởng.
+- Gacha: phím * mở popup hướng dẫn lịch pool, điểm mới/trùng, pity 100 và reset
+  Huyền thoại; phím # bật/tắt auto-roll, tự dừng an toàn khi hết Bóng.
+- Hồ sơ hiển thị avatar viền xanh cạnh model Pokémon đang chọn. Mode Khám phá và
+  bắt cóc Pokémon dùng chính model Hồ sơ làm nhân vật, có IDLE/WALK và đúng 4 hướng.
 
 Nội dung UX trong v1.3.8
 - History/tổng kết giữ bố cục responsive; đã hoàn thiện hướng dẫn điều khiển,

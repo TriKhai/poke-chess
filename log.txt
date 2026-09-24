@@ -107,6 +107,11 @@ v1.3.2 - Collection Gen 1-9
 - Source hiện có 944 National Dex: Gen4 107, Gen5 135, Gen6 68, Gen7 80,
   Gen8 83, Gen9 85; không tự tạo dữ liệu/portrait cho entry source còn thiếu.
 - Nâng MIDlet-Version lên 1.3.2 và khóa số lượng từng Gen bằng regression.
+- Hotfix Collection: dời hướng dẫn đổi Gen khỏi header để không đè chữ.
+- Bản Full đóng gói 558 atlas animation gốc Gen 4-9 và cho xem 6 clip/8 hướng
+  trong chi tiết Collection; bản Lite chỉ giữ portrait và fallback tĩnh.
+- Kích thước sau build: Full 27.843.189 byte, Lite 2.910.513 byte. So với Full
+  portrait-only 13.170.164 byte, animation làm tăng 14.673.025 byte (~14,0 MiB).
 
 v1.3.3 - Responsive UI
 - Chia layout thành Compact, Standard và Large/Landscape; hỗ trợ tối thiểu

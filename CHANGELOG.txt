@@ -4,6 +4,9 @@ POKE AUTO CHESS ME - OFFLINE REMAKE UPDATE
 Collection generations (v1.3.2)
 - Collection now filters Pokemon by Generation 1 through 9 with keys 1/3.
 - Added 558 source-backed Gen 4-9 entries and 32px portraits.
+- Full includes 558 original animation atlases with six clips and eight directions;
+  Lite excludes them and falls back to the static portrait.
+- Moved the generation shortcut to the footer so it no longer overlaps the header count.
 - Gen 4-9 are collection-only and cannot enter shop, pools, teams, AI or Battle.
 - Battle Data.N deliberately remains 386 for deterministic Gen 1-3 compatibility.
 

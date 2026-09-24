@@ -11,6 +11,7 @@ public final class CollectionScreen extends Screen {
     private boolean detail = false;
     private boolean itemDetail = false;
     private boolean dexDetail = false;
+    private int dexAction = 0;
     private int animTime = 0, previewState = 0, previewDir = 0;
     private int previewStatus = 0, previewAttackKind = 1;
     private static final String[] CLIP = { "IDLE", "ATTACK", "VICTORY" };
@@ -18,6 +19,7 @@ public final class CollectionScreen extends Screen {
             "CONFUSION", "CURSE", "FATIGUE", "FLINCH", "FREEZE", "LOCKED",
             "PARALYSIS", "POISON", "PROTECT", "SILENCE", "SLEEP", "WOUND" };
     private static final String[] DIR = { "DOWN", "DOWN-R", "RIGHT", "UP-R", "UP", "UP-L", "LEFT", "DOWN-L" };
+    private static final String[] DEX_CLIP = { "IDLE", "WALK", "ATTACK", "HOP", "HURT", "POSE" };
 
     public CollectionScreen(Game g) {
         super(g);
@@ -26,7 +28,14 @@ public final class CollectionScreen extends Screen {
     public void update(int dt) { animTime += dt; }
 
     public void key(int k) {
-        if(dexDetail){if(k==Game.K_FIRE||k==Game.K_SOFT1||k==Game.K_SOFT2||k==Game.K_0)dexDetail=false;return;}
+        if(dexDetail){
+            if(k==Game.K_LEFT)previewDir=(previewDir+7)&7;
+            else if(k==Game.K_RIGHT)previewDir=(previewDir+1)&7;
+            else if(k==Game.K_UP)dexAction=(dexAction+5)%6;
+            else if(k==Game.K_DOWN)dexAction=(dexAction+1)%6;
+            else if(k==Game.K_FIRE||k==Game.K_SOFT1||k==Game.K_SOFT2||k==Game.K_0)dexDetail=false;
+            return;
+        }
         if(itemDetail){
             if(k==Game.K_FIRE||k==Game.K_SOFT1||k==Game.K_SOFT2||k==Game.K_0)itemDetail=false;
             return;
@@ -83,7 +92,6 @@ public final class CollectionScreen extends Screen {
         if(tab==3){paintStatuses(g);return;}
         int count=pokemonCount();
         Art.textB(g,Lang.t("THẾ HỆ ","GEN ")+generation+"  "+count,4,fh+7,0xFFD030);
-        Art.textSmallR(g,Lang.t("1/3 đổi thế hệ","1/3 change Gen"),W-3,fh+8,0x80A8D0);
 
         int rowH = 34;
         int detailMinH = fh * 5 + 6;
@@ -138,6 +146,7 @@ public final class CollectionScreen extends Screen {
             Art.text(g, Lang.t("Hãy bắt trong chế độ Khám phá!", "Catch it in Explore mode!"), 4, dy + fh + 3, 0x9090A0);
         }
         Art.textR(g, Lang.t("FIRE chi tiết", "FIRE detail"), W - 3, fh+7, 0x80A8D0);
+        Art.textSmallR(g,Lang.t("1/3: đổi thế hệ","1/3: change Gen"),W-3,H-fh-2,0x80A8D0);
     }
 
     private void changeGeneration(int d){generation+=d;if(generation<1)generation=9;if(generation>9)generation=1;sel=0;top=0;}
@@ -149,15 +158,19 @@ public final class CollectionScreen extends Screen {
     private int currentDex(){return dexAt(sel);}
 
     private void paintDexDetail(Graphics g){
-        int W=game.W,H=game.H,fh=Art.fh,di=currentDex();
+        int W=game.W,H=game.H,fh=Art.fh,di=currentDex(),frame=animTime/70;
         g.setColor(0x08111E);g.fillRect(0,0,W,H);Art.box(g,3,3,W-6,H-6,0x101830,0xFFD030);
-        Art.textBC(g,"#"+CollectionDex.DEX[di]+" "+CollectionDex.NAME[di],W/2,7,0xFFFFFF);
-        int y=fh+14;Art.dexAvatar(g,di,W/2-16,y);y+=36;
+        Art.textSmallC(g,"#"+CollectionDex.DEX[di]+" "+CollectionDex.NAME[di],W/2,7,0xFFFFFF);
+        int y=fh+12,boxW=Math.min(88,W-16),boxH=Math.min(76,H/3),bx=(W-boxW)/2;
+        g.setColor(0x172438);g.fillRect(bx,y,boxW,boxH);
+        if(!CollectionAtlas.draw(g,di,bx,y,boxW,boxH,dexAction,previewDir,frame))Art.dexAvatar(g,di,W/2-16,y+(boxH-32)/2);
+        y+=boxH+2;
+        Art.textSmallC(g,DEX_CLIP[dexAction]+"  "+DIR[previewDir],W/2,y,0xA0E8FF);y+=fh+2;
         int x=W/2-18;Art.typeIcon(g,CollectionDex.T1[di],x,y);if(CollectionDex.T2[di]>=0)Art.typeIcon(g,CollectionDex.T2[di],x+20,y);y+=20;
         Art.textC(g,Lang.t("Thế hệ ","Generation ")+CollectionDex.GEN[di]+" - "+CollectionDex.CATEGORY[di],W/2,y,0x80D8FF);y+=fh+5;
         Art.textC(g,Lang.t("POKEMON CHỈ TRONG BỘ SƯU TẬP","COLLECTION-ONLY POKEMON"),W/2,y,0xFFD060);y+=fh+3;
-        Art.para(g,Lang.t("Chưa được đưa vào shop, đội hình, AI hoặc Battle.","Not included in shop, teams, AI or Battle yet."),8,y,W-16,0xB8C8D8,3);
-        Art.textC(g,Lang.t("FIRE / 0: đóng","FIRE / 0: close"),W/2,H-fh-5,0x8090B0);
+        Art.textSmallC(g,Lang.t("Chưa vào shop, AI hoặc Battle","Not in shop, AI or Battle"),W/2,y,0xB8C8D8);
+        Art.textSmallC(g,Lang.t("2/8 animation  4/6 hướng  FIRE đóng","2/8 animation  4/6 direction  FIRE close"),W/2,H-fh-5,0x8090B0);
     }
 
     private void paintTabs(Graphics g){

@@ -200,6 +200,17 @@ public final class Battle {
         }
     }
 
+    /** Remove combat-only frames once simulation stops so the result pose is clean. */
+    public void clearTransientVisuals(){
+        for(int i=0;i<MAXFX;i++)fxTtl[i]=0;
+        for(int i=0;i<MAXSHOT;i++)shotTtl[i]=0;
+        for(int i=0;i<MAXSKILLFX;i++){skillFxTtl[i]=0;skillFxAge[i]=0;}
+        for(int i=0;i<MAXBOARDFX;i++)boardFxTtl[i]=0;
+        for(int i=0;i<n;i++){
+            Unit u=units[i];u.hit=0;u.cast=0;u.attack=0;u.moveLeft=0;
+        }
+    }
+
     private static int dist(Unit a, Unit b) {
         int dx = a.x - b.x; if (dx < 0) dx = -dx;
         int dy = a.y - b.y; if (dy < 0) dy = -dy;

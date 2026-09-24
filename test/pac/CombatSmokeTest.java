@@ -268,6 +268,13 @@ public final class CombatSmokeTest {
         for (int i = 0; i < 800 && !battle.over; i++) battle.step();
         check(battle.over, "battle did not terminate");
         check(battle.tick <= Battle.HARD_LIMIT, "battle exceeded hard limit");
+        battle.fxTtl[0]=3;battle.shotTtl[0]=3;battle.skillFxTtl[0]=3;battle.boardFxTtl[0]=3;
+        battle.units[0].hit=2;battle.units[0].cast=2;battle.units[0].attack=2;battle.units[0].moveLeft=2;
+        battle.clearTransientVisuals();
+        check(battle.fxTtl[0]==0&&battle.shotTtl[0]==0&&battle.skillFxTtl[0]==0&&battle.boardFxTtl[0]==0,
+              "battle-end effects were not cleared");
+        check(battle.units[0].hit==0&&battle.units[0].cast==0&&battle.units[0].attack==0&&battle.units[0].moveLeft==0,
+              "battle-end unit animation state was not cleared");
 
         for (int seed = 0; seed < 100; seed++) {
             for (int i = 0; i < 24; i++) { player[i] = -1; enemy[i] = -1; }

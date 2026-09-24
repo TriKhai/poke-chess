@@ -20,6 +20,7 @@ public final class ChessScreen extends Screen {
     private final FixedStepClock simClock=new FixedStepClock(TICK_MS);
     private int endT = 0, speed = 1;
     private boolean endReady = false;
+    private boolean battleEndVisualsCleared=false;
     private String toast = "";
     private int toastT = 0;
     private boolean showSyn = false;
@@ -101,6 +102,9 @@ public final class ChessScreen extends Screen {
                 while (simClock.ready() && !bt.over) {
                     simClock.consume();
                     bt.step();
+                }
+                if(bt.over&&!battleEndVisualsCleared){
+                    bt.clearTransientVisuals();battleEndVisualsCleared=true;
                 }
             } else {
                 endT += dt;
@@ -519,6 +523,7 @@ public final class ChessScreen extends Screen {
         simClock.reset();
         endT = 0;
         endReady = false;
+        battleEndVisualsCleared=false;
         state = BATTLE;
     }
 
@@ -1082,7 +1087,7 @@ public final class ChessScreen extends Screen {
             int uy = by + (u.py * 256 + (u.y - u.py) * moveFrac) * cs / 256;
             // The web game uses directional walk/attack clips. On MIDP we retain the
             // readable motion language with interpolation, idle bob and a short lunge.
-            int bob = ((bt.tick + i) & 3) == 0 ? -1 : 0;
+            int bob = (((visualTime/90) + i) & 3) == 0 ? -1 : 0;
             if (u.attack > 0) {
                 int power = u.attack == 3 ? 3 : (u.attack == 2 ? 2 : 1);
                 int dx = u.attackX - u.x, dy = u.attackY - u.y;

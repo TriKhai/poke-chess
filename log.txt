@@ -1,6 +1,12 @@
 POKE AUTO CHESS ME - VERSION LOG
 ================================
 
+v1.4.1 - Post-battle Visual Hotfix
+- Khi Battle vừa kết thúc, dọn damage text, projectile, skill FX, board FX và các
+  state hit/cast/attack/move còn sót; không để frame hiệu ứng cuối đứng trên sàn.
+- Idle bob ở màn kết quả dùng visual clock vẫn chạy sau khi simulation tick dừng.
+- Thêm regression xác nhận toàn bộ transient visual state được reset.
+
 v1.4.0 - Stable Offline Release
 - Đóng băng gameplay và save schema v9 từ baseline 1.3.9RC2.
 - Metadata Full/Lite đồng bộ MIDlet-Version và PAC-Build thành 1.4.0.

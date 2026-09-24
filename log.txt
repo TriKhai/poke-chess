@@ -277,6 +277,9 @@ v1.3.9RC2 - Formation selection và hiệu ứng mua pet
   620ms dưới chân theo tinh thần SPAWN animation của source gốc.
 - Hiệu ứng dùng primitive MIDP, không thêm PNG mới và không làm JAR phình đáng kể.
 - PAC-Build đổi thành 1.3.9RC2; không thay đổi gameplay hoặc save schema.
+- Hotfix RC2: thay burst primitive bằng nguyên 5 frame 32x32 của
+  only_tham_khao/assets/abilities{tps}/SPAWN. Viền chọn lấy alpha từ đúng raw-atlas
+  frame và transform đang hiển thị, sửa lỗi viền fallback lệch thành chấm vuông.
 
 v1.3.9RC - Release Candidate
 - Đóng băng gameplay và giữ nguyên toàn bộ animation/hiệu ứng hiện có.

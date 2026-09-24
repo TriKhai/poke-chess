@@ -36,6 +36,7 @@ public final class ReleaseArtifactTest {
             check(label.equals(a.getValue("PAC-Build")),"build label mismatch");
             check(entry(jar,"pac/PacMidlet.class")&&entry(jar,"icon.png"),"runtime entry missing");
             check(entry(jar,"sp/0.png")&&entry(jar,"av/0.png")&&entry(jar,"dex/1000.png"),"fallback art missing");
+            check(entry(jar,"fx/spawn/0.png")&&entry(jar,"fx/spawn/4.png"),"original SPAWN frames missing");
             if(lite){
                 check(!prefix(jar,"raw/")&&!prefix(jar,"dexraw/")&&!prefix(jar,"sfx/")&&!prefix(jar,"maps/"),
                       "Lite contains excluded heavy assets");

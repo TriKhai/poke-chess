@@ -63,6 +63,8 @@ public final class Art {
     /** One transient silhouette is enough: preparation has only one keyboard cursor. */
     private static Image selectionOutline;
     private static int selectionOutlineSp=-1,selectionOutlineSize=-1;
+    private static Image[] spawnFx=new Image[5];
+    private static boolean spawnFxTried;
     private static final int[] RARITY_COLOR={0xA0A0A0,0x3BC95E,0x41BFCC,0x927FFF,0xE53B3B,0xFFFFFF,0xE6CB49,0xE58EE5};
     private static final int TL = Graphics.TOP | Graphics.LEFT;
 
@@ -438,6 +440,7 @@ public final class Art {
     /** White one-pixel silhouette derived only for the currently selected Pokemon. */
     public static void formationSelection(Graphics g,int sp,int x,int y,int size,int color){
         formationCursor(g,x,y,size,color);
+        if(RawAtlas.drawFormationOutline(g,sp,x,y,size,size,Integer.MAX_VALUE,7,0,color))return;
         if(selectionOutlineSp!=sp||selectionOutlineSize!=size||selectionOutline==null){
             selectionOutline=null;Image im=scaled(sp,size);
             if(im!=null)try{
@@ -458,6 +461,17 @@ public final class Art {
             selectionOutlineSp=sp;selectionOutlineSize=size;
         }
         if(selectionOutline!=null)g.drawImage(selectionOutline,x,y,TL);
+    }
+
+    /** Original five-frame SPAWN animation from the source abilities atlas. */
+    public static void spawnFx(Graphics g,int x,int y,int elapsed){
+        if(!spawnFxTried){
+            spawnFxTried=true;
+            for(int i=0;i<spawnFx.length;i++)try{spawnFx[i]=Image.createImage("/fx/spawn/"+i+".png");}
+            catch(Exception e){spawnFx[i]=null;}
+        }
+        int frame=elapsed/110;if(frame<0)frame=0;if(frame>=spawnFx.length)frame=spawnFx.length-1;
+        if(spawnFx[frame]!=null)g.drawImage(spawnFx[frame],x,y,TL);
     }
 
     public static void skillSprite(Graphics g, int ability, int x, int y, int frame) {

@@ -605,7 +605,10 @@ public final class ChessScreen extends Screen {
             g.setColor(((c) & 1) == 0 ? 0x4A3A28 : 0x42341F);
             g.fillRect(x, y, cell, cell);
         }
-        if(benchSpawnT>0&&benchSpawnSlot>=0)drawBenchSpawnFx(g,bx+benchSpawnSlot*cell,benchY,cell);
+        if(benchSpawnT>0&&benchSpawnSlot>=0){
+            int fx=bx+benchSpawnSlot*cell+(cell-32)/2,fy=benchY+cell-30;
+            Art.spawnFx(g,fx,fy,620-benchSpawnT);
+        }
         // Pass 2: draw all units after all backgrounds. Lower rows are painted
         // later, giving large sprites a stable natural depth order.
         for (int r = 0; r < 3; r++) {
@@ -696,20 +699,6 @@ public final class ChessScreen extends Screen {
         int frame = visualTime / 90 + phase;
         Art.formationSprite(g,sp,x,y,size,size,game.W,frame);
         drawEvolutionDots(g,sp,x+2,y+size-3);
-    }
-
-    private void drawBenchSpawnFx(Graphics g,int x,int y,int size){
-        int age=620-benchSpawnT,p=age*256/620;
-        int cx=x+size/2,base=y+size-3;
-        int rw=Math.max(4,size*(40+p)/320),rh=Math.max(2,rw/3);
-        g.setColor(0x164D70);g.fillArc(cx-rw/2,base-rh/2,rw,rh,0,360);
-        g.setColor(p<150?0x56F0D0:0x45A8FF);g.drawArc(cx-rw/2,base-rh/2,rw,rh,0,360);
-        int ray=Math.max(2,size*(256-p)/512);
-        g.setColor(0x80FFF0);
-        g.drawLine(cx-rw/3,base,cx-rw/3-ray,base-ray);
-        g.drawLine(cx+rw/3,base,cx+rw/3+ray,base-ray);
-        g.drawLine(cx,base-rh/2,cx,base-rh/2-ray-1);
-        if(p<170){g.setColor(0x50C8FF);g.drawArc(cx-rw/3,base-rh,rw*2/3,rh*2,0,360);}
     }
 
     private int familyMaxTier(int sp){int max=1,f=Data.fam[sp];for(int i=0;i<Data.N;i++)if(Data.fam[i]==f&&Data.tier[i]>max)max=Data.tier[i];return max;}

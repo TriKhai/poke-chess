@@ -626,7 +626,7 @@ public final class ChessScreen extends Screen {
             int ex,ey;
             if(evolutionFxPos<Run.BOARD){ex=bx+(evolutionFxPos%8)*cell;ey=boardY+(evolutionFxPos/8)*cell;}
             else{ex=bx+(evolutionFxPos-Run.BOARD)*cell;ey=benchY;}
-            Art.evolutionFx(g,evolutionFxTier,ex+(cell-64)/2,ey+cell-58,840-evolutionFxT);
+            Art.evolutionFx(g,evolutionFxTier,ex+(cell-56)/2,ey+cell-51,840-evolutionFxT);
         }
         // Pass 2: draw all units after all backgrounds. Lower rows are painted
         // later, giving large sprites a stable natural depth order.

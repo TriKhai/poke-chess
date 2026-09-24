@@ -8,6 +8,8 @@ v1.4.2 - Evolution Visual Effects
   phối đỏ. Hiệu ứng nằm sau model, kéo dài 840ms và thay SPAWN nếu mua dẫn đến ghép.
 - Runtime chỉ giữ một frame EVOLUTION đang hiển thị trong RAM rồi giải phóng.
 - Release gate kiểm tra đủ frame đầu/cuối của cả biến thể vàng và đỏ.
+- Điều chỉnh thử nghiệm: thu canvas hiệu ứng từ 64x64 xuống 56x56 (nhỏ 12,5%),
+  giữ tâm theo ô cờ để bớt phủ sang pet bên cạnh.
 
 v1.4.1 - Post-battle Visual Hotfix
 - Khi Battle vừa kết thúc, dọn damage text, projectile, skill FX, board FX và các

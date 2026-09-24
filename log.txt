@@ -156,6 +156,12 @@ v1.3.6 - Gameplay/content parity
 - Audit toàn bộ ability behavior, item passive, trigger và passive Pokemon với source gốc.
 - Thay các behavior chung còn lại bằng luật riêng; hoàn thiện mô tả Collection.
 - Regression theo dữ liệu cho từng ability/item/passive đã port, không để hiệu ứng giả.
+- About đã thay placeholder bằng tuyên bố bản quyền, phi thương mại, credit Kdic,
+  keldaanCommunity và Cộng đồng Game Java Việt Nam; hỗ trợ wrap/scroll responsive.
+- Item debuff đi qua CombatStatus.apply để tôn trọng Safeguard thay vì gán trực tiếp.
+- Port passive source-backed cho Heracross/Guts, Zangoose/Toxic Boost,
+  Vigoroth, Psyduck/Golduck, Sudowoodo và Wobbuffet; mô tả hiện trong Collection.
+- Đồng bộ MIDlet-Version 1.3.6.
 
 v1.3.7 - AI, PvE và cân bằng
 - Cải thiện AI chọn mục tiêu, di chuyển, dùng kỹ năng và bố trí đội hình theo vòng.

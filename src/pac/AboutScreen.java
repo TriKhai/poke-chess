@@ -1,19 +1,12 @@
 package pac;
-
 import javax.microedition.lcdui.Graphics;
-
-/** Reserved community/about page; final copy will be supplied for v1.3.5. */
+import java.util.Vector;
+/** Fan-project credits and community message. */
 public final class AboutScreen extends Screen {
-    public AboutScreen(Game g){super(g);}
-    public void update(int dt){}
-    public void key(int k){if(k==Game.K_FIRE||k==Game.K_SOFT1||k==Game.K_SOFT2||k==Game.K_0)game.setScreen(new MenuScreen(game));}
-    public void paint(Graphics g){
-        int W=game.W,H=game.H,fh=Art.fh;g.setColor(0x101827);g.fillRect(0,0,W,H);
-        Art.textBC(g,Lang.t("VỀ GAME","ABOUT"),W/2,8,0xFFD030);
-        Art.textC(g,"POKE AUTO CHESS ME",W/2,fh*3,0xFFFFFF);
-        Art.textSmallC(g,Lang.t("Trang dành cho đôi lời gửi tới","A page reserved for a message to"),W/2,fh*5,0xB8C8E0);
-        Art.textSmallC(g,Lang.t("cộng đồng và người chơi.","the community and players."),W/2,fh*6,0xB8C8E0);
-        Art.textSmallC(g,Lang.t("Nội dung sẽ cập nhật ở v1.3.5.","Final text arrives in v1.3.5."),W/2,fh*8,0xFFE080);
-        Art.textC(g,Lang.t("FIRE / 0: quay lại","FIRE / 0: back"),W/2,H-fh-3,0x8090B0);
-    }
+ private String[] lines;private int scroll,wrappedWidth=-1;
+ public AboutScreen(Game g){super(g);}public void update(int dt){}
+ public void key(int k){if(k==Game.K_UP&&scroll>0)scroll--;else if(k==Game.K_DOWN)scroll++;else if(k==Game.K_FIRE||k==Game.K_SOFT1||k==Game.K_SOFT2||k==Game.K_0)game.setScreen(new MenuScreen(game));}
+ private String copy(){return Lang.t("Mọi quyền sở hữu Pokémon thuộc về The Pokémon Company. Dự án có thể ngừng phát triển hoặc phát hành bất cứ lúc nào theo yêu cầu của chủ sở hữu bản quyền.\n\nPoke Auto Chess phiên bản JAR là dự án fan-made do Kdic thực hiện, với sự đóng góp của Cộng đồng Game Java Việt Nam. Trò chơi được phát triển dựa trên mã nguồn mở Pokémon Auto Chess của keldaanCommunity.\n\nPhiên bản này hoàn toàn miễn phí, phi thương mại và không được phép mua bán dưới bất kỳ hình thức nào.\n\nCảm ơn cộng đồng và tất cả người chơi. Chúc các bạn có những giờ phút vui vẻ trên hành trình sưu tầm Pokémon!","All Pokémon rights belong to The Pokémon Company. This project may stop development or distribution at any time if requested by the rights holder.\n\nThe JAR edition of Poke Auto Chess is a non-commercial fan project created by Kdic with contributions from the Vietnam Java Game Community. It is based on the open-source Pokémon Auto Chess project by keldaanCommunity.\n\nThis edition is completely free and must not be sold or commercially distributed in any form.\n\nThank you to the community and every player. We hope you enjoy your Pokémon-collecting journey!");}
+ private void wrap(int width){Vector v=new Vector();String s=copy();int p=0;while(p<=s.length()){int n=s.indexOf('\n',p);if(n<0)n=s.length();String[] a=Art.wrap(s.substring(p,n),width,80);for(int i=0;i<a.length;i++)v.addElement(a[i]);if(n<s.length())v.addElement("");p=n+1;}lines=new String[v.size()];v.copyInto(lines);wrappedWidth=width;}
+ public void paint(Graphics g){int W=game.W,H=game.H,fh=Art.fh,m=UiLayout.margin(W,H);g.setColor(0x101827);g.fillRect(0,0,W,H);Art.textBC(g,Lang.t("VỀ GAME","ABOUT"),W/2,3,0xFFD030);if(lines==null||wrappedWidth!=W-2*m)wrap(W-2*m);int top=fh+6,visible=UiLayout.visibleRows(H,top,fh+3,fh);if(scroll>lines.length-visible)scroll=Math.max(0,lines.length-visible);int y=top;for(int i=scroll;i<lines.length&&i<scroll+visible;i++){Art.textSmall(g,lines[i],m,y,0xD8E4F2);y+=fh;}Art.textSmallC(g,Lang.t("2/8: cuộn   FIRE/0: về","2/8: scroll   FIRE/0: back"),W/2,H-fh-1,0x8090B0);}
 }

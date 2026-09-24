@@ -15,7 +15,7 @@ public final class AbilityBehavior {
         else if(has(n,"PAYDAY"))extra=Lang.t("Tạo thêm 1 vàng thưởng sau trận.","Generates 1 post-battle gold.");
         else if(has(n,"SING")||has(n,"GRASS WHISTLE"))extra=Lang.t("Gây Ngủ cho nhóm địch quanh mục tiêu.","Puts enemies around the target to Sleep.");
         else if(has(n,"POISON GAS")||has(n,"POISON POWDER"))extra=Lang.t("Gây Độc cho nhóm địch quanh mục tiêu.","Poisons enemies around the target.");
-        String base=Lang.abilityDesc(Data.abil[sp]);return extra.length()==0?base:base+" "+extra;
+        String base=Lang.abilityDesc(Data.abil[sp]);if(extra.length()>0)base=base+" "+extra;String passive=PokemonPassive.description(sp);return passive.length()==0?base:base+" "+passive;
     }
 
     public static void apply(Battle b,Unit caster,Unit target){

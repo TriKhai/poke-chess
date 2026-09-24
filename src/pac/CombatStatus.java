@@ -50,6 +50,7 @@ public final class CombatStatus {
     public void clearPositive(){protect=resurrection=safeguard=rage=pokerus=electricField=fairyField=grassField=psychicField=0;}
 
     public void update(Battle battle, Unit unit) {
+        PokemonPassive.onTick(battle,unit);
         if (stun > 0) stun--;
         if (paralysis > 0) paralysis--;
         if (burn > 0) burn--;

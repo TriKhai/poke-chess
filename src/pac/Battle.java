@@ -71,7 +71,7 @@ public final class Battle {
         countSyn(1, synE);
         applySyn(0, synP);
         applySyn(1, synE);
-        for(int i=0;i<n;i++)ItemEffects.onStart(this,units[i]);
+        for(int i=0;i<n;i++){ItemEffects.onStart(this,units[i]);PokemonPassive.onStart(units[i]);}
         for (int i = 0; i < MAXFX; i++) fxTtl[i] = 0;
     }
 
@@ -251,7 +251,7 @@ public final class Battle {
             }
         } else {
             u.state = Unit.MOVING;
-            if(!u.status.blocksMove())move(u, t);
+            if(!u.status.blocksMove()&&!PokemonPassive.blocksMove(u))move(u, t);
         }
     }
 
@@ -442,7 +442,7 @@ public final class Battle {
         }
         addFx(tgt, dealt, crit ? 3 : 0, crit ? 0xFFD030 : (src.side == 0 ? 0xFFFFFF : 0xFF8080));
         if (src.lifesteal > 0) heal(src, dealt * src.lifesteal / 100);
-        if(triggerItems){ItemEffects.onDamageDealt(this,src,tgt,dealt,attackType);ItemEffects.onDamageReceived(this,tgt,src,dmg,blocked,attackType,basic,crit,shieldBefore);}
+        if(triggerItems){ItemEffects.onDamageDealt(this,src,tgt,dealt,attackType);ItemEffects.onDamageReceived(this,tgt,src,dmg,blocked,attackType,basic,crit,shieldBefore);}PokemonPassive.onDamaged(this,tgt);
         if (tgt.hp <= 0) kill(tgt,src);
         return dealt;
     }

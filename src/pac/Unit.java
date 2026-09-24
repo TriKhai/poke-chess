@@ -14,6 +14,8 @@ public final class Unit {
     /** Per-battle counters/flags owned by ItemEffects. */
     public int itemAttackCount, itemDamageCount, itemCastCount, itemKillCount, itemSoulClock, itemGreenClock, itemRibbonClock;
     public boolean itemSmokeUsed, itemReviveUsed, itemShieldBurstUsed;
+    public boolean passiveTree;
+    public int passiveAttackBonus;
     public int[] synTier = new int[Data.NT];
     /** Live combat statistics used by the persistent team inspector. */
     public int damageDealt, damageTaken, damageBlocked, healingDone, shieldDone;

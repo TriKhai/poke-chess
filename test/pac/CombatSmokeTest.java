@@ -75,6 +75,15 @@ public final class CombatSmokeTest {
         AbilityBehavior.apply(uniqueFamilyBattle,agilityUser,uniqueFamilyBattle.units[uniqueFamilyBattle.n-1]);
         check(agilityUser.speed==Data.speed[18]+20,"Agility behavior missing");
         check(AbilityBehavior.description(18).length()>Lang.abilityDesc(Data.abil[18]).length(),"specific ability description missing");
+        int heracross=-1,zangoose=-1,vigoroth=-1,sudowoodo=-1;
+        for(int i=0;i<Data.N;i++){if("Heracross".equals(Data.name[i]))heracross=i;if("Zangoose".equals(Data.name[i]))zangoose=i;if("Vigoroth".equals(Data.name[i]))vigoroth=i;if("Sudowoodo".equals(Data.name[i]))sudowoodo=i;}
+        check(heracross>=0&&zangoose>=0&&vigoroth>=0&&sudowoodo>=0,"passive fixtures missing");
+        Unit passiveUnit=new Unit();passiveUnit.sp=heracross;passiveUnit.atk=20;passiveUnit.status.burn=20;PokemonPassive.onTick(uniqueFamilyBattle,passiveUnit);
+        check(passiveUnit.atk==25&&passiveUnit.passiveAttackBonus==5,"Guts passive mismatch");
+        passiveUnit.status.burn=0;PokemonPassive.onTick(uniqueFamilyBattle,passiveUnit);check(passiveUnit.atk==20,"Guts removal mismatch");
+        passiveUnit.sp=vigoroth;check(PokemonPassive.immune(passiveUnit,CombatStatus.SLEEP),"Vigoroth sleep immunity missing");
+        passiveUnit.sp=sudowoodo;PokemonPassive.onStart(passiveUnit);check(PokemonPassive.blocksMove(passiveUnit),"Sudowoodo tree passive missing");
+        check(PokemonPassive.description(heracross).length()>20&&PokemonPassive.description(zangoose).length()>20,"passive descriptions missing");
         int lick=-1;for(int i=0;i<Data.N;i++)if("Lick".equals(Data.skillName[i])){lick=i;break;}
         check(lick>=0,"Lick fixture missing");Unit lickUser=new Unit();lickUser.sp=lick;Unit lickTarget=new Unit();lickTarget.alive=true;
         SkillEffects.apply(lickUser,lickTarget);check(lickTarget.status.confusion>0&&lickTarget.status.paralysis>0,"multi-status move behavior missing");

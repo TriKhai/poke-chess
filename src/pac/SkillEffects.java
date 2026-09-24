@@ -12,7 +12,7 @@ public final class SkillEffects {
         } if (has(name, "BLIZZARD") || has(name, "FREEZE") || has(name, "ICE BEAM") || has(name, "ICY")) {
             target.status.apply(CombatStatus.FREEZE,12);
         } if (has(name, "SLEEP") || has(name, "HYPNO") || has(name, "SPORE") || has(name, "YAWN") || has(name,"SING")) {
-            target.status.apply(CombatStatus.SLEEP,20);
+            if(!PokemonPassive.immune(target,CombatStatus.SLEEP))target.status.apply(CombatStatus.SLEEP,20);
         } if (has(name, "THUNDER") || has(name, "VOLT") || has(name, "PARAL") || has(name, "ELECTR") || has(name,"NUZZLE") || has(name,"STUN SPORE") || has(name,"LICK")) {
             target.status.apply(CombatStatus.PARALYSIS,40);
         } if (has(name, "FIRE") || has(name, "FLAME") || has(name, "BURN") || has(name, "BLAZE")) {

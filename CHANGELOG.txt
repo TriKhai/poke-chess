@@ -1,6 +1,14 @@
 POKE AUTO CHESS ME - OFFLINE REMAKE UPDATE
 ==========================================
 
+Gameplay/content parity and community credits (v1.3.6)
+- Replaced the About placeholder with responsive bilingual copyright, project and community credits.
+- Credited Kdic, keldaanCommunity and the Vietnam Java Game Community; clarified free/non-commercial distribution.
+- Routed held-item debuffs through the shared status immunity/cleanse path.
+- Added source-backed Gen 1-3 passives for Heracross, Zangoose, Vigoroth,
+  Psyduck/Golduck, Sudowoodo and Wobbuffet, including Collection descriptions.
+- Added passive regression for activation, removal, immunity and stationary tree form.
+
 Fixed-step render and animation (v1.3.5)
 - Separated the deterministic 100ms combat simulation clock from render cadence.
 - Added integer smoothstep interpolation for movement, HP/MP bars and projectiles.

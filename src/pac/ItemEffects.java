@@ -34,7 +34,7 @@ public final class ItemEffects {
         if(has(u,LUCKY_RIBBON))u.dodge+=15;
         if(has(u,WIDE_LENS))u.range+=2;
         if(has(u,KINGS_ROCK))shield(u,u.maxHp/5);
-        if(has(u,FLAME_ORB)){u.atk+=Math.max(1,Data.atk[u.sp]);u.status.burn=3000;}
+        if(has(u,FLAME_ORB)){u.atk+=Math.max(1,Data.atk[u.sp]);u.status.apply(CombatStatus.BURN,3000);}
         if(has(u,EFFICIENT_BANDANNA))for(int i=0;i<b.n;i++){Unit a=b.units[i];if(a.side==u.side&&a.y==u.y&&Math.abs(a.x-u.x)<=1){a.maxMana=Math.max(1,a.maxMana*85/100);if(a.mana>a.maxMana)a.mana=a.maxMana;}}
     }
 
@@ -52,8 +52,8 @@ public final class ItemEffects {
         if(has(u,DEEP_SEA_TOOTH))mana(u,killed?20:5);
         if(has(u,BLACK_BELT)&&crit)shield(u,(dealt+2)/3);
         if(has(u,SCOPE_LENS)&&crit){int steal=Math.min(10,t.mana);mana(t,-steal);mana(u,steal);}
-        if(has(u,ELECTIRIZER)&&u.itemAttackCount%3==0&&t.alive)t.status.paralysis=Math.max(t.status.paralysis,20);
-        if(has(u,RAZOR_FANG)&&t.alive)t.status.armorBreak=Math.max(t.status.armorBreak,20);
+        if(has(u,ELECTIRIZER)&&u.itemAttackCount%3==0&&t.alive)t.status.apply(CombatStatus.PARALYSIS,20);
+        if(has(u,RAZOR_FANG)&&t.alive)t.status.apply(CombatStatus.ARMOR_BREAK,20);
         if(has(u,BLUE_ORB)&&u.itemAttackCount%3==0){int left=2;for(int i=0;i<b.n&&left>0;i++){Unit e=b.units[i];if(e.alive&&e.side!=u.side&&e!=t){b.itemDamage(u,e,10,Battle.ITEM_SPECIAL);mana(e,-15);left--;}}}
         if(has(u,LOADED_DICE)&&dealt>0&&b.itemChance(50)){Unit e=b.lowestAdjacentEnemy(u,t);if(e!=null)b.itemDamage(u,e,Math.max(1,dealt*3/4),Battle.ITEM_PHYSICAL);}
     }
@@ -61,13 +61,13 @@ public final class ItemEffects {
     public static void onDamageDealt(Battle b,Unit src,Unit tgt,int dealt,int type){
         if(dealt<=0)return;
         if(has(src,SHELL_BELL))b.itemHeal(src,src,(dealt+2)/3);
-        if(has(src,POKEMONOMICON)&&type==Battle.ITEM_SPECIAL&&tgt.alive){tgt.status.burn=Math.max(tgt.status.burn,30);tgt.speDef=Math.max(0,tgt.speDef-1);}
+        if(has(src,POKEMONOMICON)&&type==Battle.ITEM_SPECIAL&&tgt.alive){tgt.status.apply(CombatStatus.BURN,30);tgt.speDef=Math.max(0,tgt.speDef-1);}
     }
 
     public static void onDamageReceived(Battle b,Unit u,Unit attacker,int dealt,int blocked,int type,boolean basic,boolean crit,int shieldBefore){
         if(has(u,MUSCLE_BAND)&&dealt>0&&u.itemDamageCount<20){u.itemDamageCount++;if((u.itemDamageCount&1)==0){u.atk++;u.def+=2;u.speed+=5;}}
         if(basic&&attacker!=null&&b.distance(u,attacker)==1&&!has(attacker,PROTECTIVE_PADS)){
-            if(has(u,STICKY_BARB)){b.itemDamage(u,attacker,3+u.def*15/100,Battle.ITEM_TRUE);attacker.status.wound=Math.max(attacker.status.wound,30);}
+            if(has(u,STICKY_BARB)){b.itemDamage(u,attacker,3+u.def*15/100,Battle.ITEM_TRUE);attacker.status.apply(CombatStatus.WOUND,30);}
             if(has(u,ROCKY_HELMET)&&type!=Battle.ITEM_TRUE)b.itemDamage(u,attacker,Math.max(1,dealt/4),Battle.ITEM_TRUE);
         }
         if(has(u,SMOKE_BALL)&&!u.itemSmokeUsed&&u.alive&&u.hp*100<u.maxHp*40){u.itemSmokeUsed=true;consume(u,SMOKE_BALL);shield(u,50);b.relocateAway(u);}
@@ -85,7 +85,7 @@ public final class ItemEffects {
     /** @return true when death was replaced by a one-time resurrection. */
     public static boolean onDeath(Battle b,Unit u,Unit killer){
         if((has(u,MAX_REVIVE)||has(u,SACRED_ASH))&&!u.itemReviveUsed){u.itemReviveUsed=true;if(has(u,MAX_REVIVE))consume(u,MAX_REVIVE);else consume(u,SACRED_ASH);u.hp=Math.max(1,u.maxHp/2);u.alive=true;shield(u,u.maxHp/5);return true;}
-        if(has(u,SPELL_TAG)&&killer!=null)killer.status.silence=Math.max(killer.status.silence,100);
+        if(has(u,SPELL_TAG)&&killer!=null)killer.status.apply(CombatStatus.SILENCE,100);
         return false;
     }
 

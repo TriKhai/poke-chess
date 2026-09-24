@@ -205,8 +205,9 @@ v1.3.8 - Tiến trình offline và UX hoàn chỉnh
   T6-T7 Gen 7-9, Chủ nhật tất cả.
 - Tái sử dụng đủ 8 frame portal gốc từ assets/environment làm lỗ xoáy: các cục hệ
   viền tròn quay 1,4 giây, bị hút vào đến 2,2 giây rồi mở Pokémon và báo chúc mừng.
-- Hotfix vòng Gacha: thay chữ viết tắt bằng icon hệ thật; giãn 9 icon thành vòng cung
-  hở có khoảng trống phía dưới. Portal được vẽ lớp trên cùng để hố đen luôn rõ ở tâm.
+- Hotfix vòng Gacha: thay chữ viết tắt bằng icon hệ thật; 8 icon nằm cách đều đúng
+  45 độ thành vòng tròn quanh portal. Thêm thanh điểm tích lũy 0/100, chuyển vàng
+  khi gần mốc; cả vòng co đều vào hố đen khi quay.
 - Bỏ hoàn Bóng khi trùng; Pokémon mới +1 điểm, trùng +2 điểm. Chạm mốc 100 bảo đảm
   Huyền thoại chưa sở hữu; trúng Huyền thoại sớm cũng reset điểm về 0.
 - Save schema v8 lưu quyền sở hữu 558 Pokémon Gen 4-9 và điểm Gacha. Chúng được chọn

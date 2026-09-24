@@ -18,8 +18,8 @@ Personal profile foundation (v1.3.8)
   Fri-Sat Gen 7-9 and Sunday all generations.
 - Added an animated original portal vortex: bordered type orbs rotate for 1.4 seconds,
   collapse into the portal, then reveal a WALK/DOWN-LEFT Pokemon with congratulations text.
-- Gacha hotfix: replaced text abbreviations with the game's real type icons, spaced nine
-  icons along an open arc and kept the portal rendered above them as the visible center.
+- Gacha hotfix: replaced text abbreviations with real type icons and placed eight icons
+  at equal 45-degree intervals around the portal. Added a visible 0-100 pity progress bar.
 - Gacha spends one Ball without duplicate refunds; new Pokemon add 1 pity point and
   duplicates add 2. Crossing 100 guarantees a non-owned Legendary and resets the meter;
   any early Legendary also resets it.

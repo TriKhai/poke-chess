@@ -8,14 +8,20 @@ public final class HistoryScreen extends Screen {
     public HistoryScreen(Game g){super(g);}
     public void update(int dt){}
     public void key(int k){if(k==Game.K_UP||k==Game.K_LEFT){if(selected>0)selected--;}else if(k==Game.K_DOWN||k==Game.K_RIGHT){if(selected+1<HistoryStore.count)selected++;}else if(k==Game.K_0||k==Game.K_SOFT2||k==Game.K_FIRE||k==Game.K_SOFT1)game.setScreen(new ChessModeScreen(game));}
-    private String mode(int m){return m==Run.MODE_THIRTY?"30":m==Run.MODE_GEN1?"GEN1":m==Run.MODE_UNLIMITED?"DEV":"NORMAL";}
+    private String mode(int m){return m==Run.MODE_THIRTY?Lang.t("30 vòng","30 rounds"):m==Run.MODE_GEN1?Lang.t("Thế hệ 1","Gen 1"):m==Run.MODE_UNLIMITED?"DEV":Lang.t("Thường","Normal");}
     public void paint(Graphics g){int W=game.W,H=game.H,fh=Art.fh;g.setColor(0x101827);g.fillRect(0,0,W,H);Art.textBC(g,Lang.t("LỊCH SỬ ĐẤU","BATTLE HISTORY"),W/2,3,0xFFD030);
         if(HistoryStore.count==0){Art.textC(g,Lang.t("Chưa có lượt chơi đã kết thúc","No completed runs yet"),W/2,H/2,0x90A0B8);Art.textC(g,"0: "+Lang.t("về","back"),W/2,H-fh-3,0x8090B0);return;}
-        int y=fh+5;String summary=(selected+1)+"/"+HistoryStore.count+"  "+mode(HistoryStore.mode[selected])+"  "+Lang.t("Vòng ","Round ")+HistoryStore.round[selected]+"  "+(HistoryStore.victory[selected]?Lang.t("THẮNG","WIN"):Lang.t("THUA","LOSS"));Art.textSmallC(g,summary,W/2,y,HistoryStore.victory[selected]?0x60E878:0xFF7070);y+=fh+2;
-        drawGraph(g,HistoryStore.path[selected],HistoryStore.resultCount[selected],4,y,W-8,38);y+=41;
-        Art.textSmallC(g,"HP "+HistoryStore.hp[selected]+"  "+Lang.t("Vàng ","Gold ")+HistoryStore.gold[selected],W/2,y,0xFFD060);y+=fh+2;
-        int gap=2,cw=(W-8-gap*2)/3,ch=Math.max(27,(H-y-fh-5)/3);for(int i=0;i<9;i++){int cx=4+(i%3)*(cw+gap),cy=y+(i/3)*ch,sp=HistoryStore.team[selected][i];g.setColor(0x182438);g.fillRect(cx,cy,cw,ch-2);g.setColor(sp>=0?0x526780:0x303B4D);g.drawRect(cx,cy,cw-1,ch-3);if(sp<0)continue;Art.avatarTiny(g,sp,cx+2,cy+2);Art.textSmall(g,Data.name[sp],cx+20,cy+2,0xD8E0F0);for(int s=0;s<3;s++){int id=HistoryStore.items[selected][i*3+s],ix=cx+20+s*10,iy=cy+14;g.setColor(id>=0?0x263448:0x172131);g.fillArc(ix,iy,9,9,0,360);g.setColor(id>=0?0x80D8FF:0x4B586C);g.drawArc(ix,iy,8,8,0,360);if(id>=0)Art.itemIconTiny(g,id,ix+1,iy+1);}}
-        Art.textSmallC(g,Lang.t("</>: đổi lượt   0: về","</>: change run   0: back"),W/2,H-fh-2,0x8090B0);
+        int top=fh+5,rowH=31;
+        for(int h=0;h<HistoryStore.count;h++){
+            int y=top+h*rowH,color=HistoryStore.victory[h]?0x60E878:0xFF7070;
+            g.setColor(h==selected?0x263B55:0x182438);g.fillRect(3,y,W-6,rowH-2);
+            g.setColor(h==selected?0xFFD060:0x40506A);g.drawRect(3,y,W-7,rowH-3);
+            String result=HistoryStore.victory[h]?Lang.t("Thắng","Win"):Lang.t("Thua","Loss");
+            Art.textSmall(g,result+" - "+mode(HistoryStore.mode[h])+" [HP:"+HistoryStore.hp[h]+" $:"+HistoryStore.gold[h]+"]",6,y+2,color);
+            int aw=18,start=(W-aw*9)/2,ay=y+fh+3;
+            for(int i=0;i<9;i++){int sp=HistoryStore.team[h][i],ax=start+i*aw;g.setColor(sp>=0?0xD9DEDF:0x222D3D);g.fillRect(ax,ay,16,16);if(sp>=0)Art.avatarTiny(g,sp,ax,ay);g.setColor(sp>=0?0x526780:0x303B4D);g.drawRect(ax,ay,15,15);}
+        }
+        Art.textSmallC(g,Lang.t("2/8: chọn   0: về","2/8: select   0: back"),W/2,H-fh-2,0x8090B0);
     }
     static void drawGraph(Graphics g,int[] data,int n,int x,int y,int w,int h){
         g.setColor(0x182438);g.fillRect(x,y,w,h);g.setColor(0x526780);g.drawRect(x,y,w-1,h-1);

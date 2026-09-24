@@ -5,17 +5,24 @@ import javax.microedition.lcdui.Graphics;
 /** Persistent player settings. */
 public final class SettingsScreen extends Screen {
     private int selected;
+    private boolean confirmReset;
 
     public SettingsScreen(Game game) { super(game); }
 
     public void update(int dt) { }
 
     public void key(int key) {
+        if(confirmReset){
+            if(key==Game.K_FIRE||key==Game.K_SOFT1){Save.resetProgress();Save.save();RunStorage.clear();HistoryStore.clear();confirmReset=false;selected=0;}
+            else if(key==Game.K_0||key==Game.K_SOFT2)confirmReset=false;
+            return;
+        }
         if (key == Game.K_UP || key == Game.K_DOWN)
-            selected = (selected + 1) % 3;
+            selected = (selected + 1) % 4;
         else if (key == Game.K_LEFT || key == Game.K_RIGHT || key == Game.K_FIRE || key == Game.K_SOFT1) {
             if (selected == 0) Lang.toggle();
             else if (selected == 1) { nextPerformance();Save.save(); }
+            else if(selected==2)confirmReset=true;
             else game.setScreen(new MenuScreen(game));
         } else if (key == Game.K_SOFT2 || key == Game.K_0)
             game.setScreen(new MenuScreen(game));
@@ -31,7 +38,8 @@ public final class SettingsScreen extends Screen {
                 Save.language == Lang.VI ? "Tiếng Việt" : "English");
         drawRow(g, 1, y + fh * 2 + 8, Lang.t("Hiệu năng", "Performance"),
                 performanceName());
-        drawRow(g, 2, y + (fh * 2 + 8)*2, Lang.t("Quay lại", "Back"), "");
+        drawRow(g, 2, y + (fh * 2 + 8)*2, Lang.t("Chơi lại từ đầu", "Start over"), "");
+        drawRow(g, 3, y + (fh * 2 + 8)*3, Lang.t("Quay lại", "Back"), "");
 
         Art.textC(g, selected == 0
                 ? Lang.t("TRÁI/PHẢI hoặc FIRE để đổi", "LEFT/RIGHT or FIRE to change")
@@ -39,6 +47,13 @@ public final class SettingsScreen extends Screen {
                 W / 2, H - fh * 2 - 4, 0x90A0B8);
         Art.textC(g, Lang.t("Thiết lập được tự động lưu", "Settings are saved automatically"),
                 W / 2, H - fh - 2, 0x708098);
+        if(confirmReset){
+            int bw=W-16,bh=fh*5+8,bx=8,by=(H-bh)/2;
+            Art.box(g,bx,by,bw,bh,0x181B28,0xFF6058);
+            Art.textBC(g,Lang.t("XÓA TIẾN ĐỘ?","ERASE PROGRESS?"),W/2,by+4,0xFF7068);
+            Art.textSmallC(g,Lang.t("Xóa run, lịch sử, bộ sưu tập","Erase run, history, collection"),W/2,by+fh+6,0xE0D0D0);
+            Art.textSmallC(g,Lang.t("FIRE: xác nhận   0: hủy","FIRE: confirm   0: cancel"),W/2,by+fh*3+5,0xFFD060);
+        }
     }
 
     private void nextPerformance(){

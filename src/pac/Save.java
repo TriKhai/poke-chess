@@ -44,6 +44,12 @@ public final class Save {
         unlocked[Data.fam[find("Bulbasaur")]] = true;
     }
 
+    /** Erase progression while keeping only language and device FPS preference. */
+    public static void resetProgress(){
+        int lang=language,perf=performance;reset();language=lang;performance=perf;
+        playPath=-1;cheatMode=false;
+    }
+
     private static int find(String n) {
         for (int i = 0; i < Data.N; i++) if (Data.name[i].equals(n)) return i;
         return 0;

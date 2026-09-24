@@ -61,6 +61,10 @@ public final class CombatSmokeTest {
         Save.performance=2;check(Save.frameDelay()==50,"20 FPS performance mode mismatch");
         Save.performance=3;check(Save.frameDelay()==40,"25 FPS performance mode mismatch");
         Save.performance=oldPerformance;
+        Save.language=Lang.EN;Save.performance=3;Save.playPath=1;Save.cheatMode=true;Save.balls=999;
+        Save.resetProgress();check(Save.language==Lang.EN&&Save.performance==3,"start-over must keep device settings");
+        check(Save.playPath==-1&&!Save.cheatMode&&Save.balls==15,"start-over did not erase progression");
+        Save.language=Lang.VI;Save.performance=oldPerformance;
         Run sandbox = new Run(123, true);
         sandbox.shop[0] = 0;
         check(sandbox.buy(0), "unlimited mode must allow buying");
@@ -157,6 +161,7 @@ public final class CombatSmokeTest {
         check(restored.resultCount==2&&restored.resultPath[1]==0&&restored.rng.state()==expectedRng,"run snapshot graph/RNG mismatch");RunStorage.clear();
         snapshot.over=true;snapshot.victory=false;HistoryStore.add(snapshot);check(HistoryStore.count>0&&HistoryStore.round[0]==7,"history entry missing");
         check(HistoryStore.team[0][0]==25&&HistoryStore.items[0][0]==ItemData.indexOf("SHELL_BELL"),"history final team/items mismatch");
+        HistoryStore.clear();check(HistoryStore.count==0,"history clear failed");
 
         int[] player = new int[24];
         int[] enemy = new int[24];

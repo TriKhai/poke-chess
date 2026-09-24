@@ -14,6 +14,7 @@ public final class HistoryStore {
     public static boolean[] victory=new boolean[MAX];public static int[][] path=new int[MAX][30],team=new int[MAX][9],items=new int[MAX][27];
     static{reset();}
     private static void reset(){count=0;for(int h=0;h<MAX;h++){for(int i=0;i<9;i++)team[h][i]=-1;for(int i=0;i<27;i++)items[h][i]=-1;}}
+    public static void clear(){try{RecordStore.deleteRecordStore(STORE);}catch(Exception e){}reset();}
     public static void add(Run r){for(int h=Math.min(count,MAX-1);h>0;h--){mode[h]=mode[h-1];round[h]=round[h-1];hp[h]=hp[h-1];gold[h]=gold[h-1];victory[h]=victory[h-1];resultCount[h]=resultCount[h-1];copy(path[h-1],path[h]);copy(team[h-1],team[h]);copy(items[h-1],items[h]);}
         mode[0]=r.mode;round[0]=r.round;hp[0]=r.hp;gold[0]=r.gold;victory[0]=r.victory;resultCount[0]=r.resultCount;copy(r.resultPath,path[0]);for(int i=0;i<9;i++)team[0][i]=-1;for(int i=0;i<27;i++)items[0][i]=-1;
         int slot=0;for(int p=0;p<Run.BOARD&&slot<9;p++)if(r.board[p]>=0){team[0][slot]=r.board[p];for(int s=0;s<3;s++)items[0][slot*3+s]=r.equip[p*3+s];slot++;}if(count<MAX)count++;save();}

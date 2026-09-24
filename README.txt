@@ -15,7 +15,7 @@ CAU TRUC
 
 PHIEN BAN
   v1.3.1: 4 muc hieu nang hien ro 10/16/20/25 FPS cho may that; giam cap phat RAM
-          trong UI Battle, sua thong ke he cuoi run va khoa can bang bang regression.
+          trong UI Battle; co nut choi lai tu dau va lich su gon theo hang 9 avatar.
   v1.3.0: save/resume run bang RMS rieng; lich su 5 run gom doi hinh, 3 item/pet
           va bieu do thang/thua; build Full va Lite (bo raw/sfx nang).
   v1.2.9: economy tach base/lai/streak/thang/item; doi hinh PvE co dinh va boss

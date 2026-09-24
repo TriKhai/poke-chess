@@ -59,6 +59,8 @@ public final class ChessScreen extends Screen {
     private final int[] rewardChoiceIds={-1,-1,-1};
     private final int[] poolChoiceTypes={-1,-1,-1,-1,-1,-1,-1,-1,-1};
     private int rewardChoiceKind=0,postChoiceMask=0;
+    private boolean typeChoiceAction=false,typeChoiceDetail=false;
+    private int typeChoiceActionSel=0;
     private static final int CH_ITEM=1,CH_TYPE=2,CH_STARTER=3,CH_ADD=4,CH_UNIQUE=5,CH_LEGEND=6;
     /** 1: formation is sucked in, 2: allies deploy onto the battle board. */
     private int transitionPhase=0,transitionT=0;
@@ -231,11 +233,22 @@ public final class ChessScreen extends Screen {
     }
 
     private void keyRewardChoice(int k){
+        if(typeChoiceDetail){if(k==Game.K_FIRE||k==Game.K_SOFT1||k==Game.K_SOFT2||k==Game.K_0||k==Game.K_POUND)typeChoiceDetail=false;return;}
+        if(typeChoiceAction){
+            if(k==Game.K_UP||k==Game.K_LEFT)typeChoiceActionSel=0;
+            else if(k==Game.K_DOWN||k==Game.K_RIGHT)typeChoiceActionSel=1;
+            else if(k==Game.K_0||k==Game.K_SOFT2||k==Game.K_POUND)typeChoiceAction=false;
+            else if(k==Game.K_FIRE||k==Game.K_SOFT1){
+                if(typeChoiceActionSel==0){typeChoiceAction=false;confirmTypeChoice();}
+                else{typeChoiceAction=false;typeChoiceDetail=true;}
+            }
+            return;
+        }
         if(k==Game.K_UP||k==Game.K_LEFT)rewardChoiceSel=(rewardChoiceSel+2)%3;
         else if(k==Game.K_DOWN||k==Game.K_RIGHT)rewardChoiceSel=(rewardChoiceSel+1)%3;
         else if(k==Game.K_FIRE||k==Game.K_SOFT1){
             int id=rewardChoiceIds[rewardChoiceSel];
-            if(rewardChoiceKind==CH_TYPE){run.choosePoolTypes(poolChoiceTypes,id*3);RunStorage.save(run);openStarterChoice();return;}
+            if(rewardChoiceKind==CH_TYPE){typeChoiceAction=true;typeChoiceActionSel=0;return;}
             if(id<0){say(Lang.t("Lựa chọn này không hợp lệ","This choice is unavailable"));return;}
             if(rewardChoiceKind==CH_STARTER){run.chooseStarter(id);rewardChoice=false;RunStorage.save(run);say(Lang.t("Đã chọn ","Selected ")+Data.name[id]);return;}
             if(rewardChoiceKind==CH_ITEM){run.giveItem(id);run.lastItem=id;}
@@ -244,8 +257,12 @@ public final class ChessScreen extends Screen {
         }
     }
 
+    private void confirmTypeChoice(){int id=rewardChoiceIds[rewardChoiceSel];run.choosePoolTypes(poolChoiceTypes,id*3);RunStorage.save(run);openStarterChoice();}
+
     public boolean pointer(int px,int py){
         if(!rewardChoice)return false;
+        if(typeChoiceDetail){typeChoiceDetail=false;return true;}
+        if(typeChoiceAction){int pick=py<game.H/2?0:1;if(typeChoiceActionSel==pick)keyRewardChoice(Game.K_FIRE);else typeChoiceActionSel=pick;return true;}
         if(px<choiceTouchX||px>=choiceTouchX+choiceTouchW||py<choiceTouchTop||py>=choiceTouchTop+choiceTouchView)return true;
         int cy=py-choiceTouchTop+rewardChoiceScroll,at=0;
         for(int i=0;i<3;i++){int bottom=at+choiceTouchRows[i];if(cy>=at&&cy<bottom){if(rewardChoiceSel==i)keyRewardChoice(Game.K_FIRE);else rewardChoiceSel=i;return true;}at=bottom;}
@@ -1719,10 +1736,7 @@ public final class ChessScreen extends Screen {
                 for(int t=0;t<3;t++){int type=poolChoiceTypes[i*3+t];Art.typeIcon(g,type,px,ry+3);px+=18;}
                 int a=poolChoiceTypes[i*3],b=poolChoiceTypes[i*3+1],c=poolChoiceTypes[i*3+2];
                 Art.textB(g,Lang.typeName(a)+" / "+Lang.typeName(b)+" / "+Lang.typeName(c),x+62,ry+3,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
-                int by=ry+fh+4;
-                by=drawChoiceBullet(g,Lang.typeName(a)+": "+Lang.synergyLongDesc(a),x+7,by,w-14,0xAFC8E0);
-                by=drawChoiceBullet(g,Lang.typeName(b)+": "+Lang.synergyLongDesc(b),x+7,by,w-14,0xAFC8E0);
-                drawChoiceBullet(g,Lang.typeName(c)+": "+Lang.synergyLongDesc(c),x+7,by,w-14,0xAFC8E0);
+                Art.textSmall(g,Lang.t("FIRE: mở tùy chọn","FIRE: open actions"),x+7,ry+fh+4,0x9FB5CE);
             }else{
                 if(id>=0)Art.avatar(g,id,x+5,ry+5);
                 String name=id>=0?Data.name[id]:"-";
@@ -1738,19 +1752,41 @@ public final class ChessScreen extends Screen {
             ry+=rowH;
         }
         g.setClip(oldX,oldY,oldW,oldH);
-        Art.textSmallC(g,Lang.t("↑↓ chọn  •  FIRE xác nhận","↑↓ choose  •  FIRE confirm"),W/2,y+h-fh-3,0x90A8C8);
+        String hint=rewardChoiceKind==CH_TYPE?Lang.t("↑↓ chọn  •  FIRE mở tùy chọn","↑↓ choose  •  FIRE actions"):Lang.t("↑↓ chọn  •  FIRE xác nhận","↑↓ choose  •  FIRE confirm");
+        Art.textSmallC(g,hint,W/2,y+h-fh-3,0x90A8C8);
+        if(typeChoiceAction)paintTypeChoiceAction(g);
+        if(typeChoiceDetail)paintTypeChoiceDetail(g);
     }
 
     private int choiceRowHeight(int i,int textW){
         int fh=Art.fh,id=rewardChoiceIds[i],lines=1;
         if(rewardChoiceKind==CH_ITEM)lines+=Art.wrap("• "+ItemData.desc(id),textW,20).length;
-        else if(rewardChoiceKind==CH_TYPE){lines=1;for(int t=0;t<3;t++){int type=poolChoiceTypes[i*3+t];lines+=Art.wrap("• "+Lang.typeName(type)+": "+Lang.synergyLongDesc(type),textW+41,20).length;}}
+        else if(rewardChoiceKind==CH_TYPE)lines=2;
         else if(id>=0){String stats="• HP: "+Data.hp[id]+Lang.t("  Công: ","  ATK: ")+Data.atk[id]+Lang.t("  Thủ: ","  DEF: ")+Data.def[id]+Lang.t("  Kháng: ","  RES: ")+Data.speDef[id]+Lang.t("  Tốc: ","  SPD: ")+Data.speed[id];String skill="• "+Lang.t("Tuyệt kỹ: ","Ultimate: ")+Lang.moveName(Data.skillName[id])+" - "+AbilityBehavior.description(id);lines=2+Art.wrap(stats,textW,20).length+Art.wrap(skill,textW,20).length;}
         int h=lines*fh+8;if(h<42)h=42;return h;
     }
 
     private int drawChoiceBullet(Graphics g,String value,int x,int y,int width,int color){
         String[] lines=Art.wrap("• "+value,width,20);for(int i=0;i<lines.length;i++){Art.textSmall(g,lines[i],x,y,color);y+=Art.fh;}return y;
+    }
+
+    private void paintTypeChoiceAction(Graphics g){
+        int W=game.W,H=game.H,fh=Art.fh,w=Math.min(174,W-20),h=fh*4+16,x=(W-w)/2,y=(H-h)/2;
+        Art.box(g,x,y,w,h,0x101830,0xFFD030);
+        Art.textBC(g,Lang.t("POOL ĐÃ CHỌN","SELECTED POOL"),W/2,y+4,0xFFD030);
+        String[] a={Lang.t("CHỌN","SELECT"),Lang.t("CHI TIẾT","DETAILS")};int by=y+fh+9;
+        for(int i=0;i<2;i++){g.setColor(i==typeChoiceActionSel?0x405273:0x202B40);g.fillRect(x+6,by+i*(fh+7),w-12,fh+5);if(i==typeChoiceActionSel){g.setColor(0xFFE060);g.drawRect(x+6,by+i*(fh+7),w-13,fh+4);}Art.textC(g,a[i],W/2,by+i*(fh+7)+2,0xFFFFFF);}
+    }
+
+    private void paintTypeChoiceDetail(Graphics g){
+        int W=game.W,H=game.H,fh=Art.fh,w=Math.min(W-12,286),x=(W-w)/2,y=5,h=H-10;
+        Art.box(g,x,y,w,h,0x101830,0xFFD030);Art.textBC(g,Lang.t("CHI TIẾT POOL HỆ","TYPE POOL DETAILS"),W/2,y+4,0xFFD030);
+        int yy=y+fh+9,base=rewardChoiceSel*3;
+        for(int i=0;i<3;i++){
+            int type=poolChoiceTypes[base+i];Art.typeIcon(g,type,x+7,yy);Art.textB(g,Lang.typeName(type),x+27,yy+1,0xFFFFFF);yy+=fh+5;
+            yy=Art.para(g,"• "+Lang.synergyLongDesc(type),x+9,yy,w-18,0xB8CDE4,20)+4;
+        }
+        Art.textSmallC(g,Lang.t("FIRE/0: quay lại","FIRE/0: back"),W/2,y+h-fh-3,0x8090B0);
     }
 
     private String rarityVi(int sp){

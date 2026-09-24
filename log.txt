@@ -45,6 +45,9 @@ v1.4.4 - 40-Stage Road
 - Popup hỗ trợ click/chạm trực tiếp: chạm một hàng để chọn, chạm lại hàng đang sáng
   để xác nhận. Phím 5/FIRE và phím mềm trái vẫn xác nhận như cũ; sau khi nhận
   Pokémon có thông báo tên để người chơi biết thao tác đã thành công.
+- Màn pool được giản lược còn đúng ba option, mỗi option chỉ hiện ba icon và tên hệ.
+  FIRE/chạm option mở menu hai mục Chọn/Chi tiết. Chọn xác nhận pool; Chi tiết mở
+  trang riêng giải thích đầy đủ buff của từng hệ rồi cho quay lại danh sách.
 
 v1.4.3 - Legendary Purchase Light Waves
 - Giữ nguyên 5 frame SPAWN khi mua pet. Nếu pet mua có category Legendary, cộng

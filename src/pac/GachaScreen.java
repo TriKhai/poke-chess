@@ -16,6 +16,7 @@ public final class GachaScreen extends Screen{
         if(help){if(k==Game.K_STAR||k==Game.K_0||k==Game.K_SOFT2||k==Game.K_FIRE||k==Game.K_SOFT1)help=false;return;}
         if(k==Game.K_STAR){help=true;return;}
         if(k==Game.K_POUND){autoRoll=!autoRoll;if(autoRoll&&state!=1)startRoll();else if(!autoRoll)msg=Lang.t("Đã tắt tự động quay","Auto-roll stopped");return;}
+        if(state==3){if(k==Game.K_FIRE||k==Game.K_SOFT1){state=2;time=0;}return;}
         if(k==Game.K_0||k==Game.K_SOFT2){if(state!=1)game.setScreen(new ExploreHubScreen(game));return;}
         if((k==Game.K_FIRE||k==Game.K_SOFT1)&&state!=1)startRoll();
     }
@@ -26,7 +27,7 @@ public final class GachaScreen extends Screen{
         lastNew=Save.unlockDex(lastDex);Save.caught++;
         if(GachaRules.legendary(lastDex))Save.gachaPoints=0;else Save.gachaPoints+=lastNew?1:2;
         if(Save.gachaPoints>99)Save.gachaPoints=99;
-        Save.save();state=2;time=0;
+        Save.save();state=GachaRules.legendary(lastDex)?3:2;time=0;
         msg=Lang.t("CHÚC MỪNG! Bạn nhận được ","CONGRATULATIONS! You got ")+name(lastDex);
     }
     private String name(int dex){if(dex<=Data.N)return Data.name[dex-1];int di=dexIndex(dex);return di>=0?CollectionDex.NAME[di]:"#"+dex;}
@@ -61,7 +62,8 @@ public final class GachaScreen extends Screen{
         int a=group==0?25:(group==1?387:(group==2?722:25)),b=group==0?150:(group==1?493:(group==2?810:387));
         if(!compact&&W>=220){drawPokemon(g,a,2,H-fh*4-24,40,36,RawAtlas.WALK,time/90);drawPokemon(g,b,W-42,H-fh*4-24,40,36,RawAtlas.WALK,time/90+2);}
         if(msg.length()>0)Art.textSmallC(g,msg,cx,H-fh*3-2,0xFFE070);
-        Art.textSmallC(g,state==1?Lang.t("Các hệ đang bị hút vào...","Types are being pulled in..."):Lang.t("FIRE quay  * hướng dẫn  # tự động","FIRE draw  * help  # auto"),cx,H-fh-1,autoRoll?0x80FF90:0xD0D8F0);if(help)paintHelp(g);
+        Art.textSmallC(g,state==1?Lang.t("Các hệ đang bị hút vào...","Types are being pulled in..."):Lang.t("FIRE quay  * hướng dẫn  # tự động","FIRE draw  * help  # auto"),cx,H-fh-1,autoRoll?0x80FF90:0xD0D8F0);if(state==3)paintLegendReveal(g,cx,cy);else if(help)paintHelp(g);
     }
+    private void paintLegendReveal(Graphics g,int cx,int cy){int W=game.W,H=game.H,fh=Art.fh,max=W+H,r=Math.min(max,time*max/700);if(r>=max-1){g.setColor(0xFFFFFF);g.fillRect(0,0,W,H);}else{g.setColor(0xFFFFFF);g.fillArc(cx-r,cy-r,r*2,r*2,0,360);}if(time<260)return;int rise=Math.min(12,(time-260)/35),pw=W<180?76:96,ph=W<180?70:88,py=H/2-ph/2-rise;drawPokemon(g,lastDex,cx-pw/2,py,pw,ph,RawAtlas.VICTORY,time/90);Art.textBC(g,name(lastDex),cx,py+ph+2,0x8A5A00);Art.textSmallC(g,Lang.t("HUYỀN THOẠI!","LEGENDARY!"),cx,Math.max(5,py-fh-4),0xC08000);Art.textSmallC(g,Lang.t("Nhấn 5 để tiếp tục","Press 5 to continue"),cx,H-fh-3,0x303848);}
     private void paintHelp(Graphics g){int W=game.W,H=game.H,fh=Art.fh,m=8,w=W-16,h=H-24,x=8,y=12;Art.box(g,x,y,w,h,0x101526,0xFFD060);Art.textBC(g,Lang.t("HƯỚNG DẪN GACHA","GACHA GUIDE"),W/2,y+4,0xFFD030);String s=Lang.t("Mỗi lượt tốn 1 Bóng. Pool đổi theo lịch Gen ghi trên màn hình. Chỉ 5 Pokémon Huyền thoại hiển thị hôm nay có thể xuất hiện, kể cả rơi sớm và mốc 100. Pokémon mới: +1 điểm. Pokémon trùng: +2 điểm, không hoàn Bóng. Đủ 100 điểm ưu tiên Huyền thoại hôm nay chưa sở hữu. Trúng Huyền thoại sớm đưa điểm về 0. Phím # bật/tắt tự động quay.","Each draw costs 1 Ball. The Gen pool follows the shown schedule. Only today's 5 displayed Legendaries can appear, both early and at pity 100. New Pokémon: +1 point. Duplicate: +2 points, no refund. Pity prioritizes an unowned featured Legendary. An early Legendary resets points. Press # to toggle auto-roll.");String[] lines=Art.wrap(s,w-2*m,30);int yy=y+fh+9;for(int i=0;i<lines.length&&yy<y+h-fh*2;i++){Art.textSmall(g,lines[i],x+m,yy,0xD8E4F2);yy+=fh;}Art.textSmallC(g,Lang.t("*/FIRE/0: đóng","*/FIRE/0: close"),W/2,y+h-fh-2,0x80A8D0);}
 }

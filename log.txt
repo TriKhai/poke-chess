@@ -1,6 +1,14 @@
 POKE AUTO CHESS ME - VERSION LOG
 ================================
 
+v1.4.4 - 40-Stage Road
+- Normal và DEV mở rộng thành 40 ải; mode 30 vòng và Gen 1 vẫn giữ mục tiêu riêng.
+- Thêm HUD ba mốc lớn: ải hiện tại sáng trắng, hai ải sau làm tối; boss dùng đúng
+  portrait đại diện từ PVEStages source gốc tại 9/14/19/24/28/32/36/40.
+- Lịch sử kết quả mở rộng 30 -> 40 điểm và đọc tương thích schema lịch sử cũ.
+- Đội hình PvE source được dời đúng lịch 40 ải; các boss Gen 1-3 có đội hình thật,
+  ải 40 dùng đội hộ vệ mạnh cho đến khi Gen 4 được đưa vào battle roster.
+
 v1.4.3 - Legendary Purchase Light Waves
 - Giữ nguyên 5 frame SPAWN khi mua pet. Nếu pet mua có category Legendary, cộng
   thêm hai wavefront xanh-trắng xuất phát từ tâm pet trên hàng chờ, quét đối xứng

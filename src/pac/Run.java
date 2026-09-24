@@ -5,7 +5,7 @@ package pac;
  * Slot codes: 0..23 = board (row*8+col, row 0 = front), 24..31 = bench.
  */
 public final class Run {
-    public static final int MAX_ROUND = 20;
+    public static final int MAX_ROUND = 40;
     public static final int MODE_NORMAL=0,MODE_UNLIMITED=1,MODE_THIRTY=2,MODE_GEN1=3;
     public static final int BOARD = 24, BENCH = 8;
 
@@ -46,7 +46,7 @@ public final class Run {
     public int lastBaseGold,lastInterest,lastStreakGold,lastVictoryGold,lastItemGold;
     public boolean over, victory;
     /** Cumulative graph point after each completed round: win +1, loss -1. */
-    public int[] resultPath=new int[30];
+    public int[] resultPath=new int[40];
     public int resultCount=0;
 
     private static final String[] NAMES = { "Youngster Joey", "Lass Amy", "Hiker Tom", "Swimmer Kai",
@@ -78,7 +78,7 @@ public final class Run {
         genEnemy();
     }
 
-    public int maxRound(){return mode>=MODE_THIRTY?30:MAX_ROUND;}
+    public int maxRound(){return mode==MODE_THIRTY||mode==MODE_GEN1?30:MAX_ROUND;}
 
     public void refreshNineItems(boolean discardOld){
         if(discardOld)for(int i=0;i<inventory.length;i++)inventory[i]=0;
@@ -322,8 +322,8 @@ public final class Run {
     // ---- rounds ----------------------------------------------------------
 
     public boolean isBoss() {
-        if(mode>=MODE_THIRTY)return round%5==0;
-        return round == 8 || round == 12 || round == 16 || round == 20;
+        if(mode==MODE_THIRTY||mode==MODE_GEN1)return round%5==0;
+        return StageRoad.boss(round);
     }
 
     public Battle makeBattle() {

@@ -16,8 +16,8 @@
     <property name="app.name"    value="PokeAutoChess"/>
     <property name="app.vendor"  value="Kdic"/>
     <!-- MIDlet-Version must remain numeric for strict Nokia/J2ME installers. -->
-    <property name="app.version" value="1.4.3"/>
-    <property name="build.label" value="1.4.3"/>
+    <property name="app.version" value="1.4.4"/>
+    <property name="build.label" value="1.4.4"/>
     <property name="midlet.class" value="pac.PacMidlet"/>
     <property name="midlet.icon" value="/icon.png"/>
 

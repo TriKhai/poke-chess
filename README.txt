@@ -1,4 +1,4 @@
-POKE AUTO CHESS ME v1.4.3 (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
+POKE AUTO CHESS ME v1.4.4 (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
 =====================================================================
 
 CAU TRUC
@@ -14,6 +14,7 @@ CAU TRUC
   docs/CHI_SO_VA_TRANG_THAI_POKEMON.md  bang chu viet tat, chi so va trang thai combat
 
 PHIEN BAN
+  v1.4.4: Normal/DEV thanh 40 ai; HUD hien ai hien tai va hai ai sap toi, boss dung portrait goc.
   v1.4.3: Legendary FX; IDLE goc; RMS dau round; cache muot; winner quay DOWN-LEFT.
   v1.4.2: hieu ung tien hoa 8 frame; pet cap 2 mau vang, cap 3 mau do.
   v1.4.1: hotfix hau tran; don projectile/skill/board FX va state tan cong,

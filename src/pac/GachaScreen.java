@@ -7,9 +7,10 @@ public final class GachaScreen extends Screen{
     /** Eight positions exactly 45 degrees apart around the vortex. */
     private static final int[] OX={0,31,44,31,0,-31,-44,-31},OY={-44,-31,0,31,44,31,0,-31};
     private final Rng rng=new Rng((int)System.currentTimeMillis());
-    private final int group=GachaRules.todayGroup();
+    private final int group;
+    private final int[] featured;
     private int state=0,time=0,lastDex=-1;private boolean lastNew,lastPity;private String msg="";
-    public GachaScreen(Game g){super(g);}
+    public GachaScreen(Game g){super(g);group=GachaRules.todayGroup();featured=GachaRules.randomFeaturedLegendaries(group,2+rng.nextInt(2),rng);}
     public void update(int dt){time+=dt;if(state==1&&time>=2200)resolve();}
     public void key(int k){
         if(k==Game.K_0||k==Game.K_SOFT2){if(state!=1)game.setScreen(new ExploreHubScreen(game));return;}
@@ -27,7 +28,7 @@ public final class GachaScreen extends Screen{
     private String name(int dex){if(dex<=Data.N)return Data.name[dex-1];int di=dexIndex(dex);return di>=0?CollectionDex.NAME[di]:"#"+dex;}
     private int dexIndex(int dex){for(int i=0;i<CollectionDex.COUNT;i++)if(CollectionDex.DEX[i]==dex)return i;return -1;}
     private void drawPokemon(Graphics g,int dex,int x,int y,int w,int h,int action,int clock){if(dex<=Data.N){if(!RawAtlas.draw(g,dex-1,x,y,w,h,action,7,clock))Art.sprite(g,dex-1,x,y,Math.min(w,h));}else{int di=dexIndex(dex);if(di<0||!CollectionAtlas.draw(g,di,x,y,w,h,action,7,clock))Art.dexAvatar(g,di,x+(w-32)/2,y+(h-32)/2);}}
-    private void drawAvatar(Graphics g,int dex,int x,int y){if(dex<=Data.N)Art.avatarMini(g,dex-1,x,y);else{int di=dexIndex(dex);if(di>=0)Art.dexAvatar(g,di,x-6,y-6);}}
+    private void drawAvatar(Graphics g,int dex,int x,int y){if(dex<=Data.N)Art.avatar(g,dex-1,x,y);else{int di=dexIndex(dex);if(di>=0)Art.dexAvatar(g,di,x,y);}}
     public void paint(Graphics g){
         int W=game.W,H=game.H,fh=Art.fh,cx=W/2;boolean compact=UiLayout.compact(W,H);int barY=fh*3+6;int cy=compact?barY+42:Math.max(barY+58,H/2);
         g.setColor(0x0B0B20);g.fillRect(0,0,W,H);for(int y=0;y<H;y+=12){g.setColor(0x10132A+(y&24)*0x010101);g.fillRect(0,y,W,12);}
@@ -48,8 +49,8 @@ public final class GachaScreen extends Screen{
             Art.textBC(g,name(lastDex),cx,cy+39,GachaRules.legendary(lastDex)?0xFFD030:0xFFFFFF);
             Art.textSmallC(g,lastPity?Lang.t("MỐC 100 - HUYỀN THOẠI KHÔNG TRÙNG","100 PITY - NEW LEGENDARY"):(lastNew?Lang.t("Pokémon mới  +1 điểm","New Pokémon  +1 point"):Lang.t("Pokémon trùng  +2 điểm","Duplicate  +2 points")),cx,cy+fh+40,lastNew?0x80FF90:0xFFC070);
         }
-        int[] legends=GachaRules.featuredLegendaries(group,4);int ly=H-fh*2-32;
-        if(state!=2&&!compact){Art.textSmallC(g,Lang.t("HUYỀN THOẠI HÔM NAY","TODAY'S LEGENDARIES"),cx,ly-fh,0xA890F0);int shown=0,step=34,start=cx-(legends.length*step)/2;for(int i=0;i<legends.length;i++)if(legends[i]>0){drawAvatar(g,legends[i],start+shown*step,ly);shown++;}}
+        int ly=H-fh*2-32;
+        if(state!=2&&!compact){Art.textSmallC(g,Lang.t("HUYỀN THOẠI HÔM NAY","TODAY'S LEGENDARIES"),cx,ly-fh-6,0xA890F0);int step=36,start=cx-(featured.length*step)/2;for(int i=0;i<featured.length;i++)drawAvatar(g,featured[i],start+i*step,ly);}
         // Walking partners decorate both lower corners without entering the reward pool.
         int a=group==0?25:(group==1?387:(group==2?722:25)),b=group==0?150:(group==1?493:(group==2?810:387));
         if(!compact&&W>=220){drawPokemon(g,a,2,H-fh*4-24,40,36,RawAtlas.WALK,time/90);drawPokemon(g,b,W-42,H-fh*4-24,40,36,RawAtlas.WALK,time/90+2);}

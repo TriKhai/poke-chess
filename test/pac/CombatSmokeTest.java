@@ -24,6 +24,8 @@ public final class CombatSmokeTest {
         check(GachaRules.groupForDay(java.util.Calendar.MONDAY)==0&&GachaRules.groupForDay(java.util.Calendar.THURSDAY)==1&&GachaRules.groupForDay(java.util.Calendar.SATURDAY)==2&&GachaRules.groupForDay(java.util.Calendar.SUNDAY)==3,"daily Gacha schedule mismatch");
         check(GachaRules.allowsGen(0,3)&&!GachaRules.allowsGen(0,4)&&GachaRules.allowsGen(1,5)&&GachaRules.allowsGen(2,9)&&GachaRules.allowsGen(3,1),"daily generation pool mismatch");
         int pityDex=GachaRules.pick(new Rng(138),3,true);check(GachaRules.legendary(pityDex)&&!Save.ownsDex(pityDex),"Gacha pity must select a new Legendary");
+        int[] featured=GachaRules.randomFeaturedLegendaries(3,3,new Rng(139));check(featured.length==3&&GachaRules.legendary(featured[0])&&GachaRules.legendary(featured[1])&&GachaRules.legendary(featured[2]),"random featured Legendary list mismatch");
+        check(featured[0]!=featured[1]&&featured[0]!=featured[2]&&featured[1]!=featured[2],"featured Legendaries must be unique");
         check(Save.unlockDex(387)&&Save.ownsDex(387)&&!Save.unlockDex(387),"collection-only ownership mismatch");
         Save.dexUnlocked=new boolean[CollectionDex.COUNT];
         int oldCamp0=Save.camp[0],oldCamp1=Save.camp[1],oldCamp2=Save.camp[2];long oldCampStart=Save.campStart;

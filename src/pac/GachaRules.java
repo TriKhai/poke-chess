@@ -23,4 +23,9 @@ public final class GachaRules{
         return 1;
     }
     public static int[] featuredLegendaries(int group,int max){int[] out=new int[max];for(int i=0;i<max;i++)out[i]=-1;int n=0;for(int d=1;d<=Data.N&&n<max;d++)if(allowsGen(group,generationOfDex(d))&&legendary(d))out[n++]=d;for(int i=0;i<CollectionDex.COUNT&&n<max;i++){int d=CollectionDex.DEX[i];if(allowsGen(group,CollectionDex.GEN[i])&&legendary(d))out[n++]=d;}return out;}
+    public static int[] randomFeaturedLegendaries(int group,int count,Rng rng){
+        int total=0;for(int d=1;d<=Data.N;d++)if(allowsGen(group,generationOfDex(d))&&legendary(d))total++;for(int i=0;i<CollectionDex.COUNT;i++)if(allowsGen(group,CollectionDex.GEN[i])&&legendary(CollectionDex.DEX[i]))total++;
+        if(count>total)count=total;int[] pool=new int[total];int n=0;for(int d=1;d<=Data.N;d++)if(allowsGen(group,generationOfDex(d))&&legendary(d))pool[n++]=d;for(int i=0;i<CollectionDex.COUNT;i++){int d=CollectionDex.DEX[i];if(allowsGen(group,CollectionDex.GEN[i])&&legendary(d))pool[n++]=d;}
+        for(int i=0;i<count;i++){int p=i+rng.nextInt(total-i),v=pool[i];pool[i]=pool[p];pool[p]=v;}int[] out=new int[count];for(int i=0;i<count;i++)out[i]=pool[i];return out;
+    }
 }

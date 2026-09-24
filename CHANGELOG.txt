@@ -13,6 +13,16 @@ Personal profile foundation (v1.3.8)
 - Camp claims accrued rewards before replacing a worker, preventing retroactive high-rate rewards.
 - Pet Farm has an 1.8-second skill cooldown, KO counter and clear reward/recovery feedback.
 - Help now has Controls, Stats, Status and Modes pages with responsive wrapping and scrolling.
+- Profile partner now loops the original WALK clip facing DOWN-LEFT for Gen 1-9.
+- Rebuilt Gacha as one daily pool: Mon-Tue Gen 1-3, Wed-Thu Gen 4-6,
+  Fri-Sat Gen 7-9 and Sunday all generations.
+- Added an animated original portal vortex: bordered type orbs rotate for 1.4 seconds,
+  collapse into the portal, then reveal a WALK/DOWN-LEFT Pokemon with congratulations text.
+- Gacha spends one Ball without duplicate refunds; new Pokemon add 1 pity point and
+  duplicates add 2. Crossing 100 guarantees a non-owned Legendary and resets the meter;
+  any early Legendary also resets it.
+- Save schema v8 stores 558 Gen 4-9 ownership flags and the pity meter. These Pokemon
+  can be profile partners but remain excluded from Battle, shop, pool and enemy AI.
 
 Offline Explore progression (v1.3.7)
 - Added an Explore hub with classic catching, Pet Farm, filtered Pokémon Gacha and Pokémon Camp.

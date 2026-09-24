@@ -36,8 +36,8 @@ public final class ProfileScreen extends Screen {
         g.setColor(0x101827);g.fillRect(0,0,W,H);
         Art.textBC(g,Lang.t("HỒ SƠ CÁ NHÂN","MY PROFILE"),W/2,2,0xFFD030);
         int modelY=fh+5,dex=Save.profileAvatarDex;
-        if(dex<=Data.N){int sp=dex-1,vw=Data.visualWidth(sp),vh=Data.visualHeight(sp);Art.battleSprite(g,sp,W/2-vw/2,modelY,anim/90,RawAtlas.IDLE,0);modelY+=Math.max(vh,42);}
-        else{int di=dexCollectionIndex(dex);if(di>=0)CollectionAtlas.draw(g,di,W/2-28,modelY,56,48,0,0,anim/90);modelY+=50;}
+        if(dex<=Data.N){int sp=dex-1,vw=Data.visualWidth(sp),vh=Data.visualHeight(sp);if(!RawAtlas.draw(g,sp,W/2-32,modelY,64,48,RawAtlas.WALK,7,anim/90))Art.battleSprite(g,sp,W/2-vw/2,modelY,anim/90,RawAtlas.WALK,7);modelY+=Math.max(vh,42);}
+        else{int di=dexCollectionIndex(dex);if(di>=0&&!CollectionAtlas.draw(g,di,W/2-32,modelY,64,48,RawAtlas.WALK,7,anim/90))Art.dexAvatar(g,di,W/2-16,modelY+8);modelY+=50;}
         Art.textBC(g,Save.displayName(),W/2,modelY,0xFFFFFF);modelY+=fh+1;
         if(Save.profileName.length()==0)Art.textSmallC(g,Lang.t("#: đặt tên một lần","#: set name once"),W/2,modelY,0x80D8FF);
         else Art.textSmallC(g,Lang.t("Tên đã được xác nhận","Name confirmed"),W/2,modelY,0x708098);
@@ -55,7 +55,7 @@ public final class ProfileScreen extends Screen {
             int i=(top+r)*cols+c;if(i>=count)continue;int x=c*cell,y=modelY+r*row,d=dexAt(i);boolean owned=Save.ownsDex(d),hover=i==sel;
             if(hover){g.setColor(0xFFF060);g.drawRect(x+1,y+1,cell-3,35);g.drawRect(x+2,y+2,cell-5,33);}
             else if(d==Save.profileAvatarDex){g.setColor(0x60D8FF);g.drawRect(x+2,y+2,cell-5,33);}
-            if(owned)Art.avatar(g,d-1,x+(cell-32)/2,y+3);
+            if(owned){if(d<=Data.N)Art.avatar(g,d-1,x+(cell-32)/2,y+3);else Art.dexAvatar(g,dexCollectionIndex(d),x+(cell-32)/2,y+3);}
             else{g.setColor(0x253148);g.fillRect(x+(cell-30)/2,y+4,30,30);Art.textBC(g,"?",x+cell/2,y+11,0x7C879A);}
         }
         int current=dexAt(sel);String label=Save.ownsDex(current)?(current<=Data.N?Data.name[current-1]:"#"+current):Lang.t("Chưa sở hữu","Not owned");

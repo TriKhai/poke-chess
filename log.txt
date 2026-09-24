@@ -200,6 +200,16 @@ v1.3.8 - Tiến trình offline và UX hoàn chỉnh
 - Normal, 30 vòng và Gen 1 có mục tiêu, phần thưởng thắng và first-clear bonus riêng;
   Hồ sơ hiển thị huy hiệu N/30/G1, Gen 1 vẫn mở toàn bộ family khi phá đảo.
 - Help chia 4 trang Điều khiển, Chỉ số, Status và Chế độ; wrap/scroll responsive.
+- Hotfix Hồ sơ/Gacha: model đại diện dùng WALK hướng DOWN-LEFT. Gacha bỏ toàn bộ
+  bộ lọc tay, chỉ còn một pool đổi theo ngày: T2-T3 Gen 1-3, T4-T5 Gen 4-6,
+  T6-T7 Gen 7-9, Chủ nhật tất cả.
+- Tái sử dụng đủ 8 frame portal gốc từ assets/environment làm lỗ xoáy: các cục hệ
+  viền tròn quay 1,4 giây, bị hút vào đến 2,2 giây rồi mở Pokémon và báo chúc mừng.
+- Bỏ hoàn Bóng khi trùng; Pokémon mới +1 điểm, trùng +2 điểm. Chạm mốc 100 bảo đảm
+  Huyền thoại chưa sở hữu; trúng Huyền thoại sớm cũng reset điểm về 0.
+- Save schema v8 lưu quyền sở hữu 558 Pokémon Gen 4-9 và điểm Gacha. Chúng được chọn
+  làm model Hồ sơ nhưng vẫn không tham gia Battle/shop/pool/AI. Gacha hiển thị các
+  Huyền thoại trong pool hôm nay và model WALK trang trí ở màn đủ rộng.
 
 Nội dung UX trong v1.3.8
 - History/tổng kết giữ bố cục responsive; đã hoàn thiện hướng dẫn điều khiển,

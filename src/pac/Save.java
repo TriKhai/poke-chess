@@ -11,7 +11,7 @@ public final class Save {
     private Save() {}
 
     private static final String STORE = "pacsave1";
-    private static final int VERSION = 7;
+    private static final int VERSION = 8;
 
     public static int balls = 15;
     public static int best = 0;
@@ -36,6 +36,9 @@ public final class Save {
     public static int profileAvatarDex=1;
     /** Bit 0 Normal, bit 1 Thirty rounds, bit 2 Generation 1. */
     public static int modeCleared=0;
+    /** Collection-only ownership for Gen 4-9 and the Gacha pity meter. */
+    public static boolean[] dexUnlocked=new boolean[CollectionDex.COUNT];
+    public static int gachaPoints=0;
     public static int frameDelay(){switch(performance){case 1:return 100;case 2:return 50;case 3:return 40;default:return 60;}}
     public static int targetFps(){switch(performance){case 1:return 10;case 2:return 20;case 3:return 25;default:return 16;}}
 
@@ -47,7 +50,7 @@ public final class Save {
     }
 
     public static void reset() {
-        balls = 15; best = 0; runs = 0; wins = 0; caught = 0; performance = 0;hero=-1;campStart=0;camp=new int[]{-1,-1,-1};profileName="";profileAvatarDex=1;modeCleared=0;
+        balls = 15; best = 0; runs = 0; wins = 0; caught = 0; performance = 0;hero=-1;campStart=0;camp=new int[]{-1,-1,-1};profileName="";profileAvatarDex=1;modeCleared=0;dexUnlocked=new boolean[CollectionDex.COUNT];gachaPoints=0;
         unlocked = new boolean[Data.N];
         // starter families
         unlocked[Data.fam[find("Charmander")]] = true;
@@ -77,9 +80,10 @@ public final class Save {
         if(value.length()>16)value=value.substring(0,16);
         profileName=value;save();return true;
     }
-    public static boolean ownsDex(int dex){return dex>=1&&dex<=Data.N&&has(dex-1);}
+    public static boolean ownsDex(int dex){if(dex>=1&&dex<=Data.N)return has(dex-1);int di=collectionIndex(dex);return di>=0&&dexUnlocked[di];}
     public static boolean chooseProfileAvatar(int dex){if(!ownsDex(dex))return false;profileAvatarDex=dex;save();return true;}
     public static boolean unlockFamily(int sp){int f=Data.fam[sp];boolean fresh=!unlocked[f];unlocked[f]=true;return fresh;}
+    public static boolean unlockDex(int dex){if(dex<=Data.N)return unlockFamily(dex-1);int di=collectionIndex(dex);if(di<0)return false;boolean fresh=!dexUnlocked[di];dexUnlocked[di]=true;return fresh;}
 
     public static int familiesUnlocked() {
         int n = 0;
@@ -117,6 +121,7 @@ public final class Save {
                     if(ver>=5){hero=in.readInt();for(int i=0;i<3;i++)camp[i]=in.readInt();campStart=in.readLong();}
                     if(ver>=6){profileName=in.readUTF();profileAvatarDex=in.readInt();}
                     if(ver>=7)modeCleared=in.readInt();
+                    if(ver>=8){int dn=in.readInt();for(int i=0;i<dn;i++){boolean v=in.readBoolean();if(i<dexUnlocked.length)dexUnlocked[i]=v;}gachaPoints=in.readInt();if(gachaPoints<0)gachaPoints=0;if(gachaPoints>99)gachaPoints=99;}
                     if(profileName==null)profileName="";
                     if(!ownsDex(profileAvatarDex))profileAvatarDex=firstOwnedDex();
                     cheatMode = playPath == 1;
@@ -151,6 +156,7 @@ public final class Save {
             out.writeInt(hero);for(int i=0;i<3;i++)out.writeInt(camp[i]);out.writeLong(campStart);
             out.writeUTF(profileName);out.writeInt(profileAvatarDex);
             out.writeInt(modeCleared);
+            out.writeInt(dexUnlocked.length);for(int i=0;i<dexUnlocked.length;i++)out.writeBoolean(dexUnlocked[i]);out.writeInt(gachaPoints);
             out.flush();
             byte[] b = bo.toByteArray();
             rs = RecordStore.openRecordStore(STORE, true);
@@ -166,4 +172,5 @@ public final class Save {
     }
 
     private static int firstOwnedDex(){for(int i=0;i<Data.N;i++)if(has(i))return i+1;return 1;}
+    private static int collectionIndex(int dex){for(int i=0;i<CollectionDex.COUNT;i++)if(CollectionDex.DEX[i]==dex)return i;return -1;}
 }

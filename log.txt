@@ -231,6 +231,10 @@ v1.3.8 - Tiến trình offline và UX hoàn chỉnh
   tiến trình các mode chiến đấu khác. Lite có sprite fallback khi thiếu raw atlas.
 - Đổi tên hiển thị mode đầu thành “Khám phá và bắt cóc Pokémon” ở menu chính,
   Explore Hub, hướng dẫn và lời nhắc trong Collection.
+- Bãi Pokémon: avatar chỉ dùng ở popup chọn; sau khi xác nhận, model thật được thả
+  vào map và tự chọn đích, đi 8 hướng, nghỉ/pose rồi tiếp tục lang thang.
+- Farm Pet: hero và địch là actor có tọa độ trong map, đi WALK để áp sát theo tầm
+  đánh rồi chuyển IDLE/ATTACK/HURT, có nhích người khi ra đòn như combat Auto Chess.
 
 Nội dung UX trong v1.3.8
 - History/tổng kết giữ bố cục responsive; đã hoàn thiện hướng dẫn điều khiển,

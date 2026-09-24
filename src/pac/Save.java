@@ -27,6 +27,7 @@ public final class Save {
     /** 0 = legacy smooth 16 FPS, 1 = battery 10 FPS, 2 = medium 20 FPS, 3 = high 25 FPS. */
     public static int performance = 0;
     public static int frameDelay(){switch(performance){case 1:return 100;case 2:return 50;case 3:return 40;default:return 60;}}
+    public static int targetFps(){switch(performance){case 1:return 10;case 2:return 20;case 3:return 25;default:return 16;}}
 
     public static void enableCheat() {
         cheatMode = true;

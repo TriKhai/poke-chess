@@ -1,6 +1,13 @@
 POKE AUTO CHESS ME - OFFLINE REMAKE UPDATE
 ==========================================
 
+Fixed-step render and animation (v1.3.5)
+- Separated the deterministic 100ms combat simulation clock from render cadence.
+- Added integer smoothstep interpolation for movement, HP/MP bars and projectiles.
+- Battle HUD reports measured/target FPS for the 10, 16, 20 and 25 FPS modes.
+- Added cadence regression: all four render intervals produce identical simulation ticks.
+- Kept the About community-message placeholder ready for author-provided copy.
+
 Status parity and About placeholder (v1.3.4)
 - Expanded the documented status catalog from 16 to 25 entries from the original source.
 - Added Possessed, Resurrection, Safeguard, Rage, Pokerus and four terrain fields.

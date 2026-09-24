@@ -17,7 +17,8 @@ public final class ChessScreen extends Screen {
     private int held = -1;
 
     private Battle bt;
-    private int acc = 0, endT = 0, speed = 1;
+    private final FixedStepClock simClock=new FixedStepClock(TICK_MS);
+    private int endT = 0, speed = 1;
     private boolean endReady = false;
     private String toast = "";
     private int toastT = 0;
@@ -92,9 +93,9 @@ public final class ChessScreen extends Screen {
         if (toastT > 0) toastT -= dt;
         if (state == BATTLE && !rosterDetail) {
             if (!bt.over) {
-                acc += dt * speed;
-                while (acc >= TICK_MS && !bt.over) {
-                    acc -= TICK_MS;
+                simClock.add(dt,speed);
+                while (simClock.ready() && !bt.over) {
+                    simClock.consume();
                     bt.step();
                 }
             } else {
@@ -505,7 +506,7 @@ public final class ChessScreen extends Screen {
         bt = run.makeBattle();
         watch = 0;
         for (int i = 0; i < bt.n; i++) if (bt.units[i].side == 0) { watch = i; break; }
-        acc = 0;
+        simClock.reset();
         endT = 0;
         endReady = false;
         state = BATTLE;
@@ -1046,7 +1047,8 @@ public final class ChessScreen extends Screen {
             Art.speciesSkillSprite(g,bt.boardFxSp[k],fx,fy,(visualTime/90+k)&7);
         }
 
-        int frac = bt.over ? 256 : acc * 256 / TICK_MS;
+        int linearFrac = bt.over ? 256 : simClock.fraction256();
+        int frac = FixedStepClock.smooth256(linearFrac);
         if (frac > 256) frac = 256;
         for (int i = 0; i < bt.n; i++) {
             Unit u = bt.units[i];
@@ -1126,7 +1128,7 @@ public final class ChessScreen extends Screen {
         }
         for (int k = 0; k < Battle.MAXSKILLFX; k++) {
             if (bt.skillFxTtl[k] <= 0) continue;
-            int sf = bt.skillFxAge[k] * 2 + (acc * 2 / TICK_MS);
+            int sf = bt.skillFxAge[k] * 2 + (linearFrac * 2 / 256);
             int fx = bx + bt.skillFxX[k] * cs + (cs - 32) / 2;
             int fy = by + bt.skillFxY[k] * cs + (cs - 32) / 2;
             // A cast must remain legible even when a device cannot decode the
@@ -1176,7 +1178,7 @@ public final class ChessScreen extends Screen {
         // HUD
         Art.text(g, "R" + run.round + "  vs " + run.enemyName, 3, 1, 0xFFFFFF);
         Art.text(g, Lang.t("Ta ", "You ") + bt.alive(0) + Lang.t("  Địch ", "  Foe ") + bt.alive(1), 3, fh + 2, 0xB0C8FF);
-        Art.textR(g, "x" + speed + (bt.tick > Battle.SUDDEN_DEATH ? " SUDDEN" : ""), W - 3, fh + 2, 0xFFD030);
+        Art.textR(g, "x" + speed + " " + game.actualFps + "/" + Save.targetFps() + "FPS" + (bt.tick > Battle.SUDDEN_DEATH ? " SUDDEN" : ""), W - 3, fh + 2, 0xFFD030);
         paintBattleStats(g, by + 6 * cs + 2, H-(by+6*cs+2));
         if(bt.over&&endReady){
             int ph=fh+6,py=H-ph;

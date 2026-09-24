@@ -19,6 +19,8 @@ public final class Game extends GameCanvas implements Runnable {
     public int W = 176, H = 208;
     private Graphics gfx;
     private boolean sizeDirty = true;
+    /** Measured render diagnostics, updated once per second without allocations. */
+    public int actualFps=0,lastFrameMs=0;
 
     private final int[] queue = new int[16];
     private int qHead = 0, qTail = 0;
@@ -130,6 +132,7 @@ public final class Game extends GameCanvas implements Runnable {
 
     public void run() {
         long last = System.currentTimeMillis();
+        long fpsStart=last;int fpsFrames=0;
         while (running) {
             long now = System.currentTimeMillis();
             int dt = (int) (now - last);
@@ -153,11 +156,15 @@ public final class Game extends GameCanvas implements Runnable {
                 s.update(dt);
                 s.paint(gfx);
                 flushGraphics();
+                fpsFrames++;
+                long fpsNow=System.currentTimeMillis();
+                if(fpsNow-fpsStart>=1000){actualFps=(int)(fpsFrames*1000/(fpsNow-fpsStart));fpsFrames=0;fpsStart=fpsNow;}
             } catch (Exception e) {
                 // keep the loop alive; a broken frame should not kill the game
                 lastError = e.toString();
             }
             long spent = System.currentTimeMillis() - now;
+            lastFrameMs=(int)spent;
             // Real phones can trade animation cadence for lower CPU/battery usage.
             long wait = Save.frameDelay() - spent;
             try {

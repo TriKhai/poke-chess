@@ -144,6 +144,13 @@ v1.3.5 - Render và animation thật theo FPS
 - Tách tick combat 100 ms khỏi render; nội suy vị trí, HP/MP/khiên, đạn và VFX.
 - Các mức 10/16/20/25 FPS tạo khác biệt nhìn thấy rõ nhưng kết quả trận không đổi.
 - Giới hạn cache/ảnh tạm, đo frame time và tránh cấp phát trong paint/update.
+- Đã tách accumulator thành FixedStepClock 100ms, độc lập nhịp render; regression
+  xác nhận cadence 100/60/50/40ms đều tạo đúng 60 tick sau 6 giây.
+- Vị trí, HP/MP/khiên và projectile dùng nội suy smoothstep số nguyên; không dùng
+  float và không cấp phát trong frame để giữ tương thích CLDC 1.0.
+- Battle HUD hiển thị FPS thực tế/mục tiêu; Game đo FPS và frame time mỗi giây.
+- About vẫn giữ placeholder, chờ nội dung cộng đồng do tác giả gửi.
+- Đồng bộ MIDlet-Version 1.3.5.
 
 v1.3.6 - Gameplay/content parity
 - Audit toàn bộ ability behavior, item passive, trigger và passive Pokemon với source gốc.

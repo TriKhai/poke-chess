@@ -25,6 +25,14 @@ public final class CombatSmokeTest {
         parity.apply(CombatStatus.RAGE,10);check(parity.effectiveSpeed(60)==90,"Rage speed mismatch");
         parity.clearPositive();parity.apply(CombatStatus.ELECTRIC_FIELD,10);check(parity.effectiveSpeed(50)==60,"Electric Field speed mismatch");
         check(parity.positive(CombatStatus.RESURRECTION)&&!parity.positive(CombatStatus.POSSESSED),"status polarity mismatch");
+        int[] cadence={100,60,50,40};
+        for(int c=0;c<cadence.length;c++){
+            FixedStepClock clock=new FixedStepClock(100);int elapsed=0,steps=0;
+            while(elapsed<6000){int dt=Math.min(cadence[c],6000-elapsed);clock.add(dt,1);elapsed+=dt;while(clock.ready()){clock.consume();steps++;}}
+            check(steps==60&&clock.remainder()==0,"render cadence changed simulation at "+cadence[c]+"ms");
+        }
+        check(FixedStepClock.smooth256(0)==0&&FixedStepClock.smooth256(128)==128&&FixedStepClock.smooth256(256)==256,"smooth interpolation endpoints mismatch");
+        check(Save.targetFps()==16,"default target FPS mismatch");
         check(Data.N == 386, "roster must contain Gen 1-3");
         check(CollectionDex.COUNT==558,"collection-only Gen 4-9 roster mismatch");
         check(CollectionDex.countGen(4)==107&&CollectionDex.countGen(5)==135&&CollectionDex.countGen(6)==68,
@@ -80,9 +88,13 @@ public final class CombatSmokeTest {
         Save.reset();
         int oldPerformance=Save.performance;
         Save.performance=1;check(Save.frameDelay()==100,"10 FPS performance mode mismatch");
+        check(Save.targetFps()==10,"10 FPS target label mismatch");
         Save.performance=0;check(Save.frameDelay()==60,"legacy 16 FPS performance mode mismatch");
+        check(Save.targetFps()==16,"16 FPS target label mismatch");
         Save.performance=2;check(Save.frameDelay()==50,"20 FPS performance mode mismatch");
+        check(Save.targetFps()==20,"20 FPS target label mismatch");
         Save.performance=3;check(Save.frameDelay()==40,"25 FPS performance mode mismatch");
+        check(Save.targetFps()==25,"25 FPS target label mismatch");
         Save.performance=oldPerformance;
         Save.language=Lang.EN;Save.performance=3;Save.playPath=1;Save.cheatMode=true;Save.balls=999;
         Save.resetProgress();check(Save.language==Lang.EN&&Save.performance==3,"start-over must keep device settings");

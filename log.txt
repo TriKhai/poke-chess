@@ -8,6 +8,8 @@ v1.4.3 - Legendary Purchase Light Waves
 - Hiệu ứng dùng primitive MIDP, không thêm asset và không thay đổi logic shop/merge.
 - Hoàn nguyên renderer trạng thái chờ về clip IDLE gốc. Không còn ép Pokémon có
   một frame IDLE chạy WALK tại chỗ, tránh cảm giác đứng rung/giật trên bàn và Collection.
+- Bỏ ghi Run RMS định kỳ trong lúc xếp cờ và khi pause. Snapshot chỉ được ghi khi
+  bắt đầu giai đoạn chuẩn bị của round, tránh I/O chen vào lúc roll shop hoặc kéo pet.
 
 v1.4.2 - Evolution Visual Effects
 - Bám trực tiếp mergeCopies/mergeAll để phát hiệu ứng đúng vị trí pet vừa tiến hóa,

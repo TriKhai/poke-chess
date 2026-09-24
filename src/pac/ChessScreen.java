@@ -46,7 +46,6 @@ public final class ChessScreen extends Screen {
     private int reward = 0;
     private boolean finished = false;
     private int visualTime = 0;
-    private int saveClock = 0;
     private int watch = 0;
     private boolean rosterDetail = false;
     private boolean refreshItemsAsk=false;
@@ -84,7 +83,8 @@ public final class ChessScreen extends Screen {
     }
 
     public ChessScreen(Game g,Run resumed){super(g);run=resumed;unlimitedGold=run.mode==Run.MODE_UNLIMITED;state=PREP;}
-    public void saveResume(){if(!finished&&state==PREP)RunStorage.save(run);}
+    /** Run snapshots are written only when a preparation round begins. */
+    public void saveResume(){}
 
     private void say(String s) {
         toast = s;
@@ -98,7 +98,6 @@ public final class ChessScreen extends Screen {
         if(benchSpawnT>0){benchSpawnT-=dt;if(benchSpawnT<=0){benchSpawnT=0;benchSpawnSlot=-1;}}
         if(evolutionFxT>0){evolutionFxT-=dt;if(evolutionFxT<=0){evolutionFxT=0;evolutionFxPos=-1;Art.clearEvolutionFx();}}
         if(legendaryBuyT>0){legendaryBuyT-=dt;if(legendaryBuyT<=0){legendaryBuyT=0;legendaryBuySlot=-1;}}
-        if(state==PREP){saveClock+=dt;if(saveClock>=3000){saveClock=0;RunStorage.save(run);}}
         if (toastT > 0) toastT -= dt;
         if (state == BATTLE && !rosterDetail) {
             if (!bt.over) {

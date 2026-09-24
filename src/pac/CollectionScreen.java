@@ -14,12 +14,11 @@ public final class CollectionScreen extends Screen {
     private int dexAction = 0;
     private int animTime = 0, previewState = 0, previewDir = 0;
     private int previewStatus = 0, previewAttackKind = 1;
-    private static final String[] CLIP = { "IDLE", "ATTACK", "VICTORY" };
+    private static final String[] CLIP = { "IDLE", "WALK", "ATTACK", "HOP", "HURT", "POSE" };
     private static final String[] STATUS = { "ARMOR BREAK", "BLINDED", "BURN", "CHARM",
             "CONFUSION", "CURSE", "FATIGUE", "FLINCH", "FREEZE", "LOCKED",
             "PARALYSIS", "POISON", "PROTECT", "SILENCE", "SLEEP", "WOUND" };
     private static final String[] DIR = { "DOWN", "DOWN-R", "RIGHT", "UP-R", "UP", "UP-L", "LEFT", "DOWN-L" };
-    private static final String[] DEX_CLIP = { "IDLE", "WALK", "ATTACK", "HOP", "HURT", "POSE" };
 
     public CollectionScreen(Game g) {
         super(g);
@@ -48,8 +47,8 @@ public final class CollectionScreen extends Screen {
             switch (k) {
                 case Game.K_LEFT: previewDir = (previewDir + 7) & 7; break;
                 case Game.K_RIGHT: previewDir = (previewDir + 1) & 7; break;
-                case Game.K_UP: previewState = (previewState + 2) % 3; break;
-                case Game.K_DOWN: previewState = (previewState + 1) % 3; break;
+                case Game.K_UP: previewState = (previewState + CLIP.length - 1) % CLIP.length; break;
+                case Game.K_DOWN: previewState = (previewState + 1) % CLIP.length; break;
                 case Game.K_1: previewStatus = (previewStatus + STATUS.length - 1) % STATUS.length; break;
                 case Game.K_3: case Game.K_STAR: previewStatus = (previewStatus + 1) % STATUS.length; break;
                 case Game.K_7: previewAttackKind = (previewAttackKind + 2) % 3; break;
@@ -174,7 +173,7 @@ public final class CollectionScreen extends Screen {
         Art.statusSprite(g,previewStatus,px-19,py+vh/2-8,frame);
         Art.attackSprite(g,CollectionDex.T1[di],previewAttackKind,W/2,py+vh+12,frame);
         int y=py+vh+22;
-        Art.textC(g,DEX_CLIP[dexAction]+"  "+DIR[previewDir],W/2,y,0x80D8FF);y+=fh;
+        Art.textC(g,CLIP[dexAction]+"  "+DIR[previewDir],W/2,y,0x80D8FF);y+=fh;
         Art.textC(g,"STATUS: "+Lang.statusName(previewStatus),W/2,y,0xFFC070);y+=fh;
         String kind=previewAttackKind==0?"MELEE":(previewAttackKind==1?"RANGE":"HIT");
         Art.textC(g,Lang.t("HIỆU ỨNG: ","ATTACK FX: ")+Lang.typeName(CollectionDex.T1[di])+" "+kind,W/2,y,0xA0E8A0);y+=fh;
@@ -303,8 +302,7 @@ public final class CollectionScreen extends Screen {
         if(Data.t2[sp]>=0)Art.typeIcon(g,Data.t2[sp],x,chipY);
 
         int vw=Data.visualWidth(sp),vh=Data.visualHeight(sp),px=W/2-vw/2,py=chipY+fh+3;
-        int rawState=previewState==1?RawAtlas.ATTACK:
-            (previewState==2?RawAtlas.VICTORY:RawAtlas.IDLE);
+        int rawState=previewState;
         Art.battleSprite(g,sp,px,py,frame,rawState,previewDir);
         Art.statusSprite(g,previewStatus,px-19,py+vh/2-8,frame);
         Art.speciesSkillSprite(g,sp,px+vw+3,py+vh/2-16,frame);

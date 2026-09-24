@@ -114,6 +114,8 @@ v1.3.2 - Collection Gen 1-9
   portrait-only 13.170.164 byte, animation làm tăng 14.673.025 byte (~14,0 MiB).
 - Hotfix chi tiết Gen 4-9: màn xem animation dùng cùng bố cục và phím với Gen 1-3,
   gồm hướng, clip, status overlay và attack effect; chỉ thay stats bằng Collection-only.
+- Hotfix animation Gen 1-3: mở đủ 6 clip đã có trong raw atlas (Idle, Walk,
+  Attack, Hop, Hurt, Pose); sửa mục Victory cũ vốn hiển thị nhầm clip Hop.
 
 v1.3.3 - Responsive UI
 - Chia layout thành Compact, Standard và Large/Landscape; hỗ trợ tối thiểu

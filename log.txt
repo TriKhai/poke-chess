@@ -10,6 +10,10 @@ v1.4.3 - Legendary Purchase Light Waves
   một frame IDLE chạy WALK tại chỗ, tránh cảm giác đứng rung/giật trên bàn và Collection.
 - Bỏ ghi Run RMS định kỳ trong lúc xếp cờ và khi pause. Snapshot chỉ được ghi khi
   bắt đầu giai đoạn chuẩn bị của round, tránh I/O chen vào lúc roll shop hoặc kéo pet.
+- Chuyển sang cấu hình ưu tiên mượt: raw-atlas cache 8 -> 24 để đủ toàn bộ sân,
+  hàng chờ và battle mà không nạp/loại ảnh mỗi frame; avatar cache 24 -> 96 để
+  roll shop ít đọc lại PNG. Cấp tiến hóa được tính sẵn một lần thay vì quét 386 pet
+  cho từng model ở từng frame. Không cắt animation hay hiệu ứng.
 
 v1.4.2 - Evolution Visual Effects
 - Bám trực tiếp mergeCopies/mergeAll để phát hiệu ứng đúng vị trí pet vừa tiến hóa,

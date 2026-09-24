@@ -63,6 +63,14 @@ public final class ChessScreen extends Screen {
     private int evolutionFxPos=-1,evolutionFxTier=0,evolutionFxT=0;
     private int legendaryBuySlot=-1,legendaryBuyT=0;
     private final int[] buyBenchBefore=new int[Run.BENCH];
+    /** Precomputed once: drawing evolution dots must never scan the full roster per pet/frame. */
+    private static final int[] FAMILY_MAX_TIER=new int[Data.N];
+    static{
+        for(int i=0;i<Data.N;i++){
+            int f=Data.fam[i],tier=Data.tier[i];
+            if(f>=0&&f<FAMILY_MAX_TIER.length&&tier>FAMILY_MAX_TIER[f])FAMILY_MAX_TIER[f]=tier;
+        }
+    }
 
     // layout (recomputed every frame)
     private int cell, hudH, boardY, benchY, shopY, shopH, btnY, btnH, infoY, cw;
@@ -750,7 +758,7 @@ public final class ChessScreen extends Screen {
         }
     }
 
-    private int familyMaxTier(int sp){int max=1,f=Data.fam[sp];for(int i=0;i<Data.N;i++)if(Data.fam[i]==f&&Data.tier[i]>max)max=Data.tier[i];return max;}
+    private int familyMaxTier(int sp){int f=Data.fam[sp],max=f>=0&&f<FAMILY_MAX_TIER.length?FAMILY_MAX_TIER[f]:1;return max>0?max:1;}
 
     private void drawEvolutionDots(Graphics g,int sp,int x,int y){
         int cur=Data.tier[sp],max=familyMaxTier(sp);

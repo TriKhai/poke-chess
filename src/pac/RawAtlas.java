@@ -15,7 +15,8 @@ public final class RawAtlas {
     private static final RawAtlas[] CACHE=new RawAtlas[RAW_COUNT];
     private static final boolean[] FAILED=new boolean[RAW_COUNT];
     private static final int[] AGE=new int[RAW_COUNT];
-    private static final int MAX_CACHE=8;
+    /** Smooth profile: enough decoded atlases for a full formation without churn. */
+    private static final int MAX_CACHE=24;
     private static int clock;
     private static int outlineSp=-1,outlineDir=-1,outlineCount=0;
     private static Image[] outlineFrames;

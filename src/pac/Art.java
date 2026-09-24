@@ -43,7 +43,8 @@ public final class Art {
     private static boolean[] avatarTried = new boolean[Data.N];
     private static int[] avatarAge = new int[Data.N];
     private static int avatarClock;
-    private static final int AVATAR_CACHE_LIMIT=24;
+    /** Keep several shop rolls resident; modern targets favour smoothness over E72 RAM. */
+    private static final int AVATAR_CACHE_LIMIT=96;
     private static Image[] avatarMini = new Image[Data.N];
     private static Image[] avatarMiniGray = new Image[Data.N];
     private static Image[] avatarTiny = new Image[Data.N];

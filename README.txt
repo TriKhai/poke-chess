@@ -14,7 +14,7 @@ CAU TRUC
   docs/CHI_SO_VA_TRANG_THAI_POKEMON.md  bang chu viet tat, chi so va trang thai combat
 
 PHIEN BAN
-  v1.4.3: mua Legendary co song sang; IDLE goc; RMS chi luu dau round xep co.
+  v1.4.3: mua Legendary co song sang; IDLE goc; RMS dau round; cache uu tien muot.
   v1.4.2: hieu ung tien hoa 8 frame; pet cap 2 mau vang, cap 3 mau do.
   v1.4.1: hotfix hau tran; don projectile/skill/board FX va state tan cong,
           tiep tuc animation ket qua bang visual clock thay vi battle tick da dung.

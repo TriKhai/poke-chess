@@ -219,6 +219,8 @@ public final class CombatSmokeTest {
         check(merge.equipDirect(Run.BOARD,book),"merge item 3 equip failed");
         merge.mergeAll();
         check(merge.count(Data.evo[0])==1,"three copies did not evolve");
+        check(merge.mergeEventPos>=0&&merge.mergeEventTier==2&&merge.mergeEventSp==Data.evo[0],
+              "tier-2 evolution visual event missing");
         int evolved=-1;for(int p=0;p<Run.BOARD+Run.BENCH;p++)if(merge.get(p)==Data.evo[0]){evolved=p;break;}
         check(evolved>=0,"evolved Pokemon missing");
         check(merge.itemAt(evolved,0)>=0&&merge.itemAt(evolved,1)>=0&&merge.itemAt(evolved,2)>=0,

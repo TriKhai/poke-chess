@@ -1,6 +1,14 @@
 POKE AUTO CHESS ME - VERSION LOG
 ================================
 
+v1.4.2 - Evolution Visual Effects
+- Bám trực tiếp mergeCopies/mergeAll để phát hiệu ứng đúng vị trí pet vừa tiến hóa,
+  kể cả trường hợp mua một pet tạo chuỗi ghép.
+- Tái sử dụng 8 frame EVOLUTION 64x64 từ source gốc; cấp 2 được phối vàng, cấp 3
+  phối đỏ. Hiệu ứng nằm sau model, kéo dài 840ms và thay SPAWN nếu mua dẫn đến ghép.
+- Runtime chỉ giữ một frame EVOLUTION đang hiển thị trong RAM rồi giải phóng.
+- Release gate kiểm tra đủ frame đầu/cuối của cả biến thể vàng và đỏ.
+
 v1.4.1 - Post-battle Visual Hotfix
 - Khi Battle vừa kết thúc, dọn damage text, projectile, skill FX, board FX và các
   state hit/cast/attack/move còn sót; không để frame hiệu ứng cuối đứng trên sàn.

@@ -37,6 +37,8 @@ public final class ReleaseArtifactTest {
             check(entry(jar,"pac/PacMidlet.class")&&entry(jar,"icon.png"),"runtime entry missing");
             check(entry(jar,"sp/0.png")&&entry(jar,"av/0.png")&&entry(jar,"dex/1000.png"),"fallback art missing");
             check(entry(jar,"fx/spawn/0.png")&&entry(jar,"fx/spawn/4.png"),"original SPAWN frames missing");
+            check(entry(jar,"fx/evo2/0.png")&&entry(jar,"fx/evo2/7.png")
+                  &&entry(jar,"fx/evo3/0.png")&&entry(jar,"fx/evo3/7.png"),"evolution colour frames missing");
             if(lite){
                 check(!prefix(jar,"raw/")&&!prefix(jar,"dexraw/")&&!prefix(jar,"sfx/")&&!prefix(jar,"maps/"),
                       "Lite contains excluded heavy assets");

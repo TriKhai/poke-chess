@@ -24,6 +24,8 @@ public final class Run {
     public int[] equip = new int[(BOARD + BENCH) * 3];
     /** Player item inventory; indices match ItemData.ID. */
     public int[] inventory = new int[ItemData.ID.length];
+    /** Last merge result for preparation-screen visuals; not persisted. */
+    public int mergeEventPos=-1,mergeEventTier=0,mergeEventSp=-1;
     public int lastItem = -1;
     public final boolean unlimitedGold;
     public final int mode;
@@ -218,6 +220,7 @@ public final class Run {
     }
 
     public boolean buy(int slot) {
+        mergeEventPos=-1;mergeEventTier=0;mergeEventSp=-1;
         int sp = shop[slot];
         if (sp < 0) { msg = Lang.t("Đã bán hết", "Sold out"); return false; }
         int c = Data.cost[sp];
@@ -287,7 +290,8 @@ public final class Run {
             for(int s=0;s<3;s++){int id=itemAt(p,s);if(id>=0&&n<kept.length)kept[n++]=id;}
             clearItems(p,false);set(p,-1);removed++;
         }
-        set(first,Data.evo[sp]);
+        int evolved=Data.evo[sp];set(first,evolved);
+        mergeEventPos=first;mergeEventTier=Data.tier[evolved];mergeEventSp=evolved;
         for(int i=0;i<n;i++){if(i<3)equip[first*3+i]=kept[i];else giveItem(kept[i]);}
     }
 

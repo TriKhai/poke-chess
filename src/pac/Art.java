@@ -64,6 +64,8 @@ public final class Art {
     private static int selectionOutlineSp=-1,selectionOutlineSize=-1;
     private static Image[] spawnFx=new Image[5];
     private static boolean spawnFxTried;
+    private static Image evolutionFrame;
+    private static int evolutionFrameTier=-1,evolutionFrameIndex=-1;
     private static final int[] RARITY_COLOR={0xA0A0A0,0x3BC95E,0x41BFCC,0x927FFF,0xE53B3B,0xFFFFFF,0xE6CB49,0xE58EE5};
     private static final int TL = Graphics.TOP | Graphics.LEFT;
 
@@ -461,6 +463,19 @@ public final class Art {
         int frame=elapsed/110;if(frame<0)frame=0;if(frame>=spawnFx.length)frame=spawnFx.length-1;
         if(spawnFx[frame]!=null)g.drawImage(spawnFx[frame],x,y,TL);
     }
+
+    /** Recoloured original EVOLUTION frame; only one decoded frame stays in RAM. */
+    public static void evolutionFx(Graphics g,int tier,int x,int y,int elapsed){
+        int frame=elapsed/105;if(frame<0)frame=0;if(frame>7)frame=7;
+        if(evolutionFrame==null||evolutionFrameTier!=tier||evolutionFrameIndex!=frame){
+            evolutionFrame=null;
+            try{evolutionFrame=Image.createImage("/fx/evo"+(tier>=3?3:2)+"/"+frame+".png");}
+            catch(Exception e){evolutionFrame=null;}
+            evolutionFrameTier=tier;evolutionFrameIndex=frame;
+        }
+        if(evolutionFrame!=null)g.drawImage(evolutionFrame,x,y,TL);
+    }
+    public static void clearEvolutionFx(){evolutionFrame=null;evolutionFrameTier=-1;evolutionFrameIndex=-1;}
 
     public static void skillSprite(Graphics g, int ability, int x, int y, int frame) {
         if (!skillTried[ability]) {

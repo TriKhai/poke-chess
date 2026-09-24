@@ -61,6 +61,7 @@ public final class ChessScreen extends Screen {
     private final boolean[] synFamilies = new boolean[Data.N];
     /** Short source-style blue/green burst when a purchase lands on the bench. */
     private int benchSpawnSlot=-1,benchSpawnT=0;
+    private int evolutionFxPos=-1,evolutionFxTier=0,evolutionFxT=0;
     private final int[] buyBenchBefore=new int[Run.BENCH];
 
     // layout (recomputed every frame)
@@ -94,6 +95,7 @@ public final class ChessScreen extends Screen {
     public void update(int dt) {
         visualTime += dt;
         if(benchSpawnT>0){benchSpawnT-=dt;if(benchSpawnT<=0){benchSpawnT=0;benchSpawnSlot=-1;}}
+        if(evolutionFxT>0){evolutionFxT-=dt;if(evolutionFxT<=0){evolutionFxT=0;evolutionFxPos=-1;Art.clearEvolutionFx();}}
         if(state==PREP){saveClock+=dt;if(saveClock>=3000){saveClock=0;RunStorage.save(run);}}
         if (toastT > 0) toastT -= dt;
         if (state == BATTLE && !rosterDetail) {
@@ -464,8 +466,14 @@ public final class ChessScreen extends Screen {
             else{
                 for(int i=0;i<Run.BENCH;i++)buyBenchBefore[i]=run.bench[i];
                 if(!run.buy(col))say(run.msg);
-                else for(int i=0;i<Run.BENCH;i++)if(run.bench[i]>=0&&run.bench[i]!=buyBenchBefore[i]){
-                    benchSpawnSlot=i;benchSpawnT=620;break;
+                else{
+                    for(int i=0;i<Run.BENCH;i++)if(run.bench[i]>=0&&run.bench[i]!=buyBenchBefore[i]){
+                        benchSpawnSlot=i;benchSpawnT=620;break;
+                    }
+                    if(run.mergeEventPos>=0){
+                        evolutionFxPos=run.mergeEventPos;evolutionFxTier=run.mergeEventTier;evolutionFxT=840;
+                        benchSpawnT=0;benchSpawnSlot=-1;
+                    }
                 }
             }
         } else if(zone==3) {
@@ -613,6 +621,12 @@ public final class ChessScreen extends Screen {
         if(benchSpawnT>0&&benchSpawnSlot>=0){
             int fx=bx+benchSpawnSlot*cell+(cell-32)/2,fy=benchY+cell-30;
             Art.spawnFx(g,fx,fy,620-benchSpawnT);
+        }
+        if(evolutionFxT>0&&evolutionFxPos>=0){
+            int ex,ey;
+            if(evolutionFxPos<Run.BOARD){ex=bx+(evolutionFxPos%8)*cell;ey=boardY+(evolutionFxPos/8)*cell;}
+            else{ex=bx+(evolutionFxPos-Run.BOARD)*cell;ey=benchY;}
+            Art.evolutionFx(g,evolutionFxTier,ex+(cell-64)/2,ey+cell-58,840-evolutionFxT);
         }
         // Pass 2: draw all units after all backgrounds. Lower rows are painted
         // later, giving large sprites a stable natural depth order.

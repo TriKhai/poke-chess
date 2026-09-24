@@ -62,6 +62,7 @@ public final class ChessScreen extends Screen {
     /** Short source-style blue/green burst when a purchase lands on the bench. */
     private int benchSpawnSlot=-1,benchSpawnT=0;
     private int evolutionFxPos=-1,evolutionFxTier=0,evolutionFxT=0;
+    private int legendaryBuySlot=-1,legendaryBuyT=0;
     private final int[] buyBenchBefore=new int[Run.BENCH];
 
     // layout (recomputed every frame)
@@ -96,6 +97,7 @@ public final class ChessScreen extends Screen {
         visualTime += dt;
         if(benchSpawnT>0){benchSpawnT-=dt;if(benchSpawnT<=0){benchSpawnT=0;benchSpawnSlot=-1;}}
         if(evolutionFxT>0){evolutionFxT-=dt;if(evolutionFxT<=0){evolutionFxT=0;evolutionFxPos=-1;Art.clearEvolutionFx();}}
+        if(legendaryBuyT>0){legendaryBuyT-=dt;if(legendaryBuyT<=0){legendaryBuyT=0;legendaryBuySlot=-1;}}
         if(state==PREP){saveClock+=dt;if(saveClock>=3000){saveClock=0;RunStorage.save(run);}}
         if (toastT > 0) toastT -= dt;
         if (state == BATTLE && !rosterDetail) {
@@ -464,11 +466,15 @@ public final class ChessScreen extends Screen {
         } else if (zone == 2) {
             if (held >= 0) doSell();
             else{
+                int boughtSp=run.shop[col],landed=-1;
                 for(int i=0;i<Run.BENCH;i++)buyBenchBefore[i]=run.bench[i];
                 if(!run.buy(col))say(run.msg);
                 else{
                     for(int i=0;i<Run.BENCH;i++)if(run.bench[i]>=0&&run.bench[i]!=buyBenchBefore[i]){
-                        benchSpawnSlot=i;benchSpawnT=620;break;
+                        landed=i;benchSpawnSlot=i;benchSpawnT=620;break;
+                    }
+                    if(boughtSp>=0&&Data.category[boughtSp]==6&&landed>=0){
+                        legendaryBuySlot=landed;legendaryBuyT=760;
                     }
                     if(run.mergeEventPos>=0){
                         evolutionFxPos=run.mergeEventPos;evolutionFxTier=run.mergeEventTier;evolutionFxT=840;
@@ -713,12 +719,36 @@ public final class ChessScreen extends Screen {
 
         paintPrepDock(g,infoY,53);
         paintPrepInfo(g,infoY+55,H-(infoY+55));
+        if(legendaryBuyT>0&&legendaryBuySlot>=0)
+            drawLegendaryBuyFx(g,bx+legendaryBuySlot*cell+cell/2,benchY+cell/2,W,H,760-legendaryBuyT);
     }
 
     private void drawSetupUnit(Graphics g, int sp, int x, int y, int size, int phase) {
         int frame = visualTime / 90 + phase;
         Art.formationSprite(g,sp,x,y,size,size,game.W,frame);
         drawEvolutionDots(g,sp,x+2,y+size-3);
+    }
+
+    /** Two mirrored full-screen light fronts emitted by a purchased Legendary. */
+    private void drawLegendaryBuyFx(Graphics g,int cx,int cy,int w,int h,int age){
+        int p=age*256/760;if(p>256)p=256;
+        int reach=(Math.max(w,h)+24)*p/256;
+        int pulse=(p<128?p:256-p);if(pulse<0)pulse=0;
+        int col=pulse>70?0xFFFFFF:(pulse>30?0x80E8FF:0x4098E8);
+        for(int side=-1;side<=1;side+=2){
+            int x=cx+side*reach;
+            g.setColor(0x2868B8);g.drawLine(x-1,0,x-1,h);
+            g.setColor(col);g.drawLine(x,0,x,h);
+            g.setColor(0x60D8FF);g.drawLine(x+1,0,x+1,h);
+            int slant=8+p/24;
+            g.drawLine(x-side*slant,0,x+side*slant,h);
+        }
+        int rw=reach*2,rh=Math.max(8,reach);
+        g.setColor(col);g.drawArc(cx-reach,cy-rh/2,rw,rh,0,360);
+        if(p<72){
+            int r=4+p/6;g.setColor(0xFFFFFF);
+            g.drawLine(cx-r,cy,cx+r,cy);g.drawLine(cx,cy-r,cx,cy+r);
+        }
     }
 
     private int familyMaxTier(int sp){int max=1,f=Data.fam[sp];for(int i=0;i<Data.N;i++)if(Data.fam[i]==f&&Data.tier[i]>max)max=Data.tier[i];return max;}

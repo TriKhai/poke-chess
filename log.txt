@@ -261,6 +261,7 @@ v1.3.8 - Tiến trình offline và UX hoàn chỉnh
 - Khi Gacha ra Legendary, chuyển sang reveal riêng: nền trắng loang tròn từ tâm hố
   đen, ẩn toàn bộ UI Gacha và chỉ trình diễn model Legendary vừa trúng. Auto-roll
   dừng chờ tại đây; nhấn FIRE/5 mới đóng reveal và tiếp tục chuỗi quay.
+- Đổi metadata build MIDlet-Vendor từ TriKhai thành Kdic cho cả Full/Lite JAR và JAD.
 
 Nội dung UX trong v1.3.8
 - History/tổng kết giữ bố cục responsive; đã hoàn thiện hướng dẫn điều khiển,

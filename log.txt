@@ -269,6 +269,15 @@ Nội dung UX trong v1.3.8
 - Rà toàn bộ Việt hóa/English, tên nút, mô tả dài, scroll, xác nhận thao tác nguy hiểm.
 - Chuẩn hóa phản hồi âm thanh/hình ảnh, trạng thái focus và điều khiển phím/cảm ứng.
 
+v1.3.9RC2 - Formation selection và hiệu ứng mua pet
+- Bỏ border vuông phủ nguyên ô đối với board/hàng chờ; con trỏ nay dùng ellipse
+  mỏng dưới chân và viền trắng một pixel ôm silhouette Pokémon đang chọn.
+- Chỉ cache duy nhất một silhouette theo pet/kích thước hiện tại để giữ RAM thấp.
+- Khi mua pet thành công và pet xuất hiện ở hàng chờ, phát burst xanh lam/xanh ngọc
+  620ms dưới chân theo tinh thần SPAWN animation của source gốc.
+- Hiệu ứng dùng primitive MIDP, không thêm PNG mới và không làm JAR phình đáng kể.
+- PAC-Build đổi thành 1.3.9RC2; không thay đổi gameplay hoặc save schema.
+
 v1.3.9RC - Release Candidate
 - Đóng băng gameplay và giữ nguyên toàn bộ animation/hiệu ứng hiện có.
 - Regression responsive tiếp tục bao phủ 128x160, 176x208, 240x320 và 320x240.

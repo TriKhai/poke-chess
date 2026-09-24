@@ -58,6 +58,9 @@ public final class ChessScreen extends Screen {
     /** Reused by paint/input paths to avoid garbage-collector spikes on CLDC phones. */
     private final int[] synCounts = new int[Data.NT];
     private final boolean[] synFamilies = new boolean[Data.N];
+    /** Short source-style blue/green burst when a purchase lands on the bench. */
+    private int benchSpawnSlot=-1,benchSpawnT=0;
+    private final int[] buyBenchBefore=new int[Run.BENCH];
 
     // layout (recomputed every frame)
     private int cell, hudH, boardY, benchY, shopY, shopH, btnY, btnH, infoY, cw;
@@ -89,6 +92,7 @@ public final class ChessScreen extends Screen {
 
     public void update(int dt) {
         visualTime += dt;
+        if(benchSpawnT>0){benchSpawnT-=dt;if(benchSpawnT<=0){benchSpawnT=0;benchSpawnSlot=-1;}}
         if(state==PREP){saveClock+=dt;if(saveClock>=3000){saveClock=0;RunStorage.save(run);}}
         if (toastT > 0) toastT -= dt;
         if (state == BATTLE && !rosterDetail) {
@@ -453,7 +457,13 @@ public final class ChessScreen extends Screen {
             }
         } else if (zone == 2) {
             if (held >= 0) doSell();
-            else if (!run.buy(col)) say(run.msg);
+            else{
+                for(int i=0;i<Run.BENCH;i++)buyBenchBefore[i]=run.bench[i];
+                if(!run.buy(col))say(run.msg);
+                else for(int i=0;i<Run.BENCH;i++)if(run.bench[i]>=0&&run.bench[i]!=buyBenchBefore[i]){
+                    benchSpawnSlot=i;benchSpawnT=620;break;
+                }
+            }
         } else if(zone==3) {
             switch (col) {
                 case 0: doXp(); break;
@@ -595,6 +605,7 @@ public final class ChessScreen extends Screen {
             g.setColor(((c) & 1) == 0 ? 0x4A3A28 : 0x42341F);
             g.fillRect(x, y, cell, cell);
         }
+        if(benchSpawnT>0&&benchSpawnSlot>=0)drawBenchSpawnFx(g,bx+benchSpawnSlot*cell,benchY,cell);
         // Pass 2: draw all units after all backgrounds. Lower rows are painted
         // later, giving large sprites a stable natural depth order.
         for (int r = 0; r < 3; r++) {
@@ -615,14 +626,13 @@ public final class ChessScreen extends Screen {
                 drawEquippedItems(g,p,x,benchY,cell);
             }
         }
-        // held marker
+        // Source position marker: fit the Pokemon instead of boxing the whole cell.
         if (held >= 0) {
             int hx, hy;
             if (held < Run.BOARD) { hx = bx + (held % 8) * cell; hy = boardY + (held / 8) * cell; }
             else { hx = bx + (held - Run.BOARD) * cell; hy = benchY; }
-            g.setColor(0x40A0FF);
-            g.drawRect(hx, hy, cell - 1, cell - 1);
-            g.drawRect(hx + 1, hy + 1, cell - 3, cell - 3);
+            int selected=run.get(held);
+            if(selected>=0)Art.formationSelection(g,selected,hx,hy,cell,0xFFFFFF);
         }
         // shop
         for (int i = 0; i < 5; i++) {
@@ -659,17 +669,23 @@ public final class ChessScreen extends Screen {
         else if (zone == 1) { cx = bx + col * cell; cy = benchY; cwid = cell; chei = cell; }
         else if (zone == 2) { cx = col * cw + 1; cy = shopY; cwid = cw - 2; chei = shopH; }
         else { cx = col * cw + 1; cy = btnY; cwid = cw - 2; chei = btnH; }
-        if(zone<=3){
+        if(zone>=2&&zone<=3){
             g.setColor(0xFFE040);
             g.drawRect(cx, cy, cwid - 1, chei - 1);
             g.drawRect(cx + 1, cy + 1, cwid - 3, chei - 3);
         }
+        if(zone<=1){
+            int target=zone==0?row*8+col:Run.BOARD+col;
+            int hover=held>=0?run.get(held):run.get(target);
+            if(hover>=0)Art.formationSelection(g,hover,cx,cy,cell,0xFFFFFF);
+            else Art.formationCursor(g,cx,cy,cell,0x80D8FF);
+        }
         if (held >= 0 && zone <= 1) {
-            int hs = run.get(held);
+            int hs=run.get(held);
             // The drag preview must use the same raw-atlas frame, canvas and
             // bottom anchor as board/bench units. Art.sprite() is the small
             // static collection icon and made a held Gen-1 Pokemon collapse.
-            if (hs >= 0) drawSetupUnit(g, hs, cx, cy, cell, held + 37);
+            if (hs >= 0){drawSetupUnit(g,hs,cx,cy,cell,held+37);Art.formationSelection(g,hs,cx,cy,cell,0xFFFFFF);}
         }
 
         paintPrepDock(g,infoY,53);
@@ -680,6 +696,20 @@ public final class ChessScreen extends Screen {
         int frame = visualTime / 90 + phase;
         Art.formationSprite(g,sp,x,y,size,size,game.W,frame);
         drawEvolutionDots(g,sp,x+2,y+size-3);
+    }
+
+    private void drawBenchSpawnFx(Graphics g,int x,int y,int size){
+        int age=620-benchSpawnT,p=age*256/620;
+        int cx=x+size/2,base=y+size-3;
+        int rw=Math.max(4,size*(40+p)/320),rh=Math.max(2,rw/3);
+        g.setColor(0x164D70);g.fillArc(cx-rw/2,base-rh/2,rw,rh,0,360);
+        g.setColor(p<150?0x56F0D0:0x45A8FF);g.drawArc(cx-rw/2,base-rh/2,rw,rh,0,360);
+        int ray=Math.max(2,size*(256-p)/512);
+        g.setColor(0x80FFF0);
+        g.drawLine(cx-rw/3,base,cx-rw/3-ray,base-ray);
+        g.drawLine(cx+rw/3,base,cx+rw/3+ray,base-ray);
+        g.drawLine(cx,base-rh/2,cx,base-rh/2-ray-1);
+        if(p<170){g.setColor(0x50C8FF);g.drawArc(cx-rw/3,base-rh,rw*2/3,rh*2,0,360);}
     }
 
     private int familyMaxTier(int sp){int max=1,f=Data.fam[sp];for(int i=0;i<Data.N;i++)if(Data.fam[i]==f&&Data.tier[i]>max)max=Data.tier[i];return max;}

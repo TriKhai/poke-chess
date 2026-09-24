@@ -59,6 +59,9 @@ v1.4.4 - 40-Stage Road
 - Điều chỉnh Thần Thú Đại Chiến: đầu run hiện ba Legendary ngẫu nhiên để chọn một
   con miễn phí, shop chỉ mở sau khi xác nhận. Kinh tế riêng: thắng 10 vàng nền
   +1 vàng thắng, thua 5 vàng nền; lãi, chuỗi và vàng từ item vẫn cộng tách biệt.
+- Sửa lệch một vòng ở encounter/icon Gyarados: vòng 9 trở lại trận thường, boss và
+  portrait cá chép-rồng chỉ xuất hiện từ vòng 10. Icon vòng 10 dùng lại đúng asset
+  boss 24x24, tránh avatar Legendary sai kích thước hoặc tràn khung lộ trình.
 
 v1.4.3 - Legendary Purchase Light Waves
 - Giữ nguyên 5 frame SPAWN khi mua pet. Nếu pet mua có category Legendary, cộng

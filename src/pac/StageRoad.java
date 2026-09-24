@@ -6,7 +6,7 @@ import javax.microedition.lcdui.Image;
 /** Three-step 40-stage road used by preparation and battle HUDs. */
 public final class StageRoad {
     private StageRoad(){}
-    private static final int[] BOSS_ROUND={9,14,19,24,28,32,36,40};
+    private static final int[] BOSS_ROUND={10,14,19,24,28,32,36,40};
     private static final Image[] BOSS=new Image[BOSS_ROUND.length];
     private static final Image[] BOSS_DIM=new Image[BOSS_ROUND.length];
     private static final boolean[] TRIED=new boolean[BOSS_ROUND.length];

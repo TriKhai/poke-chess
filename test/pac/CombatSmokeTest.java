@@ -303,13 +303,14 @@ public final class CombatSmokeTest {
         check(EconomyRules.playerDamage(8,5)==11,"player damage formula mismatch");
         Run pve=new Run(990,Run.MODE_NORMAL);pve.round=9;pve.genEnemy();
         int gyarados=-1;for(int i=0;i<Data.N;i++)if("Gyarados".equals(Data.name[i])){gyarados=i;break;}
-        check(pve.enemy[2*8+4]==gyarados,"source Gyarados formation mismatch");
+        check(pve.enemy[2*8+4]!=gyarados,"Gyarados boss appeared one round early");
+        pve.round=10;pve.genEnemy();check(pve.enemy[2*8+4]==gyarados,"round-10 Gyarados formation mismatch");
         check(pve.enemyEquip[(2*8+4)*3]==ItemData.indexOf("KINGS_ROCK"),"boss held item missing");
         Battle pveBattle=pve.makeBattle();Unit bossUnit=null;for(int i=0;i<pveBattle.n;i++)if(pveBattle.units[i].side==1)bossUnit=pveBattle.units[i];
         check(bossUnit!=null&&bossUnit.shield>=bossUnit.maxHp/5,"enemy held item passive missing");
         pve.round=24;pve.genEnemy();int legends=0;for(int i=0;i<Run.BOARD;i++)if(pve.enemy[i]>=0)legends++;
         check(legends==3&&pve.enemy[2*8+2]>=0&&pve.enemy[2*8+4]>=0&&pve.enemy[2*8+6]>=0,"legendary birds formation mismatch");
-        check(StageRoad.boss(9)&&StageRoad.boss(40)&&!StageRoad.boss(39),"40-stage boss road mismatch");
+        check(!StageRoad.boss(9)&&StageRoad.boss(10)&&StageRoad.boss(40)&&!StageRoad.boss(39),"40-stage boss road mismatch");
         Run snapshot=new Run(1201,Run.MODE_THIRTY);snapshot.round=7;snapshot.hp=73;snapshot.gold=42;snapshot.level=5;snapshot.xp=9;snapshot.streak=-3;
         snapshot.board[4]=25;snapshot.bench[2]=7;snapshot.shop[1]=18;snapshot.equip[4*3]=ItemData.indexOf("SHELL_BELL");snapshot.resultPath[0]=1;snapshot.resultPath[1]=0;snapshot.resultCount=2;
         int expectedRng=snapshot.rng.state();byte[] snapshotBytes=RunStorage.encode(snapshot);Run restored=RunStorage.decode(snapshotBytes);

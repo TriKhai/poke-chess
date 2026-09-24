@@ -88,6 +88,9 @@ v1.3.1
   tên chế độ, HP, vàng và 9 avatar đội hình cuối.
 - Hotfix Lịch sử: avatar đội hình tăng lên 20px, danh sách tự cuộn; kết quả thắng
   đổi thành Nhà Vô Địch màu vàng, kết quả thua đổi thành Kẻ bại trận màu đỏ.
+- Hotfix Collection/Lịch sử: màn đủ rộng dùng avatar lịch sử 24px kiểu tổng kết,
+  tự tính khoảng cách để luôn vừa 9 pet; Collection thêm tab STATUS với Pikachu
+  làm mẫu, animation và mô tả đủ 16 trạng thái combat đã port từ source gốc.
 - Loại cấp phát mảng synergy/family lặp lại trong luồng paint và điều khiển Battle,
   giảm giật do garbage collector trên thiết bị RAM thấp.
 - Màn tổng kết dùng đúng quy tắc mỗi family tiến hóa chỉ đóng góp hệ một lần.

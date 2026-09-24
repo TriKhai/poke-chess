@@ -5,7 +5,7 @@ import javax.microedition.lcdui.Graphics;
 /** Pokedex-like list of every species; locked families are hidden. */
 public final class CollectionScreen extends Screen {
     private int sel = 0, top = 0;
-    private int tab=0,typeSel=0,itemSel=0;
+    private int tab=0,typeSel=0,itemSel=0,statusSel=0;
     private int itemDescScroll=0;
     private boolean detail = false;
     private boolean itemDetail = false;
@@ -45,13 +45,13 @@ public final class CollectionScreen extends Screen {
             return;
         }
         switch (k) {
-            case Game.K_LEFT: tab=(tab+2)%3; top=0; itemDescScroll=0; break;
-            case Game.K_RIGHT: tab=(tab+1)%3; top=0; itemDescScroll=0; break;
+            case Game.K_LEFT: tab=(tab+3)%4; top=0; itemDescScroll=0; break;
+            case Game.K_RIGHT: tab=(tab+1)%4; top=0; itemDescScroll=0; break;
             case Game.K_UP:
-                if(tab==0&&sel>0)sel--; else if(tab==1&&typeSel>0)typeSel--; else if(tab==2&&itemSel>0){itemSel--;itemDescScroll=0;}
+                if(tab==0&&sel>0)sel--; else if(tab==1&&typeSel>0)typeSel--; else if(tab==2&&itemSel>0){itemSel--;itemDescScroll=0;}else if(tab==3&&statusSel>0)statusSel--;
                 break;
             case Game.K_DOWN:
-                if(tab==0&&sel<Data.N-1)sel++; else if(tab==1&&typeSel<Data.NT-1)typeSel++; else if(tab==2&&itemSel<ItemData.count()-1){itemSel++;itemDescScroll=0;}
+                if(tab==0&&sel<Data.N-1)sel++; else if(tab==1&&typeSel<Data.NT-1)typeSel++; else if(tab==2&&itemSel<ItemData.count()-1){itemSel++;itemDescScroll=0;}else if(tab==3&&statusSel<STATUS.length-1)statusSel++;
                 break;
             case Game.K_1: if(tab==2&&itemDescScroll>0)itemDescScroll--; break;
             case Game.K_3: if(tab==2)itemDescScroll++; break;
@@ -75,6 +75,7 @@ public final class CollectionScreen extends Screen {
         paintTabs(g);
         if(tab==1){paintTypes(g);return;}
         if(tab==2){paintItems(g);return;}
+        if(tab==3){paintStatuses(g);return;}
         Art.textB(g, Lang.t("Bộ sưu tập ", "Collection ") + Save.familiesUnlocked() + "/" + Data.countFamilies(), 4, fh+7, 0xFFD030);
 
         int rowH = 34;
@@ -125,12 +126,55 @@ public final class CollectionScreen extends Screen {
     }
 
     private void paintTabs(Graphics g){
-        int W=game.W,w=W/3,h=Art.fh+5;
-        for(int i=0;i<3;i++){
-            g.setColor(i==tab?0x60708A:0x303B52);g.fillRect(i*w,0,i==2?W-i*w:w-1,h);
-            if(i==tab){g.setColor(0xFFD030);g.fillRect(i*w,h-2,i==2?W-i*w:w-1,2);}
-            String title=i==0?"POKEMON":(i==1?Lang.t("HỆ","TYPES"):Lang.t("VẬT PHẨM","ITEMS"));
-            Art.textC(g,title,i*w+(i==2?W-i*w:w)/2,2,i==tab?0xFFFFFF:0xA8B0C0);
+        int W=game.W,w=W/4,h=Art.fh+5;
+        for(int i=0;i<4;i++){
+            int tw=i==3?W-i*w:w;
+            g.setColor(i==tab?0x60708A:0x303B52);g.fillRect(i*w,0,tw-1,h);
+            if(i==tab){g.setColor(0xFFD030);g.fillRect(i*w,h-2,tw-1,2);}
+            String title=i==0?"PKMN":(i==1?Lang.t("HỆ","TYPE"):(i==2?Lang.t("ĐỒ","ITEM"):"STATUS"));
+            Art.textSmallC(g,title,i*w+tw/2,2,i==tab?0xFFFFFF:0xA8B0C0);
+        }
+    }
+
+    private void paintStatuses(Graphics g){
+        int W=game.W,H=game.H,fh=Art.fh,pikachu=24,frame=animTime/70;
+        int y0=fh+8,vw=Data.visualWidth(pikachu),vh=Data.visualHeight(pikachu);
+        int px=W/2-vw/2,py=y0+2;
+        Art.battleSprite(g,pikachu,px,py,frame,RawAtlas.IDLE,0);
+        Art.statusSprite(g,statusSel,px+vw/2-8,py+vh/2-8,frame);
+        Art.textBC(g,"PIKACHU + "+Lang.statusName(statusSel),W/2,py+vh+2,0xFFD060);
+        int descY=py+vh+fh+4;
+        Art.para(g,statusDesc(statusSel),5,descY,W-10,0xD8E8F0,2);
+        int listY=descY+fh*2+3,row=fh+3,rows=(H-listY-fh-2)/row;if(rows<1)rows=1;
+        if(statusSel<top)top=statusSel;if(statusSel>=top+rows)top=statusSel-rows+1;
+        for(int r=0;r<rows&&top+r<STATUS.length;r++){
+            int st=top+r,y=listY+r*row;
+            if(st==statusSel){g.setColor(0x405273);g.fillRect(2,y,W-4,row-1);}
+            Art.statusSprite(g,st,4,y-2,frame);
+            Art.textB(g,(st+1)+". "+Lang.statusName(st),23,y,st==statusSel?0xFFFFFF:0xA8B5C8);
+        }
+        Art.textSmallR(g,(statusSel+1)+"/"+STATUS.length,W-4,H-fh-1,0x8090A8);
+    }
+
+    private String statusDesc(int st){
+        switch(st){
+            case CombatStatus.ARMOR_BREAK:return Lang.t("Giáp và Kháng phép chỉ còn một nửa.","Defense and Special Defense are halved.");
+            case CombatStatus.BLINDED:return Lang.t("Đòn đánh thường có 50% bị trượt.","Basic attacks have a 50% miss chance.");
+            case CombatStatus.BURN:return Lang.t("Mỗi giây mất 4% HP tối đa.","Loses 4% maximum HP each second.");
+            case CombatStatus.CHARM:return Lang.t("Có thể đổi mục tiêu sang đồng minh.","May switch its target to an ally.");
+            case CombatStatus.CONFUSION:return Lang.t("Có thể tự gây sát thương khi hành động.","May damage itself when acting.");
+            case CombatStatus.CURSE:return Lang.t("Mỗi giây mất khoảng 6% HP tối đa.","Loses about 6% maximum HP each second.");
+            case CombatStatus.FATIGUE:return Lang.t("Tốc độ còn khoảng hai phần ba.","Speed is reduced to about two thirds.");
+            case CombatStatus.FLINCH:return Lang.t("Không thể hành động trong thời gian ngắn.","Cannot act for a short duration.");
+            case CombatStatus.FREEZE:return Lang.t("Bị đóng băng và không thể hành động.","Frozen and unable to act.");
+            case CombatStatus.LOCKED:return Lang.t("Không thể di chuyển sang ô khác.","Cannot move to another tile.");
+            case CombatStatus.PARALYSIS:return Lang.t("Tốc độ bị giảm còn một nửa.","Speed is halved.");
+            case CombatStatus.POISON:return Lang.t("Mỗi giây mất 5% HP tối đa.","Loses 5% maximum HP each second.");
+            case CombatStatus.PROTECT:return Lang.t("Chặn toàn bộ sát thương nhận vào.","Blocks all incoming damage.");
+            case CombatStatus.SILENCE:return Lang.t("Không thể sử dụng kỹ năng.","Cannot cast its ability.");
+            case CombatStatus.SLEEP:return Lang.t("Ngủ và không thể hành động.","Asleep and unable to act.");
+            case CombatStatus.WOUND:return Lang.t("Lượng hồi máu nhận được giảm một nửa.","Incoming healing is halved.");
+            default:return "";
         }
     }
 

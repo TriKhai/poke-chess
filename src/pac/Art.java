@@ -39,6 +39,7 @@ public final class Art {
     private static Image[] avatarMiniGray = new Image[Data.N];
     private static Image[] avatarTiny = new Image[Data.N];
     private static Image[] avatarDock = new Image[Data.N];
+    private static Image[] avatarHistory = new Image[Data.N];
     private static Image[] itemIcon = new Image[ItemData.ID.length];
     private static boolean[] itemIconTried = new boolean[ItemData.ID.length];
     private static Image[] itemIconTiny = new Image[ItemData.ID.length];
@@ -565,6 +566,21 @@ public final class Art {
             }catch(Exception e){avatarDock[sp]=null;}
         }
         if(avatarDock[sp]!=null)g.drawImage(avatarDock[sp],x,y,TL);else sprite(g,sp,x,y,22);
+    }
+
+    /** 24px portrait used by history rows on screens wide enough for nine slots. */
+    public static void avatarHistory(Graphics g,int sp,int x,int y){
+        if(avatarHistory[sp]==null){
+            if(!avatarTried[sp]){avatarTried[sp]=true;try{avatar[sp]=Image.createImage("/av/"+sp+".png");}catch(Exception e){avatar[sp]=null;}}
+            Image im=avatar[sp];
+            if(im!=null)try{
+                int sw=im.getWidth(),sh=im.getHeight(),s=24;int[] src=new int[sw*sh],dst=new int[s*s];
+                im.getRGB(src,0,sw,0,0,sw,sh);
+                for(int yy=0;yy<s;yy++)for(int xx=0;xx<s;xx++)dst[yy*s+xx]=src[(yy*sh/s)*sw+xx*sw/s];
+                avatarHistory[sp]=Image.createRGBImage(dst,s,s,true);
+            }catch(Exception e){avatarHistory[sp]=null;}
+        }
+        if(avatarHistory[sp]!=null)g.drawImage(avatarHistory[sp],x,y,TL);else sprite(g,sp,x,y,24);
     }
 
     /** Gray 20px portrait for defeated units; generated once and then cached. */

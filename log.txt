@@ -269,6 +269,17 @@ Nội dung UX trong v1.3.8
 - Rà toàn bộ Việt hóa/English, tên nút, mô tả dài, scroll, xác nhận thao tác nguy hiểm.
 - Chuẩn hóa phản hồi âm thanh/hình ảnh, trạng thái focus và điều khiển phím/cảm ứng.
 
+v1.3.9RC - Release Candidate
+- Đóng băng gameplay và giữ nguyên toàn bộ animation/hiệu ứng hiện có.
+- Regression responsive tiếp tục bao phủ 128x160, 176x208, 240x320 và 320x240.
+- Thêm kiểm thử run save null, bị cắt nửa và sai version: phải từ chối an toàn.
+- Thêm 25 trận chạy đôi cùng seed để bắt lỗi battle không deterministic.
+- Thêm ReleaseArtifactTest chạy trên chính JAR/JAD đầu ra: xác nhận vendor, version,
+  nhãn RC, kích thước JAD, class/icon/fallback art và tài nguyên Full/Lite.
+- build-poke.bat nay chạy target rc; build thất bại nếu Lite lẫn raw/dexraw/sfx/maps
+  hoặc Full bị thiếu các animation/map đó.
+- PAC-Build đổi thành 1.3.9RC; MIDlet-Version giữ 1.3.9 cho Nokia/J2ME.
+
 v1.3.9b - Device QA và release candidate (tối ưu RAM vòng hai)
 - Cache sprite fallback giới hạn 24 Pokémon, đồng thời giải phóng bản scale đi kèm.
 - Cache avatar Gen 1-3 giới hạn 24 family gần nhất và dọn đồng bộ các biến thể

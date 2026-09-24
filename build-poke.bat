@@ -17,7 +17,7 @@ if not exist "build.xml" (
     exit /b 1
 )
 
-call "%KVEM_HOME%\toolbar\java2\ant\bin\ant.bat" clean test dist-all
+call "%KVEM_HOME%\toolbar\java2\ant\bin\ant.bat" clean rc
 
 if errorlevel 1 (
     echo.

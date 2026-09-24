@@ -250,6 +250,11 @@ public final class CombatSmokeTest {
         check(restored!=null&&restored.mode==Run.MODE_THIRTY&&restored.round==7&&restored.hp==73&&restored.gold==42,"run snapshot scalar mismatch");
         check(restored.board[4]==25&&restored.bench[2]==7&&restored.shop[1]==18&&restored.equip[12]==ItemData.indexOf("SHELL_BELL"),"run snapshot arrays mismatch");
         check(restored.resultCount==2&&restored.resultPath[1]==0&&restored.rng.state()==expectedRng,"run snapshot graph/RNG mismatch");RunStorage.clear();
+        check(RunStorage.decode(null)==null,"null run save must be rejected");
+        byte[] truncated=new byte[snapshotBytes.length/2];System.arraycopy(snapshotBytes,0,truncated,0,truncated.length);
+        check(RunStorage.decode(truncated)==null,"truncated run save must be rejected");
+        byte[] wrongVersion=new byte[snapshotBytes.length];System.arraycopy(snapshotBytes,0,wrongVersion,0,snapshotBytes.length);
+        wrongVersion[3]=99;check(RunStorage.decode(wrongVersion)==null,"unknown run save version must be rejected");
         snapshot.over=true;snapshot.victory=false;HistoryStore.add(snapshot);check(HistoryStore.count>0&&HistoryStore.round[0]==7,"history entry missing");
         check(HistoryStore.team[0][0]==25&&HistoryStore.items[0][0]==ItemData.indexOf("SHELL_BELL"),"history final team/items mismatch");
         HistoryStore.clear();check(HistoryStore.count==0,"history clear failed");
@@ -274,7 +279,13 @@ public final class CombatSmokeTest {
             for (int i = 0; i <= Battle.HARD_LIMIT && !stress.over; i++) stress.step();
             check(stress.over, "stress battle did not terminate at seed " + seed);
         }
+        for(int seed=0;seed<25;seed++){
+            Battle a=new Battle(player,enemy,100,new Rng(7000+seed));
+            Battle b=new Battle(player,enemy,100,new Rng(7000+seed));
+            while(!a.over&&!b.over){a.step();b.step();check(a.tick==b.tick&&a.over==b.over,"deterministic battle diverged at seed "+seed);}
+            check(a.over==b.over&&a.winner==b.winner&&a.tick==b.tick,"deterministic result mismatch at seed "+seed);
+        }
 
-        System.out.println("CombatSmokeTest OK: synergies, items, abilities/statuses, economy, PvE/bosses, save/resume/history, Camp/Farm rules, "+ItemData.recipeCount()+" item battles and 101 base battles");
+        System.out.println("CombatSmokeTest OK: responsive matrix, corrupt saves, deterministic combat, synergies, items, abilities/statuses, economy, PvE/bosses, save/resume/history, Camp/Farm rules, "+ItemData.recipeCount()+" item battles and 126 base battles");
     }
 }

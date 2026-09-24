@@ -18,6 +18,13 @@ public final class CombatSmokeTest {
         check(UiLayout.profile(128,160)==UiLayout.COMPACT,"128x160 must be compact");
         check(UiLayout.profile(176,208)==UiLayout.STANDARD,"176x208 must be standard");
         check(UiLayout.profile(240,320)==UiLayout.LARGE&&UiLayout.profile(320,240)==UiLayout.LARGE,"large/landscape profile mismatch");
+        check(CombatStatus.COUNT==25,"documented status count mismatch");
+        CombatStatus parity=new CombatStatus();parity.apply(CombatStatus.BURN,20);parity.apply(CombatStatus.SAFEGUARD,15);
+        check(parity.burn==0&&parity.safeguard==15,"Safeguard must cleanse negatives");
+        check(!parity.apply(CombatStatus.POISON,20)&&parity.poison==0,"Safeguard must block negatives");
+        parity.apply(CombatStatus.RAGE,10);check(parity.effectiveSpeed(60)==90,"Rage speed mismatch");
+        parity.clearPositive();parity.apply(CombatStatus.ELECTRIC_FIELD,10);check(parity.effectiveSpeed(50)==60,"Electric Field speed mismatch");
+        check(parity.positive(CombatStatus.RESURRECTION)&&!parity.positive(CombatStatus.POSSESSED),"status polarity mismatch");
         check(Data.N == 386, "roster must contain Gen 1-3");
         check(CollectionDex.COUNT==558,"collection-only Gen 4-9 roster mismatch");
         check(CollectionDex.countGen(4)==107&&CollectionDex.countGen(5)==135&&CollectionDex.countGen(6)==68,

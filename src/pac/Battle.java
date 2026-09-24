@@ -238,7 +238,7 @@ public final class Battle {
         u.px=u.x; u.py=u.y;
         if (u.cdLeft > 0) u.cdLeft--;
         Unit t = u.target;
-        if(u.status.charm>0)t=findCharmedTarget(u);
+        if(u.status.charm>0||u.status.possessed>0)t=findCharmedTarget(u);
         else if (t == null || !t.alive || t.side==u.side || (tick % 3) == 0) t = findTarget(u);
         u.target = t;
         if (t == null) return;
@@ -465,6 +465,7 @@ public final class Battle {
     private void kill(Unit u) { kill(u,null); }
     private void kill(Unit u,Unit killer) {
         if(ItemEffects.onDeath(this,u,killer))return;
+        if(u.status.resurrection>0){u.status.resurrection=0;u.status.clearNegative();u.hp=Math.max(1,u.maxHp/2);u.shield+=Math.max(1,u.maxHp/5);u.state=Unit.IDLE;addFx(u,u.hp,1,0xFFF0A0);return;}
         u.alive = false;
         u.state = Unit.DEAD;
         u.hp = 0;

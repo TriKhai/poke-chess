@@ -22,16 +22,16 @@ public final class Lang {
 
     public static String[] menu() {
         return Save.language == EN
-            ? new String[] { "Explore & Catch", "Auto Chess Run", "Collection", "Settings", "Help", "Exit" }
-            : new String[] { "Khám phá & Bắt", "Chơi AutoChess", "Bộ sưu tập", "Cài đặt", "Hướng dẫn", "Thoát" };
+            ? new String[] { "Explore & Catch", "Auto Chess Run", "Collection", "Settings", "Help", "About", "Exit" }
+            : new String[] { "Khám phá & Bắt", "Chơi AutoChess", "Bộ sưu tập", "Cài đặt", "Hướng dẫn", "Về game", "Thoát" };
     }
 
     private static final String[] TYPE_VI = {"Thường","Lửa","Nước","Cỏ","Điện","Đá","Tâm linh","Chiến đấu","Bay","Rồng","Ma","Bọ","Độc","Đất","Băng","Bóng tối","Thép","Tiên","Vô định hình","Thủy sinh","Nhân tạo","Trẻ nhỏ","Đồng cỏ","Thực vật","Hóa thạch","Ẩm thực","Con người","Ánh sáng","Quái thú","Âm thanh","Hoang dã"};
     private static final String[] TYPE_SHORT_VI = {"THƯ","LỬ","NƯỚ","CỎ","ĐIỆ","ĐÁ","TL","ĐẤU","BAY","RỒ","MA","BỌ","ĐỘC","ĐẤT","BĂN","TỐI","THÉ","TIÊ","VĐH","THỦ","NT","NHỎ","ĐỒN","TV","HT","ẨM","NGƯ","SÁG","QT","ÂM","HD"};
     private static final String[] ABILITY_VI = {"Cú Đánh Uy Lực","Xung Hồi Phục","Bùng Nổ","Hiệu Triệu","Tê Liệt","Sét Dây Chuyền","Cứng Hóa","Hút Sinh Lực","Tia Siêu Cấp"};
     private static final String[] ABILITY_DESC_VI = {"Đánh mục tiêu bằng 250% ATK.","Hồi máu cho đồng minh yếu nhất.","Nổ quanh mục tiêu, gây 180% ATK.","Đồng minh gần đó nhận +30% ATK.","Làm choáng 1,2 giây và gây 120% ATK.","Giật sét 3 kẻ địch, gây 140% ATK.","Nhận lá chắn bằng 35% HP tối đa.","Gây 200% ATK và tự hồi máu.","Bắn tia lớn gây 380% ATK."};
-    private static final String[] STATUS_EN={"Armor Break","Blinded","Burn","Charm","Confusion","Curse","Fatigue","Flinch","Freeze","Locked","Paralysis","Poison","Protect","Silence","Sleep","Wound"};
-    private static final String[] STATUS_VI={"Phá giáp","Mù","Bỏng","Mê hoặc","Hoang mang","Nguyền rủa","Mệt mỏi","Nao núng","Đóng băng","Khóa","Tê liệt","Nhiễm độc","Bảo vệ","Câm lặng","Ngủ","Vết thương"};
+    private static final String[] STATUS_EN={"Armor Break","Blinded","Burn","Charm","Confusion","Curse","Fatigue","Flinch","Freeze","Locked","Paralysis","Poison","Protect","Silence","Sleep","Wound","Possessed","Resurrection","Safeguard","Rage","Pokerus","Electric Field","Fairy Field","Grass Field","Psychic Field"};
+    private static final String[] STATUS_VI={"Phá giáp","Mù","Bỏng","Mê hoặc","Hoang mang","Nguyền rủa","Mệt mỏi","Nao núng","Đóng băng","Khóa","Tê liệt","Nhiễm độc","Bảo vệ","Câm lặng","Ngủ","Vết thương","Nhập hồn","Hồi sinh","Hộ vệ","Cuồng nộ","Pokerus","Điện trường","Tiên trường","Thảo trường","Tâm linh trường"};
 
     public static String typeName(int type) {
         return Save.language == EN ? Data.TNAME[type] : TYPE_VI[type];

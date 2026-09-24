@@ -26,7 +26,14 @@ public final class AbilityBehavior {
         if(has(n,"NASTY PLOT")||has(n,"CALM MIND")||has(n,"QUIVER DANCE"))caster.skillBonus+=30;
         if(has(n,"RECOVER")||has(n,"ROOST")||has(n,"SYNTHESIS")||has(n,"MOONLIGHT")||has(n,"MORNING SUN")||has(n,"SLACK OFF"))b.itemHeal(caster,caster,Math.max(1,caster.maxHp*35/100));
         if(has(n,"AQUA RING")||has(n,"INGRAIN"))caster.regen+=3;
-        if(has(n,"PROTECT")||has(n,"DETECT")||has(n,"KING SHIELD")||has(n,"OBSTRUCT")||has(n,"BANEFUL BUNKER"))caster.status.protect=Math.max(caster.status.protect,20);
+        if(has(n,"PROTECT")||has(n,"DETECT")||has(n,"KING SHIELD")||has(n,"OBSTRUCT")||has(n,"BANEFUL BUNKER"))caster.status.apply(CombatStatus.PROTECT,20);
+        if(has(n,"SAFEGUARD"))for(int i=0;i<b.n;i++){Unit a=b.units[i];if(a.alive&&a.side==caster.side)a.status.apply(CombatStatus.SAFEGUARD,40);}
+        if(has(n,"RAGE"))caster.status.apply(CombatStatus.RAGE,40);
+        if(has(n,"REVIVAL BLESSING"))caster.status.apply(CombatStatus.RESURRECTION,3000);
+        if(has(n,"ELECTRIC TERRAIN"))field(b,caster,CombatStatus.ELECTRIC_FIELD);
+        if(has(n,"MISTY TERRAIN"))field(b,caster,CombatStatus.FAIRY_FIELD);
+        if(has(n,"GRASSY TERRAIN"))field(b,caster,CombatStatus.GRASS_FIELD);
+        if(has(n,"PSYCHIC TERRAIN"))field(b,caster,CombatStatus.PSYCHIC_FIELD);
         if(has(n,"TELEPORT")||has(n,"DIG")||has(n,"FLY"))b.relocateAway(caster);
         if(has(n,"PAYDAY")&&caster.side==0)b.itemGold++;
         if(has(n,"AROMATHERAPY")||has(n,"HEAL BELL")||has(n,"PURIFY")||has(n,"LUNAR BLESSING")){
@@ -36,9 +43,10 @@ public final class AbilityBehavior {
             for(int i=0;i<b.n;i++){Unit a=b.units[i];if(a.alive&&a.side==caster.side){int sh=Math.max(1,a.maxHp/8);a.shield+=sh;a.shieldDone+=sh;}}
         }
         if(has(n,"GROWL")||has(n,"CHARM"))for(int i=0;i<b.n;i++){Unit e=b.units[i];if(e.alive&&e.side!=caster.side&&b.distance(caster,e)<=2)e.atk=Math.max(1,e.atk*80/100);}
-        if(has(n,"SING")||has(n,"GRASS WHISTLE"))for(int i=0;i<b.n;i++){Unit e=b.units[i];if(e.alive&&e.side!=caster.side&&b.distance(target,e)<=1)e.status.sleep=Math.max(e.status.sleep,20);}
-        if(has(n,"POISON GAS")||has(n,"POISON POWDER"))for(int i=0;i<b.n;i++){Unit e=b.units[i];if(e.alive&&e.side!=caster.side&&b.distance(target,e)<=1)e.status.poison=Math.max(e.status.poison,40);}
-        if(has(n,"FLASH")||has(n,"SAND SPIT"))for(int i=0;i<b.n;i++){Unit e=b.units[i];if(e.alive&&e.side!=caster.side&&b.distance(target,e)<=1)e.status.blinded=Math.max(e.status.blinded,30);}
+        if(has(n,"SING")||has(n,"GRASS WHISTLE"))for(int i=0;i<b.n;i++){Unit e=b.units[i];if(e.alive&&e.side!=caster.side&&b.distance(target,e)<=1)e.status.apply(CombatStatus.SLEEP,20);}
+        if(has(n,"POISON GAS")||has(n,"POISON POWDER"))for(int i=0;i<b.n;i++){Unit e=b.units[i];if(e.alive&&e.side!=caster.side&&b.distance(target,e)<=1)e.status.apply(CombatStatus.POISON,40);}
+        if(has(n,"FLASH")||has(n,"SAND SPIT"))for(int i=0;i<b.n;i++){Unit e=b.units[i];if(e.alive&&e.side!=caster.side&&b.distance(target,e)<=1)e.status.apply(CombatStatus.BLINDED,30);}
         if(has(n,"HAZE")){for(int i=0;i<b.n;i++)if(b.units[i].alive)b.units[i].status.clearNegative();}
     }
+    private static void field(Battle b,Unit caster,int status){for(int i=0;i<b.n;i++){Unit a=b.units[i];if(a.alive&&a.side==caster.side)a.status.apply(status,60);}}
 }

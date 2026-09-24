@@ -1,4 +1,4 @@
-POKE AUTO CHESS ME v1.3.3  (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
+POKE AUTO CHESS ME v1.3.4  (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
 =====================================================================
 
 CAU TRUC
@@ -14,6 +14,7 @@ CAU TRUC
   docs/CHI_SO_VA_TRANG_THAI_POKEMON.md  bang chu viet tat, chi so va trang thai combat
 
 PHIEN BAN
+  v1.3.4: Du 25 status co tai lieu; them san trang About/Về game cho loi nhan cong dong.
   v1.3.3: Responsive UI Compact/Standard/Large cho man hinh 128x160 den landscape.
   v1.3.2: Collection phan loai Gen 1-9; them 558 Pokemon Gen 4-9 va portrait
           tu source goc. Full co 6 clip/8 huong; Lite dung portrait tinh.

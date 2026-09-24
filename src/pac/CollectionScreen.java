@@ -17,7 +17,9 @@ public final class CollectionScreen extends Screen {
     private static final String[] CLIP = { "IDLE", "WALK", "ATTACK", "HOP", "HURT", "POSE" };
     private static final String[] STATUS = { "ARMOR BREAK", "BLINDED", "BURN", "CHARM",
             "CONFUSION", "CURSE", "FATIGUE", "FLINCH", "FREEZE", "LOCKED",
-            "PARALYSIS", "POISON", "PROTECT", "SILENCE", "SLEEP", "WOUND" };
+            "PARALYSIS", "POISON", "PROTECT", "SILENCE", "SLEEP", "WOUND",
+            "POSSESSED", "RESURRECTION", "SAFEGUARD", "RAGE", "POKERUS",
+            "ELECTRIC FIELD", "FAIRY FIELD", "GRASS FIELD", "PSYCHIC FIELD" };
     private static final String[] DIR = { "DOWN", "DOWN-R", "RIGHT", "UP-R", "UP", "UP-L", "LEFT", "DOWN-L" };
 
     public CollectionScreen(Game g) {
@@ -232,6 +234,15 @@ public final class CollectionScreen extends Screen {
             case CombatStatus.SILENCE:return Lang.t("Không thể sử dụng kỹ năng.","Cannot cast its ability.");
             case CombatStatus.SLEEP:return Lang.t("Ngủ và không thể hành động.","Asleep and unable to act.");
             case CombatStatus.WOUND:return Lang.t("Lượng hồi máu nhận được giảm một nửa.","Incoming healing is halved.");
+            case CombatStatus.POSSESSED:return Lang.t("Buộc nhắm đồng minh như mục tiêu thù địch.","Forces allied units to be treated as hostile targets.");
+            case CombatStatus.RESURRECTION:return Lang.t("Hồi sinh một lần sau khi bị hạ gục.","Revives once after being knocked out.");
+            case CombatStatus.SAFEGUARD:return Lang.t("Xóa và miễn nhiễm trạng thái xấu khi còn hiệu lực.","Cleanses and prevents negative statuses while active.");
+            case CombatStatus.RAGE:return Lang.t("Tăng 50% tốc độ; hiệu ứng khống chế ngắn hơn.","Raises Speed by 50%; control effects are shorter.");
+            case CombatStatus.POKERUS:return Lang.t("Tăng dần sức mạnh và có thể lây sang đồng minh gần.","Gradually grants power and may spread to nearby allies.");
+            case CombatStatus.ELECTRIC_FIELD:return Lang.t("Điện trường tăng 20% tốc độ.","Electric Field raises Speed by 20%.");
+            case CombatStatus.FAIRY_FIELD:return Lang.t("Tiên trường bảo hộ đội khỏi hiệu ứng bất lợi.","Fairy Field protects the team from harmful effects.");
+            case CombatStatus.GRASS_FIELD:return Lang.t("Thảo trường hồi phục HP theo thời gian.","Grass Field restores HP over time.");
+            case CombatStatus.PSYCHIC_FIELD:return Lang.t("Tâm linh trường khuếch đại sức mạnh kỹ năng.","Psychic Field amplifies ability power.");
             default:return "";
         }
     }

@@ -23,8 +23,8 @@ public final class Art {
     private static int[] sclS = new int[Data.N];
     private static Image[] skill = new Image[Data.ABIL_NAME.length];
     private static boolean[] skillTried = new boolean[Data.ABIL_NAME.length];
-    private static Image[] status = new Image[16];
-    private static boolean[] statusTried = new boolean[16];
+    private static Image[] status = new Image[CombatStatus.COUNT];
+    private static boolean[] statusTried = new boolean[CombatStatus.COUNT];
     private static Image[] speciesSkill = new Image[Data.MAX];
     private static boolean[] speciesSkillTried = new boolean[Data.MAX];
     private static Image[] typeIcon = new Image[Data.NT];
@@ -511,6 +511,7 @@ public final class Art {
             try { status[id]=Image.createImage("/status/"+id+".png"); } catch(Exception e) { status[id]=null; }
         }
         if (status[id]!=null) g.drawRegion(status[id],(frame&3)*16,0,16,16,0,x,y,TL);
+        else if(id>=16){int[] c={0xB060E8,0xFFF0A0,0x80E8FF,0xFF7040,0xB8E878,0xFFE040,0xFF90D8,0x70D060,0xD080FF};g.setColor(c[id-16]);g.fillArc(x+2,y+2,12,12,0,360);g.setColor(0xFFFFFF);g.drawArc(x+1,y+1,13,13,0,360);g.drawLine(x+5,y+8,x+11,y+8);}
     }
 
     public static boolean attackSprite(Graphics g,int type,int kind,int x,int y,int frame) {

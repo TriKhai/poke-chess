@@ -133,6 +133,12 @@ v1.3.4 - Status parity
   thời gian, cleanse, immunity, trigger và tương tác chồng trạng thái.
 - Mở rộng tab STATUS với animation, mô tả Việt/Anh và Pikachu làm mẫu.
 - Port các board effect liên quan status; test riêng từng status và tổ hợp quan trọng.
+- Đã mở đủ 25 status có tài liệu từ source: thêm Nhập hồn, Hồi sinh, Hộ vệ,
+  Cuồng nộ, Pokerus và bốn Field; tab STATUS có tên/mô tả Việt-Anh và VFX fallback.
+- Safeguard xóa/chặn debuff; Rage và Electric Field tác động tốc độ; bổ sung phân loại
+  buff/debuff, clearPositive và regression cho miễn nhiễm/cleanse.
+- Thêm sẵn menu About/Về game và trang placeholder cho lời nhắn cộng đồng v1.3.5.
+- Đồng bộ MIDlet-Version 1.3.4.
 
 v1.3.5 - Render và animation thật theo FPS
 - Tách tick combat 100 ms khỏi render; nội suy vị trí, HP/MP/khiên, đạn và VFX.

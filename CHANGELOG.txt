@@ -1,6 +1,13 @@
 POKE AUTO CHESS ME - OFFLINE REMAKE UPDATE
 ==========================================
 
+Status parity and About placeholder (v1.3.4)
+- Expanded the documented status catalog from 16 to 25 entries from the original source.
+- Added Possessed, Resurrection, Safeguard, Rage, Pokerus and four terrain fields.
+- Statuses now distinguish positive/negative effects; Safeguard cleanses and prevents debuffs.
+- Added combat hooks for terrain, Rage speed, Pokerus growth and one-use Resurrection.
+- Added a bilingual About menu/page ready for the community message planned for v1.3.5.
+
 Responsive UI (v1.3.3)
 - Added Compact, Standard and Large/Landscape layout profiles.
 - Compact menus preserve all actions at 128x160 by reducing gaps and optional art.

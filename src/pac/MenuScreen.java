@@ -33,6 +33,7 @@ public final class MenuScreen extends Screen {
             case 2: game.setScreen(new CollectionScreen(game)); break;
             case 3: game.setScreen(new SettingsScreen(game)); break;
             case 4: game.setScreen(new HelpScreen(game)); break;
+            case 5: game.setScreen(new AboutScreen(game)); break;
             default: game.quit(); break;
         }
     }

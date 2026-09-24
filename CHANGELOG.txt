@@ -7,6 +7,8 @@ Offline Explore progression (v1.3.7)
 - Gacha filters the playable Gen 1-3 roster by generation, type or rarity and unlocks families.
 - Three Camp slots gather rarity-scaled Balls for up to 24 offline hours; save schema v5 migrates old saves.
 - Collection now has a fifth MAP tab cataloguing all 143 original DungeonPMDO identifiers with themes/descriptions.
+- Full packages all 143 existing 384x288 map previews; FIRE opens a fitted preview viewer.
+- Lite excludes map previews and keeps the searchable metadata/fallback screen.
 
 Gameplay/content parity and community credits (v1.3.6)
 - Replaced the About placeholder with responsive bilingual copyright, project and community credits.

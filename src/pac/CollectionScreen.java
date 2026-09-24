@@ -11,6 +11,7 @@ public final class CollectionScreen extends Screen {
     private boolean detail = false;
     private boolean itemDetail = false;
     private boolean dexDetail = false;
+    private boolean mapDetail = false;
     private int dexAction = 0;
     private int animTime = 0, previewState = 0, previewDir = 0;
     private int previewStatus = 0, previewAttackKind = 1;
@@ -29,6 +30,7 @@ public final class CollectionScreen extends Screen {
     public void update(int dt) { animTime += dt; }
 
     public void key(int k) {
+        if(mapDetail){if(k==Game.K_LEFT||k==Game.K_UP){mapSel=(mapSel+MapData.COUNT-1)%MapData.COUNT;MapPreview.clear();}else if(k==Game.K_RIGHT||k==Game.K_DOWN){mapSel=(mapSel+1)%MapData.COUNT;MapPreview.clear();}else if(k==Game.K_FIRE||k==Game.K_SOFT1||k==Game.K_SOFT2||k==Game.K_0){mapDetail=false;MapPreview.clear();}return;}
         if(dexDetail){
             if(k==Game.K_LEFT)previewDir=(previewDir+7)&7;
             else if(k==Game.K_RIGHT)previewDir=(previewDir+1)&7;
@@ -76,6 +78,7 @@ public final class CollectionScreen extends Screen {
                 if(tab==0&&generation<=3&&Save.has(currentSpecies())){detail=true;animTime=0;}
                 else if(tab==0&&generation>=4)dexDetail=true;
                 else if(tab==2)itemDetail=true;
+                else if(tab==4){mapDetail=true;MapPreview.clear();}
                 break;
             case Game.K_SOFT2: case Game.K_0:
                 game.setScreen(new MenuScreen(game));
@@ -85,6 +88,7 @@ public final class CollectionScreen extends Screen {
     }
 
     public void paint(Graphics g) {
+        if(mapDetail){paintMapDetail(g);return;}
         if(dexDetail){paintDexDetail(g);return;}
         if(itemDetail){paintItemDetail(g);return;}
         if (detail) { paintDetail(g); return; }
@@ -201,8 +205,10 @@ public final class CollectionScreen extends Screen {
         int W=game.W,H=game.H,fh=Art.fh,y0=fh+8,row=fh+4,detail=fh*6,rows=UiLayout.visibleRows(H,y0,detail,row);
         if(mapSel<top)top=mapSel;if(mapSel>=top+rows)top=mapSel-rows+1;
         for(int r=0;r<rows&&top+r<MapData.COUNT;r++){int i=top+r,y=y0+r*row;if(i==mapSel){g.setColor(0x405273);g.fillRect(2,y,W-4,row-1);}Art.textB(g,(i+1)+". "+MapData.name(i),5,y,i==mapSel?0xFFFFFF:0xA8B5C8);}
-        int y=y0+rows*row+2;g.setColor(0x0B1422);g.fillRect(0,y,W,H-y);Art.textB(g,MapData.name(mapSel),5,y+3,0xFFD060);Art.text(g,Lang.t("Chủ đề: ","Theme: ")+MapData.theme(mapSel),5,y+fh+4,0x80D8FF);Art.para(g,MapData.desc(mapSel),5,y+fh*2+5,W-10,0xD8E8F0,3);Art.textSmallR(g,(mapSel+1)+"/"+MapData.COUNT,W-4,H-fh-1,0x8090A8);
+        int y=y0+rows*row+2;g.setColor(0x0B1422);g.fillRect(0,y,W,H-y);Art.textB(g,MapData.name(mapSel),5,y+3,0xFFD060);Art.text(g,Lang.t("Chủ đề: ","Theme: ")+MapData.theme(mapSel),5,y+fh+4,0x80D8FF);Art.para(g,MapData.desc(mapSel),5,y+fh*2+5,W-10,0xD8E8F0,2);Art.textSmall(g,"FIRE: "+Lang.t("xem map","view map"),5,H-fh-1,0x80D8FF);Art.textSmallR(g,(mapSel+1)+"/"+MapData.COUNT,W-4,H-fh-1,0x8090A8);
     }
+
+    private void paintMapDetail(Graphics g){int W=game.W,H=game.H,fh=Art.fh,top=fh+5,bottom=fh*4+3;g.setColor(0x080E18);g.fillRect(0,0,W,H);Art.textBC(g,MapData.name(mapSel),W/2,2,0xFFD060);int ph=H-top-bottom;if(ph<32)ph=32;if(!MapPreview.draw(g,mapSel,2,top,W-4,ph)){g.setColor(0x1C3040);g.fillRect(5,top+5,W-10,ph-10);Art.textC(g,Lang.t("Lite: không đóng gói ảnh map","Lite: map image not packaged"),W/2,top+ph/2,0xA8B8C8);}int y=top+ph+2;Art.textC(g,Lang.t("Chủ đề: ","Theme: ")+MapData.theme(mapSel),W/2,y,0x80D8FF);Art.textSmallC(g,MapData.ID[mapSel]+"  "+(mapSel+1)+"/"+MapData.COUNT,W/2,y+fh,0xA8B5C8);Art.textSmallC(g,Lang.t("4/6: đổi map   FIRE/0: về","4/6: change map   FIRE/0: back"),W/2,H-fh-1,0x8090B0);}
 
     private void paintStatuses(Graphics g){
         int W=game.W,H=game.H,fh=Art.fh,pikachu=24,frame=animTime/70;

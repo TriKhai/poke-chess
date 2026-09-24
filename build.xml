@@ -143,7 +143,7 @@
     <target name="jar-lite" depends="preverify,preverify-skip">
         <mkdir dir="${dist.dir}"/>
         <jar destfile="${dist.dir}/${app.name}-Lite.jar" basedir="${pre.dir}" compress="true">
-            <fileset dir="${res.dir}" erroronmissingdir="false"><exclude name="raw/**"/><exclude name="dexraw/**"/><exclude name="sfx/**"/></fileset>
+            <fileset dir="${res.dir}" erroronmissingdir="false"><exclude name="raw/**"/><exclude name="dexraw/**"/><exclude name="sfx/**"/><exclude name="maps/**"/></fileset>
             <manifest>
                 <attribute name="MIDlet-Name" value="${app.name} Lite"/><attribute name="MIDlet-Vendor" value="${app.vendor}"/><attribute name="MIDlet-Version" value="${app.version}"/>
                 <attribute name="MIDlet-1" value="${app.name} Lite,${midlet.icon},${midlet.class}"/><attribute name="MIDlet-Icon" value="${midlet.icon}"/>

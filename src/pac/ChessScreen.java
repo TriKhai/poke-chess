@@ -209,6 +209,7 @@ public final class ChessScreen extends Screen {
 
     private void beginPostRoundChoices(){
         postChoiceMask=0;
+        if(!run.lastWon){afterResultChoice();return;}
         if(run.round%5==0&&run.round<=35)postChoiceMask|=1;
         if(run.round==5||run.round==8||run.round==11)postChoiceMask|=2;
         if(run.round==10)postChoiceMask|=4;
@@ -1650,7 +1651,9 @@ public final class ChessScreen extends Screen {
                 (run.lastItemGold>0?Lang.t("  Đồ ","  Item ")+run.lastItemGold:"");
         Art.textSmallC(g,goldParts,W/2,fy+fh*2,0xC8B878);
         if(run.lastItem>=0)Art.textSmallC(g,Lang.t("Vật phẩm: ","Item: ")+ItemData.name(run.lastItem),W/2,fy+fh*3,0x80D8FF);
-        Art.textSmallC(g,run.over?Lang.t("FIRE: xem tổng kết","FIRE: final summary"):Lang.t("FIRE: tiếp tục","FIRE: continue"),W/2,H-fh-2,0x8090B0);
+        String next=run.over?Lang.t("FIRE: xem tổng kết","FIRE: final summary"):
+            (run.lastWon?Lang.t("FIRE: tiếp tục","FIRE: continue"):Lang.t("FIRE: đấu lại vòng này","FIRE: retry this round"));
+        Art.textSmallC(g,next,W/2,H-fh-2,0x8090B0);
     }
 
     private void drawResultItems(Graphics g,Unit u,int x,int y){for(int s=0;s<3;s++){int id=u.items[s],px=x+s*9;g.setColor(id>=0?0x263448:0x172131);g.fillArc(px,y,8,8,0,360);g.setColor(id>=0?0x80D8FF:0x4B586C);g.drawArc(px,y,7,7,0,360);if(id>=0)Art.itemIconTiny(g,id,px, y);}}
@@ -1669,7 +1672,10 @@ public final class ChessScreen extends Screen {
 
     /** Reusable row-based choice presentation for items, starters, pools and Legendaries. */
     private void paintRewardChoice(Graphics g){
-        int W=game.W,H=game.H,fh=Art.fh,x=4,y=4,w=W-8,h=H-8;
+        int W=game.W,H=game.H,fh=Art.fh,w=Math.min(W-12,286);
+        int desiredRow=rewardChoiceKind==CH_ITEM?fh*3+7:fh*4+7;
+        int chrome=fh*2+17,h=desiredRow*3+chrome;if(h>H-8)h=H-8;
+        int x=(W-w)/2,y=(H-h)/2,top=y+fh+8,footer=fh+6,rowH=(h-(top-y)-footer)/3;
         Art.box(g,x,y,w,h,0x101830,0xFFD030);
         String title=rewardChoiceKind==CH_TYPE?Lang.t("CHỌN POOL HỆ","CHOOSE TYPE POOL"):
             (rewardChoiceKind==CH_STARTER?Lang.t("CHỌN POKÉMON KHỞI ĐẦU","CHOOSE A STARTER"):
@@ -1677,8 +1683,6 @@ public final class ChessScreen extends Screen {
             (rewardChoiceKind==CH_ADD?Lang.t("CHỌN FAMILY BỔ SUNG","CHOOSE AN EXTRA FAMILY"):
             (rewardChoiceKind==CH_UNIQUE?Lang.t("CHỌN UNIQUE","CHOOSE A UNIQUE"):Lang.t("CHỌN LEGENDARY","CHOOSE A LEGENDARY")))));
         Art.textBC(g,title,W/2,y+3,0xFFD030);
-        int top=y+fh+7,footer=fh+5,rowH=(h-(top-y)-footer)/3;
-        if(rowH<31)rowH=31;
         for(int i=0;i<3;i++){
             int ry=top+i*rowH,id=rewardChoiceIds[i];
             g.setColor(i==rewardChoiceSel?0x405273:((i&1)==0?0x202B40:0x192338));
@@ -1689,20 +1693,33 @@ public final class ChessScreen extends Screen {
                 Art.textB(g,ItemData.name(id),x+36,ry+2,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
                 Art.para(g,ItemData.desc(id),x+36,ry+fh+2,w-43,0x9FB5CE,rowH>=44?2:1);
             }else if(rewardChoiceKind==CH_TYPE){
-                int px=x+8;
+                int px=x+7;
                 for(int t=0;t<3;t++){int type=poolChoiceTypes[i*3+t];Art.typeIcon(g,type,px,ry+3);px+=18;}
                 int a=poolChoiceTypes[i*3],b=poolChoiceTypes[i*3+1],c=poolChoiceTypes[i*3+2];
-                Art.textB(g,Lang.typeName(a)+" / "+Lang.typeName(b)+" / "+Lang.typeName(c),x+8,ry+fh+5,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
-                if(rowH>=47)Art.textSmall(g,Lang.t("Ba hướng starter Common","Three Common starter paths"),x+8,ry+fh*2+5,0x9FB5CE);
+                Art.textB(g,Lang.typeName(a)+" / "+Lang.typeName(b)+" / "+Lang.typeName(c),x+62,ry+3,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
+                int by=ry+fh+4;
+                Art.textSmall(g,fitHud(Lang.typeName(a)+": "+Lang.synergyLongDesc(a),w-14),x+7,by,0xAFC8E0);
+                if(rowH>=fh*3+5)Art.textSmall(g,fitHud(Lang.typeName(b)+": "+Lang.synergyLongDesc(b),w-14),x+7,by+fh,0xAFC8E0);
+                if(rowH>=fh*4+3)Art.textSmall(g,fitHud(Lang.typeName(c)+": "+Lang.synergyLongDesc(c),w-14),x+7,by+fh*2,0xAFC8E0);
             }else{
-                if(id>=0)Art.avatar(g,id,x+5,ry+(rowH-34)/2);
+                if(id>=0)Art.avatar(g,id,x+5,ry+Math.max(1,(rowH-34)/2));
                 String name=id>=0?Data.name[id]:"-";
-                Art.textB(g,name,x+43,ry+2,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
-                String desc=id>=0?Lang.typeName(Data.t1[id])+" / "+Lang.typeName(Data.t2[id])+"  "+Data.CATEGORY_NAME[Data.category[id]]+"  "+Lang.moveName(Data.skillName[id]):"";
-                Art.para(g,desc,x+43,ry+fh+2,w-50,0x9FB5CE,rowH>=44?2:1);
+                Art.textB(g,name+"  ["+rarityVi(id)+"]",x+43,ry+1,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
+                if(id>=0){
+                    Art.typeIcon(g,Data.t1[id],x+43,ry+fh+1);Art.typeIcon(g,Data.t2[id],x+59,ry+fh+1);
+                    Art.textSmall(g,Lang.typeName(Data.t1[id])+" / "+Lang.typeName(Data.t2[id]),x+77,ry+fh+3,0x9FC5E0);
+                    if(rowH>=fh*3+4)Art.textSmall(g,"HP: "+Data.hp[id]+Lang.t("  Công: ","  ATK: ")+Data.atk[id]+Lang.t("  Thủ: ","  DEF: ")+Data.def[id]+Lang.t("  Kháng: ","  RES: ")+Data.speDef[id]+Lang.t("  Tốc: ","  SPD: ")+Data.speed[id],x+43,ry+fh*2+3,0xD5DEE8);
+                    if(rowH>=fh*4+2)Art.textSmall(g,fitHud(Lang.t("Tuyệt kỹ: ","Ultimate: ")+Lang.moveName(Data.skillName[id])+" - "+AbilityBehavior.description(id),w-50),x+43,ry+fh*3+3,0xA0FFA0);
+                }
             }
         }
-        Art.textSmallC(g,Lang.t("↑↓ chọn  •  FIRE xác nhận","↑↓ choose  •  FIRE confirm"),W/2,H-fh-3,0x90A8C8);
+        Art.textSmallC(g,Lang.t("↑↓ chọn  •  FIRE xác nhận","↑↓ choose  •  FIRE confirm"),W/2,y+h-fh-3,0x90A8C8);
+    }
+
+    private String rarityVi(int sp){
+        if(sp<0)return "";if(Save.language==Lang.EN)return Data.CATEGORY_NAME[Data.category[sp]];
+        String[] n={"Phổ biến","Ít gặp","Hiếm","Sử thi","Siêu hiếm","Độc nhất","Huyền thoại","Đặc biệt"};
+        return n[Data.category[sp]];
     }
 
     private void paintRefreshItemsAsk(Graphics g){

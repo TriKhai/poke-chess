@@ -261,6 +261,17 @@ public final class CombatSmokeTest {
         check(uniquePick[0]>=0,"Unique milestone has no proposition");int uniqueStock=draft.pool[uniquePick[0]];
         draft.chooseAdditional(uniquePick[0]);
         check(draft.count(uniquePick[0])==1&&draft.pool[uniquePick[0]]==uniqueStock,"Unique must be free but stay outside normal shop pool");
+
+        Run retry=new Run(9753,Run.MODE_NORMAL);retry.round=5;int itemTotal=0;
+        for(int i=0;i<ItemData.count();i++)itemTotal+=retry.itemCount(i);
+        int[] retryUs=new int[24],retryFoe=new int[24];for(int i=0;i<24;i++){retryUs[i]=-1;retryFoe[i]=-1;}retryUs[0]=0;retryFoe[0]=3;
+        Battle lostRound=new Battle(retryUs,retryFoe,100,new Rng(77));lostRound.winner=1;lostRound.over=true;
+        retry.applyResult(lostRound);
+        int afterLossItems=0;for(int i=0;i<ItemData.count();i++)afterLossItems+=retry.itemCount(i);
+        check(!retry.lastWon&&retry.lastXp==0&&retry.lastItem<0&&afterLossItems==itemTotal,"lost round granted XP or an item reward");
+        retry.nextRound();check(retry.round==5,"lost round advanced to the next stage");
+        retry.round=40;retry.hp=100;retry.over=false;retry.applyResult(lostRound);
+        check(!retry.over,"final stage loss must retry while HP remains");
         check(EconomyRules.interest(59)==5,"interest cap mismatch");
         check(EconomyRules.streakBonus(-6)==3&&EconomyRules.streakBonus(1)==0,"streak economy mismatch");
         check(EconomyRules.income(20,4,true,2)==12,"income breakdown mismatch");

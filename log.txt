@@ -32,6 +32,12 @@ v1.4.4 - 40-Stage Road
 - Transition GO dùng đúng sprite hố đen Gacha 8 frame cùng bốn mức co giãn đã
   dựng sẵn, thay cho hố đen vẽ bằng primitive. Run save nâng schema v2 và vẫn đọc
   được save schema v1.
+- Popup lựa chọn chuyển sang bảng gọn theo nội dung thay vì phủ toàn màn hình.
+  Pokémon hiển thị avatar, icon hệ, độ hiếm Việt hóa, HP/Công/Thủ/Kháng/Tốc và
+  dòng Tuyệt kỹ; pool hệ hiển thị buff thật của cả ba hệ; bảng đồ cũng thu chiều cao.
+- Chỉ trận thắng mới nhận mảnh và mở lựa chọn phần thưởng. Trận thua chỉ nhận vàng
+  thua, không nhận XP/mảnh/quà mốc, không tăng vòng và phải đấu lại đúng ải đó;
+  kể cả thua ải cuối vẫn được thử lại nếu HP còn trên 0.
 
 v1.4.3 - Legendary Purchase Light Waves
 - Giữ nguyên 5 frame SPAWN khi mua pet. Nếu pet mua có category Legendary, cộng

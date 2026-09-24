@@ -450,8 +450,8 @@ public final class Run {
         lastGold = 0;
         lastBaseGold=lastInterest=lastStreakGold=lastVictoryGold=lastItemGold=0;
         lastItem = -1;
-        lastXp = 2;
-        gainXp(lastXp);
+        lastXp = lastWon?2:0;
+        if(lastXp>0)gainXp(lastXp);
         if (lastWon) {
             streak = streak > 0 ? streak + 1 : 1;
             if (round >= maxRound()) { over = true; victory = true;if(mode==MODE_GEN1)unlockGen1(); }
@@ -460,14 +460,13 @@ public final class Run {
             lastDamage = EconomyRules.playerDamage(round,b.aliveTierSum(1));
             hp -= lastDamage;
             if (hp <= 0) { hp = 0; over = true; }
-            if (round >= maxRound()) over = true; // the final boss ends the run either way
         }
         if (!over) {
             lastBaseGold=EconomyRules.BASE_INCOME;lastInterest=EconomyRules.interest(gold);
             lastStreakGold=EconomyRules.streakBonus(streak);lastVictoryGold=EconomyRules.victoryBonus(lastWon);lastItemGold=b.itemGold;
             lastGold=EconomyRules.income(gold,streak,lastWon,b.itemGold);
         }
-        lastItem=randomComponent();giveItem(lastItem);
+        if(lastWon){lastItem=randomComponent();giveItem(lastItem);}
     }
 
     private void unlockGen1(){for(int i=0;i<151&&i<Data.N;i++)Save.unlocked[Data.fam[i]]=true;Save.save();}
@@ -476,7 +475,7 @@ public final class Run {
     public void nextRound() {
         if (!unlimitedGold) gold += lastGold;
         else gold = 9999;
-        round++;
+        if(lastWon)round++;
         if(shopLocked)shopLocked=false;else rollShop();
         genEnemy();
     }

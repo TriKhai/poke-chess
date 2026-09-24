@@ -28,4 +28,7 @@ public final class GachaRules{
         if(count>total)count=total;int[] pool=new int[total];int n=0;for(int d=1;d<=Data.N;d++)if(allowsGen(group,generationOfDex(d))&&legendary(d))pool[n++]=d;for(int i=0;i<CollectionDex.COUNT;i++){int d=CollectionDex.DEX[i];if(allowsGen(group,CollectionDex.GEN[i])&&legendary(d))pool[n++]=d;}
         for(int i=0;i<count;i++){int p=i+rng.nextInt(total-i),v=pool[i];pool[i]=pool[p];pool[p]=v;}int[] out=new int[count];for(int i=0;i<count;i++)out[i]=pool[i];return out;
     }
+    /** Stable for the whole local calendar day; changes after midnight with the weekday pool. */
+    public static int[] dailyFeaturedLegendaries(int group,int count){Calendar c=Calendar.getInstance();int key=c.get(Calendar.YEAR)*372+c.get(Calendar.MONTH)*31+c.get(Calendar.DATE);return featuredForDay(group,count,key);}
+    public static int[] featuredForDay(int group,int count,int dayKey){return randomFeaturedLegendaries(group,count,new Rng(dayKey*37+group*1009+0x47414348));}
 }

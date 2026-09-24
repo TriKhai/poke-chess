@@ -210,7 +210,11 @@ v1.3.8 - Tiến trình offline và UX hoàn chỉnh
   khi gần mốc; cả vòng co đều vào hố đen khi quay.
 - Hotfix avatar Gacha: sửa Gen 4-9 từng bị đẩy lên 6px nên che tiêu đề; mọi avatar
   dùng khung 32px đồng nhất, chừa khoảng trống riêng dưới chữ. Mỗi lần mở Gacha
-  chọn ngẫu nhiên 2-3 Huyền thoại không trùng trong pool của ngày thay vì cố định 4.
+  hiển thị tối đa 5 Huyền thoại không trùng trong pool của ngày. Danh sách dùng seed
+  theo ngày nên thoát/vào vẫn giữ nguyên, chỉ reset sau khi sang ngày lịch mới và tự
+  chuyển nhóm Gen đúng lịch tuần.
+- Thêm model Ho-Oh bay bằng clip WALK hướng DOWN-LEFT ở khoảng trống trên-trái
+  vòng Gacha; chỉ hiện trên màn đủ rộng để không đè icon hệ hoặc giao diện Compact.
 - Bỏ hoàn Bóng khi trùng; Pokémon mới +1 điểm, trùng +2 điểm. Chạm mốc 100 bảo đảm
   Huyền thoại chưa sở hữu; trúng Huyền thoại sớm cũng reset điểm về 0.
 - Save schema v8 lưu quyền sở hữu 558 Pokémon Gen 4-9 và điểm Gacha. Chúng được chọn

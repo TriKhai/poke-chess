@@ -20,8 +20,11 @@ Personal profile foundation (v1.3.8)
   collapse into the portal, then reveal a WALK/DOWN-LEFT Pokemon with congratulations text.
 - Gacha hotfix: replaced text abbreviations with real type icons and placed eight icons
   at equal 45-degree intervals around the portal. Added a visible 0-100 pity progress bar.
-- Fixed featured portraits overlapping their heading by using a shared 32px anchor and
-  explicit text gap; each Gacha visit now shows 2-3 random unique daily Legendaries.
+- Fixed featured portraits overlapping their heading with a shared 32px anchor and gap.
+  Up to five unique featured Legendaries are deterministic for the local calendar day,
+  so reopening Gacha keeps the list; it resets after midnight with the weekday Gen pool.
+- Added an animated Ho-Oh WALK/DOWN-LEFT model in the open upper-left Gacha space on
+  wide layouts; Compact screens omit it to preserve the type ring.
 - Gacha spends one Ball without duplicate refunds; new Pokemon add 1 pity point and
   duplicates add 2. Crossing 100 guarantees a non-owned Legendary and resets the meter;
   any early Legendary also resets it.

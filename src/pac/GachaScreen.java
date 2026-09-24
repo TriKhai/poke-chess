@@ -10,7 +10,7 @@ public final class GachaScreen extends Screen{
     private final int group;
     private final int[] featured;
     private int state=0,time=0,lastDex=-1;private boolean lastNew,lastPity;private String msg="";
-    public GachaScreen(Game g){super(g);group=GachaRules.todayGroup();featured=GachaRules.randomFeaturedLegendaries(group,2+rng.nextInt(2),rng);}
+    public GachaScreen(Game g){super(g);group=GachaRules.todayGroup();featured=GachaRules.dailyFeaturedLegendaries(group,5);}
     public void update(int dt){time+=dt;if(state==1&&time>=2200)resolve();}
     public void key(int k){
         if(k==Game.K_0||k==Game.K_SOFT2){if(state!=1)game.setScreen(new ExploreHubScreen(game));return;}
@@ -43,6 +43,8 @@ public final class GachaScreen extends Screen{
             for(int i=0;i<OX.length;i++){int p=(i+shift)%OX.length,type=(i+(state==1?time/180*OX.length:0))%Data.NT,x=cx+OX[p]*radius/44,y=cy+OY[p]*radius/44;g.setColor(0xFFFFFF);g.fillArc(x-10,y-10,20,20,0,360);g.setColor(Data.TCOL[type]);g.drawArc(x-10,y-10,19,19,0,360);g.drawArc(x-9,y-9,17,17,0,360);Art.typeIcon(g,type,x-8,y-8);}
             // Draw portal last so the center remains a visible black hole while icons are swallowed.
             GachaFx.portal(g,cx,cy,time);
+            // Ho-Oh fills the empty upper-left space without touching the type ring.
+            if(!compact&&W>=220)drawPokemon(g,250,5,cy-31,52,44,RawAtlas.WALK,time/90+3);
         }else{
             GachaFx.portal(g,cx,cy,time);
             int pw=compact?56:76,ph=compact?52:72;drawPokemon(g,lastDex,cx-pw/2,cy-ph/2,pw,ph,RawAtlas.WALK,time/90);
@@ -50,7 +52,7 @@ public final class GachaScreen extends Screen{
             Art.textSmallC(g,lastPity?Lang.t("MỐC 100 - HUYỀN THOẠI KHÔNG TRÙNG","100 PITY - NEW LEGENDARY"):(lastNew?Lang.t("Pokémon mới  +1 điểm","New Pokémon  +1 point"):Lang.t("Pokémon trùng  +2 điểm","Duplicate  +2 points")),cx,cy+fh+40,lastNew?0x80FF90:0xFFC070);
         }
         int ly=H-fh*2-32;
-        if(state!=2&&!compact){Art.textSmallC(g,Lang.t("HUYỀN THOẠI HÔM NAY","TODAY'S LEGENDARIES"),cx,ly-fh-6,0xA890F0);int step=36,start=cx-(featured.length*step)/2;for(int i=0;i<featured.length;i++)drawAvatar(g,featured[i],start+i*step,ly);}
+        if(state!=2&&!compact){Art.textSmallC(g,Lang.t("HUYỀN THOẠI HÔM NAY","TODAY'S LEGENDARIES"),cx,ly-fh-6,0xA890F0);int step=34,start=cx-((featured.length-1)*step+32)/2;for(int i=0;i<featured.length;i++)drawAvatar(g,featured[i],start+i*step,ly);}
         // Walking partners decorate both lower corners without entering the reward pool.
         int a=group==0?25:(group==1?387:(group==2?722:25)),b=group==0?150:(group==1?493:(group==2?810:387));
         if(!compact&&W>=220){drawPokemon(g,a,2,H-fh*4-24,40,36,RawAtlas.WALK,time/90);drawPokemon(g,b,W-42,H-fh*4-24,40,36,RawAtlas.WALK,time/90+2);}

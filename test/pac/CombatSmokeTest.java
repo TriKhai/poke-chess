@@ -25,6 +25,9 @@ public final class CombatSmokeTest {
         Save.camp[0]=0;Save.camp[1]=-1;Save.camp[2]=-1;Save.campStart=1000;
         check(ExploreRules.campReward(1000+7200)==ExploreRules.hourlyBalls(0)*2,"offline camp reward mismatch");
         check(ExploreRules.campReward(1000+30L*3600)==ExploreRules.hourlyBalls(0)*24,"camp reward cap mismatch");
+        int oldBalls=Save.balls;int claimed=ExploreRules.claimCamp(1000+7200);
+        check(claimed==ExploreRules.hourlyBalls(0)*2&&Save.balls==oldBalls+claimed&&Save.campStart==8200,"camp claim transaction mismatch");
+        Save.balls=oldBalls;
         Save.camp[0]=oldCamp0;Save.camp[1]=oldCamp1;Save.camp[2]=oldCamp2;Save.campStart=oldCampStart;
         check(CombatStatus.COUNT==25,"documented status count mismatch");
         CombatStatus parity=new CombatStatus();parity.apply(CombatStatus.BURN,20);parity.apply(CombatStatus.SAFEGUARD,15);
@@ -121,6 +124,13 @@ public final class CombatSmokeTest {
         check(Save.chooseProfileAvatar(1)&&Save.profileAvatarDex==1,"owned profile avatar selection failed");
         check(Save.setProfileNameOnce("Kdic")&&"Kdic".equals(Save.profileName),"first profile name confirmation failed");
         check(!Save.setProfileNameOnce("Renamed")&&"Kdic".equals(Save.profileName),"profile name must only be set once");
+        Save.modeCleared=0;
+        int normalFirst=ProgressionRules.finishReward(Run.MODE_NORMAL,20,true);
+        check(normalFirst==33,"Normal first-clear reward mismatch");
+        ProgressionRules.recordClear(Run.MODE_NORMAL);
+        check(ProgressionRules.cleared(Run.MODE_NORMAL)&&ProgressionRules.finishReward(Run.MODE_NORMAL,20,true)==23,"repeat clear reward mismatch");
+        check(ProgressionRules.finishReward(Run.MODE_THIRTY,30,true)==61,"30-round first-clear reward mismatch");
+        check(ProgressionRules.objective(Run.MODE_GEN1).length()>30,"mode objective help missing");
         Save.language=Lang.VI;Save.performance=oldPerformance;
         Run sandbox = new Run(123, true);
         sandbox.shop[0] = 0;

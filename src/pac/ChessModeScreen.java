@@ -47,7 +47,8 @@ public final class ChessModeScreen extends Screen {
             Art.textC(g,mode[i],W/2,y+i*gap,i==selected?0xFFFFFF:0xAFC0D8);
         }
         int modes=base.length;String note;if(selected>=modes)note=hasResume&&selected==modes?Lang.t("Khôi phục đội hình, shop, đồ và kinh tế","Restore team, shop, items and economy"):Lang.t("Xem kết quả và 9 Pokemon cuối","View results and final 9 Pokemon");else{int actual=modeAt(selected);note=actual==Run.MODE_UNLIMITED?Lang.t("Roll, mua và XP miễn phí để test","Free roll, buy and XP for testing"):actual==Run.MODE_THIRTY?Lang.t("9 mảnh mỗi vòng, boss mỗi 5 vòng","9 components each round, boss every 5 rounds"):actual==Run.MODE_GEN1?Lang.t("Chỉ Gen 1, boss cố định mỗi 5 vòng","Gen 1 only, fixed boss every 5 rounds"):Lang.t("Kinh tế và phần thưởng tiêu chuẩn","Standard economy and rewards");}
-        if(!compact)Art.textSmallC(g,note,W/2,H-fh*3,0x90A0B8);
+        if(selected<modes)note=ProgressionRules.objective(modeAt(selected));
+        if(!compact)Art.para(g,note,8,H-fh*4,W-16,0x90A0B8,2);
         Art.textC(g,Lang.t("FIRE: bắt đầu   0: về","FIRE: start   0: back"),W/2,H-fh-3,0x8090B0);
     }
 

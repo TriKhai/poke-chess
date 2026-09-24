@@ -191,13 +191,19 @@ v1.3.8 - Tiến trình offline và UX hoàn chỉnh
 - Bộ sưu tập cá nhân có 10 bộ lọc: Tất cả và Gen 1 đến Gen 9; avatar xếp dạng
   lưới responsive, ô đang trỏ có viền sáng, Pokémon chưa sở hữu hiện dấu hỏi.
 - Chỉ Pokémon đã mở khóa thật sự mới được chọn làm đại diện; Gen 4-9 hiện vẫn
-  Collection-only nên được liệt kê nhưng khóa. Save schema v6 lưu tên và National Dex.
-- Hoàn thiện Explore/bắt Pokemon, mở khóa family, phần thưởng và liên kết Collection.
-- Bổ sung mục tiêu, phần thưởng và kết thúc riêng cho Normal, 30 vòng và Gen 1.
-- Save/resume toàn bộ tiến trình mới, có migration và xử lý dữ liệu lỗi an toàn.
+  Collection-only nên được liệt kê nhưng khóa. Save schema v7 lưu tên, National Dex
+  và huy hiệu hoàn thành mode; đọc tương thích schema v1-v6.
+- Hoàn thiện Explore/bắt Pokémon, mở khóa family và liên kết Collection. Gacha phân biệt
+  NEW/trùng, hoàn Bóng khi trùng và sửa bộ lọc Độ hiếm dùng đúng Category.
+- Bãi Pokémon chốt phần thưởng cũ trước khi thay pet để không hưởng hồi tố năng suất;
+  Farm có cooldown skill 1,8 giây, đếm KO và phản hồi thưởng/hồi phục rõ ràng.
+- Normal, 30 vòng và Gen 1 có mục tiêu, phần thưởng thắng và first-clear bonus riêng;
+  Hồ sơ hiển thị huy hiệu N/30/G1, Gen 1 vẫn mở toàn bộ family khi phá đảo.
+- Help chia 4 trang Điều khiển, Chỉ số, Status và Chế độ; wrap/scroll responsive.
 
 Nội dung UX trong v1.3.8
-- Hoàn thiện History, tổng kết, hướng dẫn điều khiển, glossary chỉ số/status và trợ giúp mode.
+- History/tổng kết giữ bố cục responsive; đã hoàn thiện hướng dẫn điều khiển,
+  glossary chỉ số/status và trợ giúp mode.
 - Rà toàn bộ Việt hóa/English, tên nút, mô tả dài, scroll, xác nhận thao tác nguy hiểm.
 - Chuẩn hóa phản hồi âm thanh/hình ảnh, trạng thái focus và điều khiển phím/cảm ứng.
 

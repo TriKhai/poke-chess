@@ -6,7 +6,13 @@ Personal profile foundation (v1.3.8)
 - Player name defaults to Kẻ vô danh/Nameless and can only be confirmed once.
 - Added All plus Gen 1-9 personal collection filters in a responsive avatar grid.
 - Locked Pokemon render as question marks; FIRE only selects an owned Pokemon.
-- Save schema v6 stores the profile name and National Dex avatar while loading v1-v5 safely.
+- Save schema v7 stores profile data and three mode-clear badges while loading v1-v6 safely.
+- Normal, 30-round and Gen 1 runs now have distinct goals, victory rewards and first-clear bonuses.
+- Profile shows completion badges; Gen 1 victory still unlocks all Gen 1 families.
+- Gacha now reports NEW versus duplicate, refunds duplicate draws and uses the correct rarity labels.
+- Camp claims accrued rewards before replacing a worker, preventing retroactive high-rate rewards.
+- Pet Farm has an 1.8-second skill cooldown, KO counter and clear reward/recovery feedback.
+- Help now has Controls, Stats, Status and Modes pages with responsive wrapping and scrolling.
 
 Offline Explore progression (v1.3.7)
 - Added an Explore hub with classic catching, Pet Farm, filtered Pokémon Gacha and Pokémon Camp.

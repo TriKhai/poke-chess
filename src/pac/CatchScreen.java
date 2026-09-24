@@ -77,7 +77,7 @@ public final class CatchScreen extends Screen {
         if (d <= zw / 2) {
             boolean isNew = !Save.has(sp);
             Save.caught++;
-            Save.unlocked[Data.fam[sp]] = true;
+            Save.unlockFamily(sp);
             if (isNew) {
                 msg = Lang.t("Đã bắt ", "Caught ") + Data.name[sp] + Lang.t("! MỚI trong bộ sưu tập!", "! NEW in collection!");
             } else {

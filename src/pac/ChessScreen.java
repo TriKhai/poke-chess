@@ -114,10 +114,10 @@ public final class ChessScreen extends Screen {
     private void finishRun() {
         if (finished) return;
         finished = true;
-        reward = 2 + (run.round - 1) / 2 + (run.victory ? 10 : 0);
+        reward = ProgressionRules.finishReward(run.mode,run.round,run.victory);
         Save.balls += reward;
         Save.runs++;
-        if (run.victory) Save.wins++;
+        if (run.victory) {Save.wins++;ProgressionRules.recordClear(run.mode);}
         if (run.round > Save.best) Save.best = run.round;
         Save.save();
         HistoryStore.add(run);

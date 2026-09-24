@@ -31,14 +31,14 @@ public final class CombatSmokeTest {
         boolean dayChanged=false;for(int i=0;i<5;i++)if(dailyA[i]!=dailyC[i])dayChanged=true;check(dayChanged,"daily featured list did not reset next day");
         check(Save.unlockDex(387)&&Save.ownsDex(387)&&!Save.unlockDex(387),"collection-only ownership mismatch");
         Save.dexUnlocked=new boolean[CollectionDex.COUNT];
-        int oldCamp0=Save.camp[0],oldCamp1=Save.camp[1],oldCamp2=Save.camp[2];long oldCampStart=Save.campStart;
-        Save.camp[0]=0;Save.camp[1]=-1;Save.camp[2]=-1;Save.campStart=1000;
+        int oldCamp0=Save.camp[0],oldCamp1=Save.camp[1],oldCamp2=Save.camp[2];long oldCampStart=Save.campStart;long oldLock=Save.campLockUntil[0],oldClaim=Save.campClaimAt[0];
+        Save.camp[0]=0;Save.camp[1]=-1;Save.camp[2]=-1;Save.campStart=1000;Save.campLockUntil[0]=4600;Save.campClaimAt[0]=1000;
         check(ExploreRules.campReward(1000+7200)==ExploreRules.hourlyBalls(0)*2,"offline camp reward mismatch");
         check(ExploreRules.campReward(1000+30L*3600)==ExploreRules.hourlyBalls(0)*24,"camp reward cap mismatch");
         int oldBalls=Save.balls;int claimed=ExploreRules.claimCamp(1000+7200);
         check(claimed==ExploreRules.hourlyBalls(0)*2&&Save.balls==oldBalls+claimed&&Save.campStart==8200,"camp claim transaction mismatch");
         Save.balls=oldBalls;
-        Save.camp[0]=oldCamp0;Save.camp[1]=oldCamp1;Save.camp[2]=oldCamp2;Save.campStart=oldCampStart;
+        Save.camp[0]=oldCamp0;Save.camp[1]=oldCamp1;Save.camp[2]=oldCamp2;Save.campStart=oldCampStart;Save.campLockUntil[0]=oldLock;Save.campClaimAt[0]=oldClaim;
         check(CombatStatus.COUNT==25,"documented status count mismatch");
         CombatStatus parity=new CombatStatus();parity.apply(CombatStatus.BURN,20);parity.apply(CombatStatus.SAFEGUARD,15);
         check(parity.burn==0&&parity.safeguard==15,"Safeguard must cleanse negatives");

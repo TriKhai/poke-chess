@@ -11,7 +11,7 @@ public final class Save {
     private Save() {}
 
     private static final String STORE = "pacsave1";
-    private static final int VERSION = 8;
+    private static final int VERSION = 9;
 
     public static int balls = 15;
     public static int best = 0;
@@ -30,6 +30,8 @@ public final class Save {
     public static int hero=-1;
     public static int[] camp={-1,-1,-1};
     public static long campStart=0;
+    /** Per-slot lock gate and reward clock. lockUntil>0 means the slot is committed. */
+    public static long[] campLockUntil={0,0,0},campClaimAt={0,0,0};
     /** Personal profile. Empty name means it has never been confirmed. */
     public static String profileName="";
     /** National Dex number of the displayed partner Pokemon. */
@@ -50,7 +52,7 @@ public final class Save {
     }
 
     public static void reset() {
-        balls = 15; best = 0; runs = 0; wins = 0; caught = 0; performance = 0;hero=-1;campStart=0;camp=new int[]{-1,-1,-1};profileName="";profileAvatarDex=1;modeCleared=0;dexUnlocked=new boolean[CollectionDex.COUNT];gachaPoints=0;
+        balls = 15; best = 0; runs = 0; wins = 0; caught = 0; performance = 0;hero=-1;campStart=0;camp=new int[]{-1,-1,-1};campLockUntil=new long[]{0,0,0};campClaimAt=new long[]{0,0,0};profileName="";profileAvatarDex=1;modeCleared=0;dexUnlocked=new boolean[CollectionDex.COUNT];gachaPoints=0;
         unlocked = new boolean[Data.N];
         // starter families
         unlocked[Data.fam[find("Charmander")]] = true;
@@ -125,6 +127,8 @@ public final class Save {
                     if(ver>=6){profileName=in.readUTF();profileAvatarDex=in.readInt();}
                     if(ver>=7)modeCleared=in.readInt();
                     if(ver>=8){int dn=in.readInt();for(int i=0;i<dn;i++){boolean v=in.readBoolean();if(i<dexUnlocked.length)dexUnlocked[i]=v;}gachaPoints=in.readInt();if(gachaPoints<0)gachaPoints=0;if(gachaPoints>99)gachaPoints=99;}
+                    if(ver>=9){for(int i=0;i<3;i++)campLockUntil[i]=in.readLong();for(int i=0;i<3;i++)campClaimAt[i]=in.readLong();}
+                    else if(campStart>0)for(int i=0;i<3;i++)if(camp[i]>=0){campLockUntil[i]=campStart+3600L;campClaimAt[i]=campStart;}
                     if(profileName==null)profileName="";
                     if(!ownsDex(profileAvatarDex))profileAvatarDex=firstOwnedDex();
                     cheatMode = playPath == 1;
@@ -160,6 +164,7 @@ public final class Save {
             out.writeUTF(profileName);out.writeInt(profileAvatarDex);
             out.writeInt(modeCleared);
             out.writeInt(dexUnlocked.length);for(int i=0;i<dexUnlocked.length;i++)out.writeBoolean(dexUnlocked[i]);out.writeInt(gachaPoints);
+            for(int i=0;i<3;i++)out.writeLong(campLockUntil[i]);for(int i=0;i<3;i++)out.writeLong(campClaimAt[i]);
             out.flush();
             byte[] b = bo.toByteArray();
             rs = RecordStore.openRecordStore(STORE, true);

@@ -247,6 +247,10 @@ v1.3.8 - Tiến trình offline và UX hoàn chỉnh
   Data.mana và ON_ATTACK/ON_DAMAGE_MANA như Battle; hai bên tự cast khi đầy thanh.
 - Kéo VFX cast lên 1,2 giây, thêm aura tại người tung và vòng impact luôn có fallback,
   nên hiệu ứng vẫn nhìn thấy rõ kể cả Pokémon không có file species SFX riêng.
+- Bãi Pokémon thêm khóa riêng cho từng slot: chọn pet xong phải bấm Khóa 1 giờ mới
+  bắt đầu tạo Bóng; chưa hết đếm ngược thì không thể mở, thay hoặc gỡ pet.
+- Footer hiện tổng Bóng/giờ, thưởng đang nhận được, ba avatar và nút khóa/countdown.
+  Save schema v9 lưu lockUntil/claimAt từng slot, giữ phần phút lẻ khi nhận thưởng.
 
 Nội dung UX trong v1.3.8
 - History/tổng kết giữ bố cục responsive; đã hoàn thiện hướng dẫn điều khiển,

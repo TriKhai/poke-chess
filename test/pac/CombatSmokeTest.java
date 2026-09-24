@@ -134,6 +134,18 @@ public final class CombatSmokeTest {
         check(Save.chooseProfileAvatar(1)&&Save.profileAvatarDex==1,"owned profile avatar selection failed");
         check(Save.setProfileNameOnce("Kdic")&&"Kdic".equals(Save.profileName),"first profile name confirmation failed");
         check(!Save.setProfileNameOnce("Renamed")&&"Kdic".equals(Save.profileName),"profile name must only be set once");
+        Save.camp[0]=0;
+        check(Save.inCamp(0)&&Save.inCamp(Data.evo[0]),"camp lock must cover the full evolution family");
+        check(!Save.usable(0)&&!OwnedPokemon.eligible(0,-1),"camped Pokemon must be unavailable outside Camp");
+        check(!Save.chooseProfileAvatar(1),"camped family must not become the profile avatar");
+        Run campLocked=new Run(554,Run.MODE_NORMAL);
+        check(campLocked.pool[0]==0,"camped family leaked into a new Battle pool");
+        Save.camp[0]=-1;
+        check(Save.usable(0)&&OwnedPokemon.eligible(0,-1),"removing a Camp slot must restore availability");
+        check(ExploreRules.farmReward(4)==0&&ExploreRules.farmReward(5)==1&&ExploreRules.farmReward(12)==2,"Farm 5-KO reward/remainder rule mismatch");
+        check(!ExploreRules.farmLegendaryRound(9)&&ExploreRules.farmLegendaryRound(10)&&ExploreRules.farmLegendaryRound(20),"Farm Legendary cadence mismatch");
+        int normalFarmEnemy=ExploreRules.pickAnyBase(new Rng(555));
+        check(normalFarmEnemy>=0&&Data.isBase(normalFarmEnemy)&&Data.category[normalFarmEnemy]!=6,"Farm normal enemy picker mismatch");
         Save.modeCleared=0;
         int normalFirst=ProgressionRules.finishReward(Run.MODE_NORMAL,20,true);
         check(normalFirst==33,"Normal first-clear reward mismatch");
@@ -261,6 +273,6 @@ public final class CombatSmokeTest {
             check(stress.over, "stress battle did not terminate at seed " + seed);
         }
 
-        System.out.println("CombatSmokeTest OK: synergies, items, abilities/statuses, economy, PvE/bosses, save/resume/history, "+ItemData.recipeCount()+" item battles and 101 base battles");
+        System.out.println("CombatSmokeTest OK: synergies, items, abilities/statuses, economy, PvE/bosses, save/resume/history, Camp/Farm rules, "+ItemData.recipeCount()+" item battles and 101 base battles");
     }
 }

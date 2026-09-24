@@ -69,7 +69,7 @@ public final class Run {
         for (int i = 0; i < enemyEquip.length; i++) enemyEquip[i] = -1;
         for (int i = 0; i < 5; i++) shop[i] = -1;
         for (int i = 0; i < Data.N; i++) {
-            if (Data.isBase(i) && Save.unlocked[i] && (mode!=MODE_GEN1||i<151)) pool[i] = Data.POOL_COPIES[Data.cost[i]];
+            if (Data.isBase(i) && Save.unlocked[i] && !Save.inCamp(i) && (mode!=MODE_GEN1||i<151)) pool[i] = Data.POOL_COPIES[Data.cost[i]];
         }
         rollShop();
         if(mode==MODE_THIRTY)refreshNineItems(false);

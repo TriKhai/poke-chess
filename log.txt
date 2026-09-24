@@ -220,6 +220,15 @@ v1.3.8 - Tiến trình offline và UX hoàn chỉnh
 - Save schema v8 lưu quyền sở hữu 558 Pokémon Gen 4-9 và điểm Gacha. Chúng được chọn
   làm model Hồ sơ nhưng vẫn không tham gia Battle/shop/pool/AI. Gacha hiển thị các
   Huyền thoại trong pool hôm nay và model WALK trang trí ở màn đủ rộng.
+- Bãi Pokémon dùng nền TinyMeadow cố định từ source, giữ model WALK thành lớp riêng
+  và cho thay tối đa 3 Pokémon bằng popup avatar. Pokémon đang treo bị khóa theo cả
+  family tiến hóa khỏi Hồ sơ, shop/pool của run mới và các danh sách chọn mode khác.
+- Farm Pet được làm lại thành trận tự động có model ATTACK/HURT, HP/MP và chỉ số đối
+  xứng hai bên. Địch xuất hiện sau hiệu ứng lỗ đen 3 giây; hạ xong mới sinh con kế,
+  cứ con thứ 10 là Huyền thoại. Pet chỉ được chốt một lần trong lượt Farm.
+- Farm có ba nút Thay pet/Xác nhận-Tung kỹ năng/Tổng kết. Mỗi 5 KO đổi 1 Bóng,
+  phần dư bỏ; pet gục tự tổng kết và hỏi Đi tiếp hoặc Thoát. Thưởng không ảnh hưởng
+  tiến trình các mode chiến đấu khác. Lite có sprite fallback khi thiếu raw atlas.
 
 Nội dung UX trong v1.3.8
 - History/tổng kết giữ bố cục responsive; đã hoàn thiện hướng dẫn điều khiển,

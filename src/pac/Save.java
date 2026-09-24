@@ -81,8 +81,11 @@ public final class Save {
         profileName=value;save();return true;
     }
     public static boolean ownsDex(int dex){if(dex>=1&&dex<=Data.N)return has(dex-1);int di=collectionIndex(dex);return di>=0&&dexUnlocked[di];}
-    public static boolean chooseProfileAvatar(int dex){if(!ownsDex(dex))return false;profileAvatarDex=dex;save();return true;}
+    public static boolean chooseProfileAvatar(int dex){if(!ownsDex(dex)||(dex<=Data.N&&inCamp(dex-1)))return false;profileAvatarDex=dex;save();return true;}
     public static boolean unlockFamily(int sp){int f=Data.fam[sp];boolean fresh=!unlocked[f];unlocked[f]=true;return fresh;}
+    /** A camped family is unavailable to playable modes until removed. */
+    public static boolean inCamp(int sp){if(sp<0||sp>=Data.N)return false;int f=Data.fam[sp];for(int i=0;i<camp.length;i++)if(camp[i]>=0&&Data.fam[camp[i]]==f)return true;return false;}
+    public static boolean usable(int sp){return sp>=0&&sp<Data.N&&has(sp)&&!inCamp(sp);}
     public static boolean unlockDex(int dex){if(dex<=Data.N)return unlockFamily(dex-1);int di=collectionIndex(dex);if(di<0)return false;boolean fresh=!dexUnlocked[di];dexUnlocked[di]=true;return fresh;}
 
     public static int familiesUnlocked() {

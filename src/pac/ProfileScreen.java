@@ -58,7 +58,7 @@ public final class ProfileScreen extends Screen {
             if(owned){if(d<=Data.N)Art.avatar(g,d-1,x+(cell-32)/2,y+3);else Art.dexAvatar(g,dexCollectionIndex(d),x+(cell-32)/2,y+3);}
             else{g.setColor(0x253148);g.fillRect(x+(cell-30)/2,y+4,30,30);Art.textBC(g,"?",x+cell/2,y+11,0x7C879A);}
         }
-        int current=dexAt(sel);String label=Save.ownsDex(current)?(current<=Data.N?Data.name[current-1]:"#"+current):Lang.t("Chưa sở hữu","Not owned");
+        int current=dexAt(sel);String label=Save.ownsDex(current)?(current<=Data.N?(Save.inCamp(current-1)?Lang.t("Đang ở Bãi Pokémon","In Pokémon Camp"):Data.name[current-1]):"#"+current):Lang.t("Chưa sở hữu","Not owned");
         Art.textSmallC(g,label+"  #"+current,W/2,H-fh*2,Save.ownsDex(current)?0xFFFFFF:0x788398);
         Art.textSmallC(g,Lang.t("1/3: Gen  FIRE: chọn  0: về","1/3: Gen  FIRE: choose  0: back"),W/2,H-fh-1,0x80A8D0);
     }

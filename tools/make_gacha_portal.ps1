@@ -15,5 +15,9 @@ foreach($entry in $json.textures[0].frames){
 }
 $out=Join-Path $root 'res\fx\gacha_portal.png'
 $strip.Save($out,[System.Drawing.Imaging.ImageFormat]::Png)
-$gfx.Dispose();$strip.Dispose();$atlas.Dispose()
+$farm=[System.Drawing.Bitmap]::new(416,208,[System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+$fg=[System.Drawing.Graphics]::FromImage($farm);$fg.Clear([System.Drawing.Color]::Transparent);$fg.InterpolationMode=[System.Drawing.Drawing2D.InterpolationMode]::NearestNeighbor
+$sizes=@(52,40,28,16);for($row=0;$row -lt 4;$row++){for($i=0;$i -lt 8;$i++){$s=$sizes[$row];$fg.DrawImage($strip,[System.Drawing.Rectangle]::new($i*52+(52-$s)/2,$row*52+(52-$s)/2,$s,$s),[System.Drawing.Rectangle]::new($i*52,0,52,52),[System.Drawing.GraphicsUnit]::Pixel)}}
+$farmOut=Join-Path $root 'res\fx\farm_portal.png';$farm.Save($farmOut,[System.Drawing.Imaging.ImageFormat]::Png)
+$fg.Dispose();$farm.Dispose();$gfx.Dispose();$strip.Dispose();$atlas.Dispose()
 Get-Item -LiteralPath $out | Select-Object FullName,Length

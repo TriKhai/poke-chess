@@ -17,8 +17,6 @@ public final class RawAtlas {
     private static final int[] AGE=new int[RAW_COUNT];
     private static final int MAX_CACHE=8;
     private static int clock;
-    private static int outlineSp=-1,outlineDir=-1,outlineCount=0;
-    private static Image[] outlineFrames;
     private Image sheet;
     /** action/direction -> packed x,y,w,h,offsetX,offsetY,sourceW,sourceH */
     private short[][][] frames=new short[6][8][];
@@ -136,34 +134,4 @@ public final class RawAtlas {
         return true;
     }
 
-    /** Draws a one-pixel outline from the exact transformed atlas frame on screen. */
-    public static boolean drawFormationOutline(Graphics g,int sp,int x,int y,int boxW,int boxH,
-                                               int screenW,int direction,int clock,int color){
-        RawAtlas atlas=get(sp);if(atlas==null)return false;
-        direction&=7;int action=atlas.visibleAction(IDLE,direction);short[] clip=atlas.frames[action][direction];
-        if(clip==null||clip.length==0)return false;
-        int count=clip.length/8,frame=(clock/(action==WALK?3:2))%count,p=frame*8;
-        int sx=clip[p]&65535,sy=clip[p+1]&65535,sw=clip[p+2]&65535,sh=clip[p+3]&65535;
-        boolean turn=atlas.rotated[IDLE][direction][frame]!=0;
-        int visibleW=turn?sh:sw,visibleH=turn?sw:sh;
-        int dx=x+(boxW-visibleW)/2;if(dx<0)dx=0;if(dx+visibleW>screenW)dx=screenW-visibleW;
-        int dy=y+boxH-visibleH-2;
-        if(outlineSp!=sp||outlineDir!=direction||outlineCount!=count){
-            outlineSp=sp;outlineDir=direction;outlineCount=count;outlineFrames=new Image[count];
-        }
-        if(outlineFrames[frame]==null)try{
-            Image part=Image.createImage(atlas.sheet,sx,sy,sw,sh,turn?TRANS_ROT270:TRANS_NONE);
-            int ow=visibleW+4,oh=visibleH+4,argb=0xFF000000|(color&0xFFFFFF);
-            int[] src=new int[visibleW*visibleH],out=new int[ow*oh];
-            part.getRGB(src,0,visibleW,0,0,visibleW,visibleH);
-            for(int yy=0;yy<visibleH;yy++)for(int xx=0;xx<visibleW;xx++)if((src[yy*visibleW+xx]>>>24)!=0){
-                int cx=xx+2,cy=yy+2;
-                for(int oy=-1;oy<=1;oy++)for(int ox=-1;ox<=1;ox++)out[(cy+oy)*ow+cx+ox]=argb;
-            }
-            for(int yy=0;yy<visibleH;yy++)for(int xx=0;xx<visibleW;xx++)if((src[yy*visibleW+xx]>>>24)!=0)out[(yy+2)*ow+xx+2]=0;
-            outlineFrames[frame]=Image.createRGBImage(out,ow,oh,true);
-        }catch(Exception e){return false;}
-        g.drawImage(outlineFrames[frame],dx-2,dy-2,Graphics.TOP|Graphics.LEFT);
-        return true;
-    }
 }

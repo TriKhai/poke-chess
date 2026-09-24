@@ -283,6 +283,9 @@ v1.3.9RC2 - Formation selection và hiệu ứng mua pet
 - Hotfix idle: atlas gốc có 6 Pokémon chỉ chứa một frame IDLE dù WALK có 4 frame:
   Persian, Arcanine, Sudowoodo và ba Pokémon Collection #510/#812/#995. Renderer
   tự dùng WALK chậm tại chỗ khi được yêu cầu IDLE; Battle action khác giữ nguyên.
+- Theo phản hồi thiết bị: bỏ ellipse/bóng dưới chân và silhouette selection. Khôi
+  phục border vuông cũ cho ô board/hàng chờ nhưng giảm từ hai nét xuống một nét 1px;
+  marker vị trí pet đang cầm dùng xanh nhạt, con trỏ đích dùng vàng.
 
 v1.3.9RC - Release Candidate
 - Đóng băng gameplay và giữ nguyên toàn bộ animation/hiệu ứng hiện có.

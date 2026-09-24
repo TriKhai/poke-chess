@@ -629,13 +629,12 @@ public final class ChessScreen extends Screen {
                 drawEquippedItems(g,p,x,benchY,cell);
             }
         }
-        // Source position marker: fit the Pokemon instead of boxing the whole cell.
+        // Thin one-pixel source marker; the old double border covered small units.
         if (held >= 0) {
             int hx, hy;
             if (held < Run.BOARD) { hx = bx + (held % 8) * cell; hy = boardY + (held / 8) * cell; }
             else { hx = bx + (held - Run.BOARD) * cell; hy = benchY; }
-            int selected=run.get(held);
-            if(selected>=0)Art.formationSelection(g,selected,hx,hy,cell,0xFFFFFF);
+            g.setColor(0x80D8FF);g.drawRect(hx,hy,cell-1,cell-1);
         }
         // shop
         for (int i = 0; i < 5; i++) {
@@ -672,23 +671,16 @@ public final class ChessScreen extends Screen {
         else if (zone == 1) { cx = bx + col * cell; cy = benchY; cwid = cell; chei = cell; }
         else if (zone == 2) { cx = col * cw + 1; cy = shopY; cwid = cw - 2; chei = shopH; }
         else { cx = col * cw + 1; cy = btnY; cwid = cw - 2; chei = btnH; }
-        if(zone>=2&&zone<=3){
+        if(zone<=3){
             g.setColor(0xFFE040);
             g.drawRect(cx, cy, cwid - 1, chei - 1);
-            g.drawRect(cx + 1, cy + 1, cwid - 3, chei - 3);
-        }
-        if(zone<=1){
-            int target=zone==0?row*8+col:Run.BOARD+col;
-            int hover=held>=0?run.get(held):run.get(target);
-            if(hover>=0)Art.formationSelection(g,hover,cx,cy,cell,0xFFFFFF);
-            else Art.formationCursor(g,cx,cy,cell,0x80D8FF);
         }
         if (held >= 0 && zone <= 1) {
             int hs=run.get(held);
             // The drag preview must use the same raw-atlas frame, canvas and
             // bottom anchor as board/bench units. Art.sprite() is the small
             // static collection icon and made a held Gen-1 Pokemon collapse.
-            if (hs >= 0){drawSetupUnit(g,hs,cx,cy,cell,held+37);Art.formationSelection(g,hs,cx,cy,cell,0xFFFFFF);}
+            if (hs >= 0)drawSetupUnit(g,hs,cx,cy,cell,held+37);
         }
 
         paintPrepDock(g,infoY,53);

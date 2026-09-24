@@ -4,7 +4,8 @@ import javax.microedition.lcdui.Graphics;
 
 /** Daily all-in-one Gacha with vortex animation and a 100-point Legendary pity. */
 public final class GachaScreen extends Screen{
-    private static final int[] OX={0,18,26,18,0,-18,-26,-18},OY={-26,-18,0,18,26,18,0,-18};
+    /** Nine spaced positions on an open arc; the gap at the bottom keeps the ring visibly unclosed. */
+    private static final int[] OX={-31,-40,-37,-23,0,23,37,40,31},OY={24,0,-24,-38,-44,-38,-24,0,24};
     private final Rng rng=new Rng((int)System.currentTimeMillis());
     private final int group=GachaRules.todayGroup();
     private int state=0,time=0,lastDex=-1;private boolean lastNew,lastPity;private String msg="";
@@ -33,12 +34,15 @@ public final class GachaScreen extends Screen{
         Art.textBC(g,Lang.t("GACHA HỐ ĐEN","BLACK HOLE GACHA"),cx,3,0xFFD030);
         Art.textSmallC(g,GachaRules.scheduleName(group)+"  "+Lang.t("Bóng ","Balls ")+Save.balls,cx,fh+5,0x80D8FF);
         Art.textSmallC(g,Lang.t("Mốc Huyền thoại: ","Legendary pity: ")+Save.gachaPoints+"/100",cx,fh*2+5,0xFFE070);
-        int phase=state==1?time:0;GachaFx.portal(g,cx,cy,time);
+        int phase=state==1?time:0;
         if(state!=2||lastDex<0){
-            int radius=phase>1400?Math.max(2,26-(phase-1400)*24/800):26;
-            int shift=state==1?(time/90)&7:0;
-            for(int i=0;i<8;i++){int p=(i+shift)&7,type=(i+(state==1?time/180*8:0))%Data.NT,x=cx+OX[p]*radius/26,y=cy+OY[p]*radius/26;g.setColor(Data.TCOL[type]);g.fillArc(x-8,y-8,16,16,0,360);g.setColor(0xFFFFFF);g.drawArc(x-8,y-8,15,15,0,360);Art.textSmallC(g,Data.TSHORT[type],x,y-4,0x101018);}
+            int base=compact?38:46,radius=phase>1400?Math.max(2,base-(phase-1400)*(base-2)/800):base;
+            int shift=state==1?(time/110)%OX.length:0;
+            for(int i=0;i<OX.length;i++){int p=(i+shift)%OX.length,type=(i+(state==1?time/180*OX.length:0))%Data.NT,x=cx+OX[p]*radius/44,y=cy+OY[p]*radius/44;g.setColor(0xFFFFFF);g.fillArc(x-10,y-10,20,20,0,360);g.setColor(Data.TCOL[type]);g.drawArc(x-10,y-10,19,19,0,360);g.drawArc(x-9,y-9,17,17,0,360);Art.typeIcon(g,type,x-8,y-8);}
+            // Draw portal last so the center remains a visible black hole while icons are swallowed.
+            GachaFx.portal(g,cx,cy,time);
         }else{
+            GachaFx.portal(g,cx,cy,time);
             int pw=compact?56:76,ph=compact?52:72;drawPokemon(g,lastDex,cx-pw/2,cy-ph/2,pw,ph,RawAtlas.WALK,time/90);
             Art.textBC(g,name(lastDex),cx,cy+39,GachaRules.legendary(lastDex)?0xFFD030:0xFFFFFF);
             Art.textSmallC(g,lastPity?Lang.t("MỐC 100 - HUYỀN THOẠI KHÔNG TRÙNG","100 PITY - NEW LEGENDARY"):(lastNew?Lang.t("Pokémon mới  +1 điểm","New Pokémon  +1 point"):Lang.t("Pokémon trùng  +2 điểm","Duplicate  +2 points")),cx,cy+fh+40,lastNew?0x80FF90:0xFFC070);

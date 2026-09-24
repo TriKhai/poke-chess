@@ -25,6 +25,8 @@ public final class CombatSmokeTest {
         check(GachaRules.allowsGen(0,3)&&!GachaRules.allowsGen(0,4)&&GachaRules.allowsGen(1,5)&&GachaRules.allowsGen(2,9)&&GachaRules.allowsGen(3,1),"daily generation pool mismatch");
         int pityDex=GachaRules.pick(new Rng(138),3,true);check(GachaRules.legendary(pityDex)&&!Save.ownsDex(pityDex),"Gacha pity must select a new Legendary");
         int[] featured=GachaRules.randomFeaturedLegendaries(3,3,new Rng(139));check(featured.length==3&&GachaRules.legendary(featured[0])&&GachaRules.legendary(featured[1])&&GachaRules.legendary(featured[2]),"random featured Legendary list mismatch");
+        for(int roll=0;roll<500;roll++){int d=GachaRules.pickFeatured(new Rng(5000+roll),3,false,featured);if(GachaRules.legendary(d))check(d==featured[0]||d==featured[1]||d==featured[2],"early Legendary escaped today's featured pool");}
+        int featuredPity=GachaRules.pickFeatured(new Rng(140),3,true,featured);check(featuredPity==featured[0]||featuredPity==featured[1]||featuredPity==featured[2],"pity Legendary escaped today's featured pool");
         check(featured[0]!=featured[1]&&featured[0]!=featured[2]&&featured[1]!=featured[2],"featured Legendaries must be unique");
         int[] dailyA=GachaRules.featuredForDay(1,5,2026270),dailyB=GachaRules.featuredForDay(1,5,2026270),dailyC=GachaRules.featuredForDay(1,5,2026271);
         for(int i=0;i<5;i++)check(dailyA[i]==dailyB[i],"daily featured list changed within one day");

@@ -22,6 +22,18 @@ public final class GachaRules{
         for(int i=0;i<CollectionDex.COUNT;i++){int d=CollectionDex.DEX[i];if(allowsGen(group,CollectionDex.GEN[i])&&(!pity||legendary(d))&&(!pity||!Save.ownsDex(d))){q-=pity?1:weight(d);if(q<0)return d;}}
         return 1;
     }
+    private static boolean featured(int dex,int[] list){if(list==null)return false;for(int i=0;i<list.length;i++)if(list[i]==dex)return true;return false;}
+    /** Daily draw: every Legendary, including an early one, is restricted to today's cards. */
+    public static int pickFeatured(Rng rng,int group,boolean pity,int[] list){
+        int total=0;
+        if(pity){for(int i=0;i<list.length;i++)if(list[i]>0&&!Save.ownsDex(list[i]))total++;if(total==0)for(int i=0;i<list.length;i++)if(list[i]>0)total++;if(total==0)return 1;int q=rng.nextInt(total);boolean needNew=false;for(int i=0;i<list.length;i++)if(list[i]>0&&!Save.ownsDex(list[i]))needNew=true;for(int i=0;i<list.length;i++)if(list[i]>0&&(!needNew||!Save.ownsDex(list[i]))&&q--==0)return list[i];return list[0];}
+        for(int d=1;d<=Data.N;d++)if(allowsGen(group,generationOfDex(d))&&(!legendary(d)||featured(d,list)))total+=weight(d);
+        for(int i=0;i<CollectionDex.COUNT;i++){int d=CollectionDex.DEX[i];if(allowsGen(group,CollectionDex.GEN[i])&&(!legendary(d)||featured(d,list)))total+=weight(d);}
+        if(total<=0)return 1;int q=rng.nextInt(total);
+        for(int d=1;d<=Data.N;d++)if(allowsGen(group,generationOfDex(d))&&(!legendary(d)||featured(d,list))){q-=weight(d);if(q<0)return d;}
+        for(int i=0;i<CollectionDex.COUNT;i++){int d=CollectionDex.DEX[i];if(allowsGen(group,CollectionDex.GEN[i])&&(!legendary(d)||featured(d,list))){q-=weight(d);if(q<0)return d;}}
+        return 1;
+    }
     public static int[] featuredLegendaries(int group,int max){int[] out=new int[max];for(int i=0;i<max;i++)out[i]=-1;int n=0;for(int d=1;d<=Data.N&&n<max;d++)if(allowsGen(group,generationOfDex(d))&&legendary(d))out[n++]=d;for(int i=0;i<CollectionDex.COUNT&&n<max;i++){int d=CollectionDex.DEX[i];if(allowsGen(group,CollectionDex.GEN[i])&&legendary(d))out[n++]=d;}return out;}
     public static int[] randomFeaturedLegendaries(int group,int count,Rng rng){
         int total=0;for(int d=1;d<=Data.N;d++)if(allowsGen(group,generationOfDex(d))&&legendary(d))total++;for(int i=0;i<CollectionDex.COUNT;i++)if(allowsGen(group,CollectionDex.GEN[i])&&legendary(CollectionDex.DEX[i]))total++;

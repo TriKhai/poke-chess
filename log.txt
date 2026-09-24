@@ -255,6 +255,9 @@ v1.3.8 - Tiến trình offline và UX hoàn chỉnh
   Huyền thoại; phím # bật/tắt auto-roll, tự dừng an toàn khi hết Bóng.
 - Hồ sơ hiển thị avatar viền xanh cạnh model Pokémon đang chọn. Mode Khám phá và
   bắt cóc Pokémon dùng chính model Hồ sơ làm nhân vật, có IDLE/WALK và đúng 4 hướng.
+- Giới hạn pool Legendary Gacha vào đúng tối đa 5 Pokémon “Huyền thoại hôm nay”.
+  Cả Legendary rơi sớm và pity 100 đều không thể thoát khỏi 5 avatar đang hiển thị;
+  pity ưu tiên con chưa sở hữu, nếu đã đủ cả 5 mới cho phép trùng trong chính nhóm đó.
 
 Nội dung UX trong v1.3.8
 - History/tổng kết giữ bố cục responsive; đã hoàn thiện hướng dẫn điều khiển,

@@ -21,8 +21,8 @@ public final class GachaScreen extends Screen{
     }
     private void startRoll(){if(state==1)return;if(Save.balls<=0){autoRoll=false;msg=Lang.t("Hết Bóng - đã dừng tự động quay","Out of Balls - auto-roll stopped");state=2;return;}Save.balls--;Save.save();state=1;time=0;lastDex=-1;msg="";}
     private void resolve(){
-        int candidate=GachaRules.pick(rng,group,false);boolean candidateNew=!Save.ownsDex(candidate);int gain=candidateNew?1:2;
-        lastPity=Save.gachaPoints+gain>=100;lastDex=lastPity?GachaRules.pick(rng,group,true):candidate;
+        int candidate=GachaRules.pickFeatured(rng,group,false,featured);boolean candidateNew=!Save.ownsDex(candidate);int gain=candidateNew?1:2;
+        lastPity=Save.gachaPoints+gain>=100;lastDex=lastPity?GachaRules.pickFeatured(rng,group,true,featured):candidate;
         lastNew=Save.unlockDex(lastDex);Save.caught++;
         if(GachaRules.legendary(lastDex))Save.gachaPoints=0;else Save.gachaPoints+=lastNew?1:2;
         if(Save.gachaPoints>99)Save.gachaPoints=99;
@@ -63,5 +63,5 @@ public final class GachaScreen extends Screen{
         if(msg.length()>0)Art.textSmallC(g,msg,cx,H-fh*3-2,0xFFE070);
         Art.textSmallC(g,state==1?Lang.t("Các hệ đang bị hút vào...","Types are being pulled in..."):Lang.t("FIRE quay  * hướng dẫn  # tự động","FIRE draw  * help  # auto"),cx,H-fh-1,autoRoll?0x80FF90:0xD0D8F0);if(help)paintHelp(g);
     }
-    private void paintHelp(Graphics g){int W=game.W,H=game.H,fh=Art.fh,m=8,w=W-16,h=H-24,x=8,y=12;Art.box(g,x,y,w,h,0x101526,0xFFD060);Art.textBC(g,Lang.t("HƯỚNG DẪN GACHA","GACHA GUIDE"),W/2,y+4,0xFFD030);String s=Lang.t("Mỗi lượt tốn 1 Bóng. Pool đổi theo lịch Gen ghi trên màn hình. Pokémon mới: +1 điểm. Pokémon trùng: +2 điểm, không hoàn Bóng. Đủ 100 điểm: chắc chắn nhận Huyền thoại chưa sở hữu. Trúng Huyền thoại sớm sẽ đưa điểm về 0. Phím # bật tự động quay đến khi hết Bóng; nhấn # lần nữa để dừng.","Each draw costs 1 Ball. The Gen pool follows the schedule shown on screen. New Pokémon: +1 point. Duplicate: +2 points, no Ball refund. At 100 points: guaranteed unowned Legendary. An early Legendary resets points to 0. Press # to auto-roll until Balls run out; press # again to stop.");String[] lines=Art.wrap(s,w-2*m,30);int yy=y+fh+9;for(int i=0;i<lines.length&&yy<y+h-fh*2;i++){Art.textSmall(g,lines[i],x+m,yy,0xD8E4F2);yy+=fh;}Art.textSmallC(g,Lang.t("*/FIRE/0: đóng","*/FIRE/0: close"),W/2,y+h-fh-2,0x80A8D0);}
+    private void paintHelp(Graphics g){int W=game.W,H=game.H,fh=Art.fh,m=8,w=W-16,h=H-24,x=8,y=12;Art.box(g,x,y,w,h,0x101526,0xFFD060);Art.textBC(g,Lang.t("HƯỚNG DẪN GACHA","GACHA GUIDE"),W/2,y+4,0xFFD030);String s=Lang.t("Mỗi lượt tốn 1 Bóng. Pool đổi theo lịch Gen ghi trên màn hình. Chỉ 5 Pokémon Huyền thoại hiển thị hôm nay có thể xuất hiện, kể cả rơi sớm và mốc 100. Pokémon mới: +1 điểm. Pokémon trùng: +2 điểm, không hoàn Bóng. Đủ 100 điểm ưu tiên Huyền thoại hôm nay chưa sở hữu. Trúng Huyền thoại sớm đưa điểm về 0. Phím # bật/tắt tự động quay.","Each draw costs 1 Ball. The Gen pool follows the shown schedule. Only today's 5 displayed Legendaries can appear, both early and at pity 100. New Pokémon: +1 point. Duplicate: +2 points, no refund. Pity prioritizes an unowned featured Legendary. An early Legendary resets points. Press # to toggle auto-roll.");String[] lines=Art.wrap(s,w-2*m,30);int yy=y+fh+9;for(int i=0;i<lines.length&&yy<y+h-fh*2;i++){Art.textSmall(g,lines[i],x+m,yy,0xD8E4F2);yy+=fh;}Art.textSmallC(g,Lang.t("*/FIRE/0: đóng","*/FIRE/0: close"),W/2,y+h-fh-2,0x80A8D0);}
 }

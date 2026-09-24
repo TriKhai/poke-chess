@@ -74,7 +74,7 @@ public final class MenuScreen extends Screen {
             Art.textC(g, items[i], W / 2, y, s ? 0xFFFFFF : 0xB0C0E0);
             y += gap;
         }
-        y = H - fh * 2 - 3;
+        y = H - fh * 3 - 3;
         if(compact){
             Art.textSmallC(g,Lang.t("Bóng ","Balls ")+Save.balls+Lang.t("  Bộ sưu tập ","  Collection ")+Save.familiesUnlocked()+"/"+Data.countFamilies(),W/2,y+fh,0xC0FFC0);
         }else{
@@ -82,5 +82,6 @@ public final class MenuScreen extends Screen {
             Art.textC(g, Lang.t("Bộ sưu tập ", "Collection ") + Save.familiesUnlocked() + "/" + Data.countFamilies()
                     + Lang.t("   Vòng cao nhất ", "   Best round ") + Save.best, W / 2, y + fh, 0xC0FFC0);
         }
+        Art.textSmallR(g,"(c) 2026 Kdic",W-3,H-fh-1,0x68788E);
     }
 }

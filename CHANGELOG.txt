@@ -8,6 +8,7 @@ Gameplay/content parity and community credits (v1.3.6)
 - Added source-backed Gen 1-3 passives for Heracross, Zangoose, Vigoroth,
   Psyduck/Golduck, Sudowoodo and Wobbuffet, including Collection descriptions.
 - Added passive regression for activation, removal, immunity and stationary tree form.
+- Main menu now shows `(c) 2026 Kdic` in the bottom-right corner without overlapping Compact stats.
 
 Fixed-step render and animation (v1.3.5)
 - Separated the deterministic 100ms combat simulation clock from render cadence.

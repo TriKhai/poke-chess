@@ -281,18 +281,35 @@ public final class Run {
         }
     }
 
-    /** Merge copies and preserve up to three held items; overflow returns to inventory. */
+    /** Merge copies; every held item returns to reserve so the evolved unit starts empty. */
     private void mergeCopies(int sp,int needed){
-        int first=-1,removed=0,n=0;int[] kept=new int[9];
-        for(int i=0;i<kept.length;i++)kept[i]=-1;
+        int first=-1,removed=0;
         for(int p=0;p<BOARD+BENCH&&removed<needed;p++)if(get(p)==sp){
             if(first<0)first=p;
-            for(int s=0;s<3;s++){int id=itemAt(p,s);if(id>=0&&n<kept.length)kept[n++]=id;}
-            clearItems(p,false);set(p,-1);removed++;
+            clearItems(p,true);set(p,-1);removed++;
         }
         int evolved=Data.evo[sp];set(first,evolved);
         mergeEventPos=first;mergeEventTier=Data.tier[evolved];mergeEventSp=evolved;
-        for(int i=0;i<n;i++){if(i<3)equip[first*3+i]=kept[i];else giveItem(kept[i]);}
+    }
+
+    /** One component is awarded after every completed round. */
+    private int randomComponent(){
+        int count=0;for(int i=0;i<ItemData.count();i++)if(ItemData.isComponent(i))count++;
+        int rank=rng.nextInt(count);
+        for(int i=0;i<ItemData.count();i++)if(ItemData.isComponent(i)&&rank--==0)return i;
+        return 0;
+    }
+
+    /** Three distinct completed items for the five-round reward popup. */
+    public void craftedChoices(int[] out){
+        int total=ItemData.recipeCount();
+        for(int i=0;i<out.length;i++){
+            int id,guard=0;boolean duplicate;
+            do{ id=ItemData.recipeOutputAt(rng.nextInt(total));duplicate=false;
+                for(int j=0;j<i;j++)if(out[j]==id)duplicate=true;
+            }while(duplicate&&++guard<40);
+            out[i]=id;
+        }
     }
 
     public boolean move(int a, int b) {
@@ -357,12 +374,7 @@ public final class Run {
             lastStreakGold=EconomyRules.streakBonus(streak);lastVictoryGold=EconomyRules.victoryBonus(lastWon);lastItemGold=b.itemGold;
             lastGold=EconomyRules.income(gold,streak,lastWon,b.itemGold);
         }
-        if(mode==MODE_GEN1&&lastWon&&rng.pct(45)){
-            int[] basic={5,2,8,6,7,3,4,1};lastItem=basic[rng.nextInt(basic.length)];giveItem(lastItem);
-        }else if(mode<MODE_THIRTY&&lastWon&&(round<=3||isBoss())){
-            int[] basic={5,2,8,6,7,3,4,1};
-            lastItem=basic[rng.nextInt(basic.length)];giveItem(lastItem);
-        }
+        lastItem=randomComponent();giveItem(lastItem);
     }
 
     private void unlockGen1(){for(int i=0;i<151&&i<Data.N;i++)Save.unlocked[Data.fam[i]]=true;Save.save();}

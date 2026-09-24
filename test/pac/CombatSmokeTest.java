@@ -223,8 +223,17 @@ public final class CombatSmokeTest {
               "tier-2 evolution visual event missing");
         int evolved=-1;for(int p=0;p<Run.BOARD+Run.BENCH;p++)if(merge.get(p)==Data.evo[0]){evolved=p;break;}
         check(evolved>=0,"evolved Pokemon missing");
-        check(merge.itemAt(evolved,0)>=0&&merge.itemAt(evolved,1)>=0&&merge.itemAt(evolved,2)>=0,
-              "merge did not preserve three items");
+        check(merge.itemAt(evolved,0)<0&&merge.itemAt(evolved,1)<0&&merge.itemAt(evolved,2)<0,
+              "evolved Pokemon must start with empty equipment");
+        check(merge.itemCount(spoon)==1&&merge.itemCount(charcoal)==1&&merge.itemCount(book)==1,
+              "merge did not return all equipment to reserve");
+        int[] freeChoices={-1,-1,-1};merge.craftedChoices(freeChoices);
+        check(freeChoices[0]>=0&&freeChoices[1]>=0&&freeChoices[2]>=0,
+              "five-round crafted choices missing");
+        check(freeChoices[0]!=freeChoices[1]&&freeChoices[0]!=freeChoices[2]&&freeChoices[1]!=freeChoices[2],
+              "five-round crafted choices must be distinct");
+        check(!ItemData.isComponent(freeChoices[0])&&!ItemData.isComponent(freeChoices[1])&&!ItemData.isComponent(freeChoices[2]),
+              "five-round reward offered a component instead of a crafted item");
 
         Run locked = new Run(789, Run.MODE_NORMAL);
         int[] heldShop=new int[5];for(int i=0;i<5;i++)heldShop[i]=locked.shop[i];

@@ -50,6 +50,13 @@ public final class ChessScreen extends Screen {
     private boolean rosterDetail = false;
     private boolean refreshItemsAsk=false;
     private int refreshItemsChoice=0;
+    /** Shared vertical choice card; first use is the five-round crafted-item reward. */
+    private boolean rewardChoice=false;
+    private int rewardChoiceSel=0;
+    private final int[] rewardChoiceIds={-1,-1,-1};
+    /** 1: formation is sucked in, 2: allies deploy onto the battle board. */
+    private int transitionPhase=0,transitionT=0;
+    private static final int TRANSITION_MS=900;
     private int rosterSide = 0, rosterSel = 0, statMode = 0, battleSynCursor = 0;
     private boolean battleMore=false;
     /** True while the arrow-key cursor is on the combat-stat tabs. */
@@ -107,6 +114,14 @@ public final class ChessScreen extends Screen {
         if(evolutionFxT>0){evolutionFxT-=dt;if(evolutionFxT<=0){evolutionFxT=0;evolutionFxPos=-1;Art.clearEvolutionFx();}}
         if(legendaryBuyT>0){legendaryBuyT-=dt;if(legendaryBuyT<=0){legendaryBuyT=0;legendaryBuySlot=-1;}}
         if (toastT > 0) toastT -= dt;
+        if(transitionPhase>0){
+            transitionT+=dt;
+            if(transitionT>=TRANSITION_MS){
+                if(transitionPhase==1){state=BATTLE;transitionPhase=2;transitionT=0;simClock.reset();}
+                else{transitionPhase=0;transitionT=0;simClock.reset();}
+            }
+            return;
+        }
         if (state == BATTLE && !rosterDetail) {
             if (!bt.over) {
                 simClock.add(dt,speed);
@@ -146,6 +161,8 @@ public final class ChessScreen extends Screen {
     // ---- input -----------------------------------------------------------
 
     public void key(int k) {
+        if(transitionPhase>0)return;
+        if(rewardChoice){keyRewardChoice(k);return;}
         if(refreshItemsAsk){keyRefreshItems(k);return;}
         if(showMore){keyMore(k);return;}
         if(showCraft){keyCraft(k);return;}
@@ -160,9 +177,8 @@ public final class ChessScreen extends Screen {
             case BATTLE: keyBattle(k); break;
             case RESULT:
                 if (k == Game.K_FIRE || k == Game.K_SOFT1) {
-                    if (run.over) state = OVER;
-                    else if(run.mode==Run.MODE_THIRTY){refreshItemsAsk=true;refreshItemsChoice=0;}
-                    else continueNextRound();
+                    if(run.round%5==0&&run.round<=35)openRewardChoice();
+                    else afterResultChoice();
                 }
                 break;
             default:
@@ -174,6 +190,23 @@ public final class ChessScreen extends Screen {
     }
 
     private void continueNextRound(){run.nextRound();state=PREP;warned=false;held=-1;RunStorage.save(run);}
+
+    private void afterResultChoice(){
+        if(run.over)state=OVER;
+        else if(run.mode==Run.MODE_THIRTY){refreshItemsAsk=true;refreshItemsChoice=0;}
+        else continueNextRound();
+    }
+
+    private void openRewardChoice(){rewardChoiceSel=0;run.craftedChoices(rewardChoiceIds);rewardChoice=true;}
+
+    private void keyRewardChoice(int k){
+        if(k==Game.K_UP||k==Game.K_LEFT)rewardChoiceSel=(rewardChoiceSel+2)%3;
+        else if(k==Game.K_DOWN||k==Game.K_RIGHT)rewardChoiceSel=(rewardChoiceSel+1)%3;
+        else if(k==Game.K_FIRE||k==Game.K_SOFT1){
+            int id=rewardChoiceIds[rewardChoiceSel];run.giveItem(id);run.lastItem=id;
+            rewardChoice=false;afterResultChoice();
+        }
+    }
 
     private void keyRefreshItems(int k){
         if(k==Game.K_LEFT||k==Game.K_UP)refreshItemsChoice=0;
@@ -545,7 +578,8 @@ public final class ChessScreen extends Screen {
         endT = 0;
         endReady = false;
         battleEndVisualsCleared=false;
-        state = BATTLE;
+        transitionPhase=1;
+        transitionT=0;
     }
 
     // ---- layout ----------------------------------------------------------
@@ -593,6 +627,7 @@ public final class ChessScreen extends Screen {
         if (petActionMenu) paintPetActionMenu(g);
         if (state==BATTLE&&rosterDetail) paintRosterDetail(g);
         if(refreshItemsAsk)paintRefreshItemsAsk(g);
+        if(rewardChoice)paintRewardChoice(g);
     }
 
     private void drawUnit(Graphics g, int sp, int x, int y, int size) {
@@ -653,8 +688,15 @@ public final class ChessScreen extends Screen {
                 int sp = run.board[r * 8 + c];
                 if (sp >= 0) {
                     int p=r*8+c,x=bx+c*cell,y=boardY+r*cell;
-                    drawSetupUnit(g,sp,x,y,cell,p);
-                    drawEquippedItems(g,p,x,y,cell);
+                    if(transitionPhase==1){
+                        int q=transitionUnitProgress();
+                        int tx=W/2-cell/2,ty=boardY-cell/2;
+                        x=x+(tx-x)*q/256;y=y+(ty-y)*q/256;
+                        if(q<244)drawSetupUnit(g,sp,x,y,cell,p);
+                    }else{
+                        drawSetupUnit(g,sp,x,y,cell,p);
+                        drawEquippedItems(g,p,x,y,cell);
+                    }
                 }
             }
         }
@@ -731,6 +773,7 @@ public final class ChessScreen extends Screen {
 
         paintPrepDock(g,infoY,53);
         paintPrepInfo(g,infoY+55,H-(infoY+55));
+        if(transitionPhase==1)GachaFx.transitionPortal(g,W/2,boardY,visualTime,transitionRadius(cell));
         if(legendaryBuyT>0&&legendaryBuySlot>=0)
             drawLegendaryBuyFx(g,bx+legendaryBuySlot*cell+cell/2,benchY+cell/2,W,H,760-legendaryBuyT);
     }
@@ -1128,6 +1171,8 @@ public final class ChessScreen extends Screen {
             Art.speciesSkillSprite(g,bt.boardFxSp[k],fx,fy,(visualTime/90+k)&7);
         }
 
+        if(transitionPhase==2)GachaFx.transitionPortal(g,bx+4*cs,by+6*cs,visualTime,transitionRadius(cs));
+
         int linearFrac = bt.over ? 256 : simClock.fraction256();
         int frac = FixedStepClock.smooth256(linearFrac);
         if (frac > 256) frac = 256;
@@ -1141,6 +1186,11 @@ public final class ChessScreen extends Screen {
             }
             int ux = bx + (u.px * 256 + (u.x - u.px) * moveFrac) * cs / 256;
             int uy = by + (u.py * 256 + (u.y - u.py) * moveFrac) * cs / 256;
+            if(transitionPhase==2&&u.side==0){
+                int q=transitionUnitProgress();
+                int sx=bx+4*cs-cs/2,sy=by+6*cs-cs/2;
+                ux=sx+(ux-sx)*q/256;uy=sy+(uy-sy)*q/256;
+            }
             // The web game uses directional walk/attack clips. On MIDP we retain the
             // readable motion language with interpolation, idle bob and a short lunge.
             int bob = (((visualTime/90) + i) & 3) == 0 ? -1 : 0;
@@ -1575,6 +1625,37 @@ public final class ChessScreen extends Screen {
     }
 
     private void drawResultItems(Graphics g,Unit u,int x,int y){for(int s=0;s<3;s++){int id=u.items[s],px=x+s*9;g.setColor(id>=0?0x263448:0x172131);g.fillArc(px,y,8,8,0,360);g.setColor(id>=0?0x80D8FF:0x4B586C);g.drawArc(px,y,7,7,0,360);if(id>=0)Art.itemIconTiny(g,id,px, y);}}
+
+    private int transitionUnitProgress(){
+        int q=(transitionT-130)*256/590;
+        if(q<0)q=0;if(q>256)q=256;return q;
+    }
+
+    private int transitionRadius(int base){
+        int max=base+8;if(max<22)max=22;
+        if(transitionT<220)return 2+(max-2)*transitionT/220;
+        if(transitionT>690)return max*(TRANSITION_MS-transitionT)/(TRANSITION_MS-690);
+        return max;
+    }
+
+    /** Reusable row-based choice presentation for items, starters, pools and Legendaries. */
+    private void paintRewardChoice(Graphics g){
+        int W=game.W,H=game.H,fh=Art.fh,x=4,y=4,w=W-8,h=H-8;
+        Art.box(g,x,y,w,h,0x101830,0xFFD030);
+        Art.textBC(g,Lang.t("CHỌN 1 TRANG BỊ MIỄN PHÍ","CHOOSE 1 FREE ITEM"),W/2,y+3,0xFFD030);
+        int top=y+fh+7,footer=fh+5,rowH=(h-(top-y)-footer)/3;
+        if(rowH<31)rowH=31;
+        for(int i=0;i<3;i++){
+            int ry=top+i*rowH,id=rewardChoiceIds[i];
+            g.setColor(i==rewardChoiceSel?0x405273:((i&1)==0?0x202B40:0x192338));
+            g.fillRect(x+3,ry,w-6,rowH-2);
+            if(i==rewardChoiceSel){g.setColor(0xFFE060);g.drawRect(x+3,ry,w-7,rowH-3);}
+            Art.itemIcon(g,id,x+7,ry+(rowH-24)/2);
+            Art.textB(g,ItemData.name(id),x+36,ry+2,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
+            Art.para(g,ItemData.desc(id),x+36,ry+fh+2,w-43,0x9FB5CE,rowH>=44?2:1);
+        }
+        Art.textSmallC(g,Lang.t("↑↓ chọn  •  FIRE xác nhận","↑↓ choose  •  FIRE confirm"),W/2,H-fh-3,0x90A8C8);
+    }
 
     private void paintRefreshItemsAsk(Graphics g){
         int W=game.W,H=game.H,fh=Art.fh,w=Math.min(W-16,174),h=fh*6+14,x=(W-w)/2,y=(H-h)/2;

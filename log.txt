@@ -10,6 +10,15 @@ v1.4.4 - 40-Stage Road
 - Lịch sử kết quả mở rộng 30 -> 40 điểm và đọc tương thích schema lịch sử cũ.
 - Đội hình PvE source được dời đúng lịch 40 ải; các boss Gen 1-3 có đội hình thật,
   ải 40 dùng đội hộ vệ mạnh cho đến khi Gen 4 được đưa vào battle roster.
+- Mỗi trận hoàn tất rơi đúng một mảnh trang bị ngẫu nhiên. Ở các mốc
+  5/10/15/20/25/30/35, hiện popup ba hàng (icon, tên, mô tả) để chọn miễn phí
+  một trang bị đã ghép; giao diện này được tách để tái dùng cho lựa chọn pool,
+  Pokémon khởi đầu và Legendary khi các luật mở chúng được chốt.
+- Khi nhấn GO, hố đen co giãn ở giữa mép trên sân xếp đội và hút toàn bộ Pokémon
+  đã triển khai. Sang Battle, hố đen ở giữa mép dưới đẩy đội ta về đúng vị trí;
+  mô phỏng combat chỉ bắt đầu sau khi hoạt ảnh triển khai kết thúc.
+- Sửa merge: trang bị trên cả ba bản sao đều trở về túi, Pokémon tiến hóa bắt đầu
+  với ba ô đồ trống để người chơi tự trang bị lại.
 
 v1.4.3 - Legendary Purchase Light Waves
 - Giữ nguyên 5 frame SPAWN khi mua pet. Nếu pet mua có category Legendary, cộng

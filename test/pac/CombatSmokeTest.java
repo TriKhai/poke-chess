@@ -116,6 +116,11 @@ public final class CombatSmokeTest {
         Save.language=Lang.EN;Save.performance=3;Save.playPath=1;Save.cheatMode=true;Save.balls=999;
         Save.resetProgress();check(Save.language==Lang.EN&&Save.performance==3,"start-over must keep device settings");
         check(Save.playPath==-1&&!Save.cheatMode&&Save.balls==15,"start-over did not erase progression");
+        check("Nameless".equals(Save.displayName()),"default profile name mismatch");
+        check(!Save.chooseProfileAvatar(25),"locked Pokemon must not become profile avatar");
+        check(Save.chooseProfileAvatar(1)&&Save.profileAvatarDex==1,"owned profile avatar selection failed");
+        check(Save.setProfileNameOnce("Kdic")&&"Kdic".equals(Save.profileName),"first profile name confirmation failed");
+        check(!Save.setProfileNameOnce("Renamed")&&"Kdic".equals(Save.profileName),"profile name must only be set once");
         Save.language=Lang.VI;Save.performance=oldPerformance;
         Run sandbox = new Run(123, true);
         sandbox.shop[0] = 0;

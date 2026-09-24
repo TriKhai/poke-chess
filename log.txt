@@ -186,6 +186,12 @@ v1.3.7 - Tiến trình Explore offline
   (0 preview map); tăng khoảng 7,76 MB chỉ ở bản Full.
 
 v1.3.8 - Tiến trình offline và UX hoàn chỉnh
+- Mở đầu v1.3.8 bằng mục Hồ sơ cá nhân ở menu chính: model Pokémon đại diện
+  có animation, tên mặc định Kẻ vô danh và chỉ cho xác nhận tên đúng một lần.
+- Bộ sưu tập cá nhân có 10 bộ lọc: Tất cả và Gen 1 đến Gen 9; avatar xếp dạng
+  lưới responsive, ô đang trỏ có viền sáng, Pokémon chưa sở hữu hiện dấu hỏi.
+- Chỉ Pokémon đã mở khóa thật sự mới được chọn làm đại diện; Gen 4-9 hiện vẫn
+  Collection-only nên được liệt kê nhưng khóa. Save schema v6 lưu tên và National Dex.
 - Hoàn thiện Explore/bắt Pokemon, mở khóa family, phần thưởng và liên kết Collection.
 - Bổ sung mục tiêu, phần thưởng và kết thúc riêng cho Normal, 30 vòng và Gen 1.
 - Save/resume toàn bộ tiến trình mới, có migration và xử lý dữ liệu lỗi an toàn.

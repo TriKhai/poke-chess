@@ -31,9 +31,10 @@ public final class MenuScreen extends Screen {
             case 0: game.setScreen(new ExploreHubScreen(game)); break;
             case 1: game.setScreen(new ChessModeScreen(game)); break;
             case 2: game.setScreen(new CollectionScreen(game)); break;
-            case 3: game.setScreen(new SettingsScreen(game)); break;
-            case 4: game.setScreen(new HelpScreen(game)); break;
-            case 5: game.setScreen(new AboutScreen(game)); break;
+            case 3: game.setScreen(new ProfileScreen(game)); break;
+            case 4: game.setScreen(new SettingsScreen(game)); break;
+            case 5: game.setScreen(new HelpScreen(game)); break;
+            case 6: game.setScreen(new AboutScreen(game)); break;
             default: game.quit(); break;
         }
     }
@@ -75,9 +76,7 @@ public final class MenuScreen extends Screen {
             y += gap;
         }
         y = H - fh * 3 - 3;
-        if(compact){
-            Art.textSmallC(g,Lang.t("Bóng ","Balls ")+Save.balls+Lang.t("  Bộ sưu tập ","  Collection ")+Save.familiesUnlocked()+"/"+Data.countFamilies(),W/2,y+fh,0xC0FFC0);
-        }else{
+        if(!compact){
             Art.textC(g, Lang.t("Bóng: ", "Poke Balls: ") + Save.balls, W / 2, y, 0xFF8080);
             Art.textC(g, Lang.t("Bộ sưu tập ", "Collection ") + Save.familiesUnlocked() + "/" + Data.countFamilies()
                     + Lang.t("   Vòng cao nhất ", "   Best round ") + Save.best, W / 2, y + fh, 0xC0FFC0);

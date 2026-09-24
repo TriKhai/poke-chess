@@ -22,8 +22,8 @@ public final class Lang {
 
     public static String[] menu() {
         return Save.language == EN
-            ? new String[] { "Explore & Catch", "Auto Chess Run", "Collection", "Settings", "Help", "About", "Exit" }
-            : new String[] { "Khám phá & Bắt", "Chơi AutoChess", "Bộ sưu tập", "Cài đặt", "Hướng dẫn", "Về game", "Thoát" };
+            ? new String[] { "Explore & Catch", "Auto Chess Run", "Collection", "My Profile", "Settings", "Help", "About", "Exit" }
+            : new String[] { "Khám phá & Bắt", "Chơi AutoChess", "Bộ sưu tập", "Hồ sơ cá nhân", "Cài đặt", "Hướng dẫn", "Về game", "Thoát" };
     }
 
     private static final String[] TYPE_VI = {"Thường","Lửa","Nước","Cỏ","Điện","Đá","Tâm linh","Chiến đấu","Bay","Rồng","Ma","Bọ","Độc","Đất","Băng","Bóng tối","Thép","Tiên","Vô định hình","Thủy sinh","Nhân tạo","Trẻ nhỏ","Đồng cỏ","Thực vật","Hóa thạch","Ẩm thực","Con người","Ánh sáng","Quái thú","Âm thanh","Hoang dã"};

@@ -1,6 +1,13 @@
 POKE AUTO CHESS ME - OFFLINE REMAKE UPDATE
 ==========================================
 
+Personal profile foundation (v1.3.8)
+- Added My Profile to the main menu with an animated partner Pokemon model.
+- Player name defaults to Kẻ vô danh/Nameless and can only be confirmed once.
+- Added All plus Gen 1-9 personal collection filters in a responsive avatar grid.
+- Locked Pokemon render as question marks; FIRE only selects an owned Pokemon.
+- Save schema v6 stores the profile name and National Dex avatar while loading v1-v5 safely.
+
 Offline Explore progression (v1.3.7)
 - Added an Explore hub with classic catching, Pet Farm, filtered Pokémon Gacha and Pokémon Camp.
 - Pet Farm uses an unlocked lead Pokémon, active skill input and rarity-scaled Ball rewards.

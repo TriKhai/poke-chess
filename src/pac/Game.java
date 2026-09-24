@@ -40,6 +40,8 @@ public final class Game extends GameCanvas implements Runnable {
         midlet.quit();
     }
 
+    public void requestProfileName(){midlet.requestProfileName();}
+
     public synchronized void start() {
         if (running) return;
         running = true;

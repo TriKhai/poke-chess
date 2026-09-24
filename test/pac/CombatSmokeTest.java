@@ -7,6 +7,17 @@ public final class CombatSmokeTest {
     }
 
     public static void main(String[] args) {
+        int[][] screens={{128,160},{176,208},{176,220},{240,320},{320,240}};
+        for(int s=0;s<screens.length;s++){
+            int w=screens[s][0],h=screens[s][1],m=UiLayout.margin(w,h),cw=UiLayout.contentWidth(w,h);
+            check(m>=0&&cw>0&&m*2+cw<=w,"responsive content outside screen "+w+"x"+h);
+            check(UiLayout.popupWidth(w,174)<=w&&UiLayout.popupHeight(h,220)<=h,"responsive popup overflow "+w+"x"+h);
+            int rows=UiLayout.visibleRows(h,20,20,24),first=UiLayout.firstVisible(8,9,rows);
+            check(rows>=1&&first>=0&&first+rows>=9,"responsive scroll window mismatch "+w+"x"+h);
+        }
+        check(UiLayout.profile(128,160)==UiLayout.COMPACT,"128x160 must be compact");
+        check(UiLayout.profile(176,208)==UiLayout.STANDARD,"176x208 must be standard");
+        check(UiLayout.profile(240,320)==UiLayout.LARGE&&UiLayout.profile(320,240)==UiLayout.LARGE,"large/landscape profile mismatch");
         check(Data.N == 386, "roster must contain Gen 1-3");
         check(CollectionDex.COUNT==558,"collection-only Gen 4-9 roster mismatch");
         check(CollectionDex.countGen(4)==107&&CollectionDex.countGen(5)==135&&CollectionDex.countGen(6)==68,

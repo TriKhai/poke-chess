@@ -33,22 +33,23 @@ public final class SettingsScreen extends Screen {
         g.setColor(0x101827); g.fillRect(0, 0, W, H);
         Art.textBC(g, Lang.t("CÀI ĐẶT", "SETTINGS"), W / 2, 10, 0xFFD030);
 
-        int y = H / 3;
+        boolean compact=UiLayout.compact(W,H);int gap=compact?fh+5:fh*2+8;
+        int y = compact?fh*3:H/3;
         drawRow(g, 0, y, Lang.t("Ngôn ngữ", "Language"),
                 Save.language == Lang.VI ? "Tiếng Việt" : "English");
-        drawRow(g, 1, y + fh * 2 + 8, Lang.t("Hiệu năng", "Performance"),
+        drawRow(g, 1, y + gap, Lang.t("Hiệu năng", "Performance"),
                 performanceName());
-        drawRow(g, 2, y + (fh * 2 + 8)*2, Lang.t("Chơi lại từ đầu", "Start over"), "");
-        drawRow(g, 3, y + (fh * 2 + 8)*3, Lang.t("Quay lại", "Back"), "");
+        drawRow(g, 2, y + gap*2, Lang.t("Chơi lại từ đầu", "Start over"), "");
+        drawRow(g, 3, y + gap*3, Lang.t("Quay lại", "Back"), "");
 
-        Art.textC(g, selected == 0
+        if(!compact)Art.textC(g, selected == 0
                 ? Lang.t("TRÁI/PHẢI hoặc FIRE để đổi", "LEFT/RIGHT or FIRE to change")
                 : Lang.t("FIRE để về menu", "FIRE to return"),
                 W / 2, H - fh * 2 - 4, 0x90A0B8);
         Art.textC(g, Lang.t("Thiết lập được tự động lưu", "Settings are saved automatically"),
                 W / 2, H - fh - 2, 0x708098);
         if(confirmReset){
-            int bw=W-16,bh=fh*5+8,bx=8,by=(H-bh)/2;
+            int bw=UiLayout.popupWidth(W,W-16),bh=UiLayout.popupHeight(H,fh*5+8),bx=(W-bw)/2,by=(H-bh)/2;
             Art.box(g,bx,by,bw,bh,0x181B28,0xFF6058);
             Art.textBC(g,Lang.t("XÓA TIẾN ĐỘ?","ERASE PROGRESS?"),W/2,by+4,0xFF7068);
             Art.textSmallC(g,Lang.t("Xóa run, lịch sử, bộ sưu tập","Erase run, history, collection"),W/2,by+fh+6,0xE0D0D0);

@@ -46,11 +46,12 @@ public final class MenuScreen extends Screen {
         Art.textBC(g, "POKE AUTO CHESS", W / 2, 6, 0xFFD030);
         Art.textC(g, "J2ME Edition", W / 2, 6 + fh + 1, 0xA0C0FF);
 
-        // parade of unlocked creatures
+        boolean compact=UiLayout.compact(W,H);
+        // Compact phones reserve vertical space for every menu entry.
         int size = W / 5;
         int shown = 0;
-        int y0 = 6 + fh * 2 + 10;
-        for (int i = 0; i < Data.N && shown < 5; i++) {
+        int y0 = 6 + fh * 2 + (compact?2:10);
+        for (int i = 0; !compact && i < Data.N && shown < 5; i++) {
             if (Data.isBase(i) && Save.unlocked[i]) {
                 int bob = ((t / 200 + shown) & 1) == 0 ? 0 : 2;
                 Art.formationSprite(g,i,shown*size,y0+bob,size,42,W,t/90+shown);
@@ -58,8 +59,9 @@ public final class MenuScreen extends Screen {
             }
         }
 
-        int y = y0 + 48;
+        int y = compact?y0+fh:y0+48;
         String[] items = Lang.menu();
+        int gap=compact?fh+1:fh+2;
         for (int i = 0; i < items.length; i++) {
             boolean s = i == sel;
             if (s) {
@@ -69,11 +71,15 @@ public final class MenuScreen extends Screen {
                 g.drawRect(W / 8, y - 1, W * 3 / 4 - 1, fh + 1);
             }
             Art.textC(g, items[i], W / 2, y, s ? 0xFFFFFF : 0xB0C0E0);
-            y += fh + 2;
+            y += gap;
         }
         y = H - fh * 2 - 3;
-        Art.textC(g, Lang.t("Bóng: ", "Poke Balls: ") + Save.balls, W / 2, y, 0xFF8080);
-        Art.textC(g, Lang.t("Bộ sưu tập ", "Collection ") + Save.familiesUnlocked() + "/" + Data.countFamilies()
-                + Lang.t("   Vòng cao nhất ", "   Best round ") + Save.best, W / 2, y + fh, 0xC0FFC0);
+        if(compact){
+            Art.textSmallC(g,Lang.t("Bóng ","Balls ")+Save.balls+Lang.t("  Bộ sưu tập ","  Collection ")+Save.familiesUnlocked()+"/"+Data.countFamilies(),W/2,y+fh,0xC0FFC0);
+        }else{
+            Art.textC(g, Lang.t("Bóng: ", "Poke Balls: ") + Save.balls, W / 2, y, 0xFF8080);
+            Art.textC(g, Lang.t("Bộ sưu tập ", "Collection ") + Save.familiesUnlocked() + "/" + Data.countFamilies()
+                    + Lang.t("   Vòng cao nhất ", "   Best round ") + Save.best, W / 2, y + fh, 0xC0FFC0);
+        }
     }
 }

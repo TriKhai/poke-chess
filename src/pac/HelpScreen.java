@@ -5,6 +5,7 @@ import javax.microedition.lcdui.Graphics;
 public final class HelpScreen extends Screen {
     private String[] lines;
     private int scroll = 0;
+    private int wrappedWidth=-1;
 
     public HelpScreen(Game g) {
         super(g);
@@ -27,7 +28,8 @@ public final class HelpScreen extends Screen {
         int W = game.W, H = game.H, fh = Art.fh;
         g.setColor(0x102040);
         g.fillRect(0, 0, W, H);
-        if (lines == null) {
+        if (lines == null||wrappedWidth!=W) {
+            wrappedWidth=W;
             String text = Lang.help();
             // wrap paragraph by paragraph
             java.util.Vector v = new java.util.Vector();
@@ -44,7 +46,7 @@ public final class HelpScreen extends Screen {
             v.copyInto(lines);
         }
         Art.textBC(g, Lang.t("HƯỚNG DẪN","HELP"), W / 2, 2, 0xFFD030);
-        int visible = (H - fh * 2 - 6) / fh;
+        int visible = UiLayout.visibleRows(H,fh+4,fh+2,fh);
         if (scroll > lines.length - visible) scroll = Math.max(0, lines.length - visible);
         int y = fh + 4;
         for (int i = scroll; i < lines.length && i < scroll + visible; i++) {

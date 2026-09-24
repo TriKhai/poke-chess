@@ -37,16 +37,17 @@ public final class ChessModeScreen extends Screen {
             new String[]{Lang.t("CHƠI THƯỜNG","NORMAL RUN"),Lang.t("VÀNG VÔ HẠN","UNLIMITED GOLD"),Lang.t("30 VÒNG - 9 MẢNH","30 ROUNDS - 9 ITEMS"),Lang.t("THẾ HỆ 1","GENERATION 1")}:
             new String[]{Lang.t("CHƠI THƯỜNG","NORMAL RUN"),Lang.t("30 VÒNG - 9 MẢNH","30 ROUNDS - 9 ITEMS"),Lang.t("THẾ HỆ 1","GENERATION 1")};
         int extra=(hasResume?1:0)+1;String[] mode=new String[base.length+extra];for(int i=0;i<base.length;i++)mode[i]=base[i];int q=base.length;if(hasResume)mode[q++]=Lang.t("TIẾP TỤC VÒNG ","RESUME ROUND ")+savedRound;mode[q]=Lang.t("LỊCH SỬ ĐẤU","BATTLE HISTORY");
-        int y=Math.max(fh*3,H/2-(mode.length*(fh+10))/2);
+        boolean compact=UiLayout.compact(W,H);int gap=compact?fh+4:fh+10;
+        int y=Math.max(fh*2+2,H/2-(mode.length*gap)/2);
         for(int i=0;i<mode.length;i++){
             if(i==selected){
-                g.setColor(0x305090);g.fillRect(W/8,y+i*(fh+10)-3,W*3/4,fh+6);
-                g.setColor(0xFFD030);g.drawRect(W/8,y+i*(fh+10)-3,W*3/4-1,fh+5);
+                g.setColor(0x305090);g.fillRect(W/8,y+i*gap-3,W*3/4,fh+6);
+                g.setColor(0xFFD030);g.drawRect(W/8,y+i*gap-3,W*3/4-1,fh+5);
             }
-            Art.textC(g,mode[i],W/2,y+i*(fh+10),i==selected?0xFFFFFF:0xAFC0D8);
+            Art.textC(g,mode[i],W/2,y+i*gap,i==selected?0xFFFFFF:0xAFC0D8);
         }
         int modes=base.length;String note;if(selected>=modes)note=hasResume&&selected==modes?Lang.t("Khôi phục đội hình, shop, đồ và kinh tế","Restore team, shop, items and economy"):Lang.t("Xem kết quả và 9 Pokemon cuối","View results and final 9 Pokemon");else{int actual=modeAt(selected);note=actual==Run.MODE_UNLIMITED?Lang.t("Roll, mua và XP miễn phí để test","Free roll, buy and XP for testing"):actual==Run.MODE_THIRTY?Lang.t("9 mảnh mỗi vòng, boss mỗi 5 vòng","9 components each round, boss every 5 rounds"):actual==Run.MODE_GEN1?Lang.t("Chỉ Gen 1, boss cố định mỗi 5 vòng","Gen 1 only, fixed boss every 5 rounds"):Lang.t("Kinh tế và phần thưởng tiêu chuẩn","Standard economy and rewards");}
-        Art.textSmallC(g,note,W/2,H-fh*3,0x90A0B8);
+        if(!compact)Art.textSmallC(g,note,W/2,H-fh*3,0x90A0B8);
         Art.textC(g,Lang.t("FIRE: bắt đầu   0: về","FIRE: start   0: back"),W/2,H-fh-3,0x8090B0);
     }
 

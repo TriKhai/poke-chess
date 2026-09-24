@@ -123,6 +123,10 @@ v1.3.3 - Responsive UI
 - Battle, Collection, History, popup và menu tự co giãn; nội dung dài có scroll,
   không có tọa độ âm, chồng chữ hoặc nút nằm ngoài màn hình.
 - Thêm kiểm tra layout theo nhiều kích thước vào regression suite.
+- Đã triển khai bộ UiLayout dùng chung; menu ẩn parade ở Compact, mode/setting
+  giảm khoảng cách, History co avatar 14/20/24px và Help tự wrap lại khi đổi cỡ.
+- Đồng bộ MIDlet-Version 1.3.3. Các mức FPS vẫn giữ 10/16/20/25; phần tách
+  simulation/render và nội suy hình ảnh tiếp tục nằm ở v1.3.5.
 
 v1.3.4 - Status parity
 - Port đủ 25 status có tài liệu trong source gốc; phân biệt status tốt/xấu,

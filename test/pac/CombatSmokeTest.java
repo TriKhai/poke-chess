@@ -243,6 +243,24 @@ public final class CombatSmokeTest {
         check(new Run(1,Run.MODE_NORMAL).maxRound()==40,"normal mode round limit mismatch");
         check(new Run(1,Run.MODE_THIRTY).maxRound()==30,"thirty-round mode limit mismatch");
         check(new Run(1,Run.MODE_GEN1).maxRound()==30,"Gen 1 mode round limit mismatch");
+
+        Run draft=new Run(2468,Run.MODE_NORMAL);
+        check(draft.draftStage==0,"40-round run must begin with type-pool choice");
+        for(int i=0;i<draft.shop.length;i++)check(draft.shop[i]<0,"shop opened before starter draft");
+        int[] typePick={-1,-1,-1,-1,-1,-1,-1,-1,-1};draft.typePackageChoices(typePick);
+        for(int i=0;i<typePick.length;i++)for(int j=0;j<i;j++)check(typePick[i]!=typePick[j],"type-pool symbols must be distinct");
+        draft.choosePoolTypes(typePick,0);
+        int[] starters={-1,-1,-1};draft.starterChoices(starters);
+        for(int i=0;i<3;i++)check(starters[i]>=0&&Data.category[starters[i]]==0&&Data.famHasType(starters[i],typePick[i]),"starter does not match selected type-pool path");
+        draft.chooseStarter(starters[0]);
+        check(draft.draftStage==2&&draft.count(starters[0])==1,"free starter was not granted");
+        int activeFamilies=0;for(int i=0;i<Data.N;i++)if(draft.pool[i]>0)activeFamilies++;
+        check(activeFamilies<=36&&activeFamilies>=20,"typed family pool size mismatch: "+activeFamilies);
+        for(int i=0;i<draft.shop.length;i++)if(draft.shop[i]>=0)check(Data.category[draft.shop[i]]<5,"Unique/Legendary leaked into normal shop");
+        int[] uniquePick={-1,-1,-1};draft.pokemonChoices(uniquePick,5,-1,false);
+        check(uniquePick[0]>=0,"Unique milestone has no proposition");int uniqueStock=draft.pool[uniquePick[0]];
+        draft.chooseAdditional(uniquePick[0]);
+        check(draft.count(uniquePick[0])==1&&draft.pool[uniquePick[0]]==uniqueStock,"Unique must be free but stay outside normal shop pool");
         check(EconomyRules.interest(59)==5,"interest cap mismatch");
         check(EconomyRules.streakBonus(-6)==3&&EconomyRules.streakBonus(1)==0,"streak economy mismatch");
         check(EconomyRules.income(20,4,true,2)==12,"income breakdown mismatch");

@@ -20,6 +20,10 @@ public final class Run {
     public int[] bench = new int[BENCH];
     public int[] shop = new int[5];
     public int[] pool = new int[Data.N];
+    /** 0 choose synergy, 1 choose starter, 2 normal preparation unlocked. */
+    public int draftStage;
+    public int poolType=-1;
+    public int[] poolTypes={-1,-1,-1};
     /** Three held-item slots per board/bench position, matching the original cap. */
     public int[] equip = new int[(BOARD + BENCH) * 3];
     /** Player item inventory; indices match ItemData.ID. */
@@ -70,12 +74,100 @@ public final class Run {
         for (int i = 0; i < equip.length; i++) equip[i] = -1;
         for (int i = 0; i < enemyEquip.length; i++) enemyEquip[i] = -1;
         for (int i = 0; i < 5; i++) shop[i] = -1;
-        for (int i = 0; i < Data.N; i++) {
-            if (Data.isBase(i) && Save.unlocked[i] && !Save.inCamp(i) && (mode!=MODE_GEN1||i<151)) pool[i] = Data.POOL_COPIES[Data.cost[i]];
+        draftStage=usesDraft()?0:2;
+        if(!usesDraft()){
+            for (int i = 0; i < Data.N; i++)if(eligibleBase(i)&&Data.category[i]<5)
+                pool[i] = Data.POOL_COPIES[Data.cost[i]];
+            rollShop();
         }
-        rollShop();
         if(mode==MODE_THIRTY)refreshNineItems(false);
         genEnemy();
+    }
+
+    public boolean usesDraft(){return mode==MODE_NORMAL||mode==MODE_UNLIMITED;}
+    private boolean eligibleBase(int sp){return Data.isBase(sp)&&!Save.inCamp(sp)&&(mode!=MODE_GEN1||sp<151);}
+
+    /** Three source-style portal packages, each displaying three synergy symbols. */
+    public void typePackageChoices(int[] out){
+        for(int i=0;i<out.length;i++){
+            int t,guard=0;boolean dup;int common;
+            do{t=rng.nextInt(Data.NT);dup=false;common=0;for(int j=0;j<i;j++)if(out[j]==t)dup=true;
+                for(int s=0;s<Data.N;s++)if(eligibleBase(s)&&Data.category[s]==0&&Data.famHasType(s,t))common++;
+            }while((dup||common<1)&&++guard<300);
+            out[i]=t;
+        }
+    }
+
+    public void choosePoolTypes(int[] types,int offset){
+        for(int i=0;i<3;i++)poolTypes[i]=types[offset+i];poolType=poolTypes[0];draftStage=1;
+    }
+
+    public void starterChoices(int[] out){
+        for(int k=0;k<out.length;k++){
+            int type=poolTypes[k]>=0?poolTypes[k]:poolType,count=0;
+            for(int i=0;i<Data.N;i++)if(choiceCandidate(i,0,type,true,out,k))count++;
+            if(count==0){out[k]=-1;continue;}int q=rng.nextInt(count);
+            for(int i=0;i<Data.N;i++)if(choiceCandidate(i,0,type,true,out,k)&&q--==0){out[k]=i;break;}
+        }
+    }
+
+    /** Completes stage-zero draft, builds the restricted shop pool, gives starter, then opens shop. */
+    public void chooseStarter(int starter){
+        buildTypedPool(starter);addUnit(starter);draftStage=2;rollShop();
+    }
+
+    private void buildTypedPool(int starter){
+        for(int i=0;i<pool.length;i++)pool[i]=0;
+        boolean[] chosen=new boolean[Data.N],bridgeType=new boolean[Data.NT];
+        int available=0;for(int i=0;i<Data.N;i++)if(eligibleBase(i)&&Data.category[i]<5)available++;
+        int target=Math.min(36,available),direct=(target*50+99)/100,bridge=target*35/100;
+        int st1=Data.t1[starter],st2=Data.t2[starter];
+        for(int i=0;i<Data.N;i++)if(eligibleBase(i)&&Data.category[i]<5&&(Data.famHasType(i,st1)||Data.famHasType(i,st2))){bridgeType[Data.t1[i]]=true;bridgeType[Data.t2[i]]=true;}
+        int n=pickFamilies(chosen,direct,0,st1,st2,bridgeType);
+        n+=pickFamilies(chosen,bridge,1,st1,st2,bridgeType);
+        pickFamilies(chosen,target-n,2,st1,st2,bridgeType);
+        for(int i=0;i<Data.N;i++)if(chosen[i])pool[i]=Data.POOL_COPIES[Data.cost[i]];
+    }
+
+    private int pickFamilies(boolean[] chosen,int wanted,int kind,int st1,int st2,boolean[] bridgeType){
+        int added=0;
+        while(added<wanted){
+            int count=0;
+            for(int i=0;i<Data.N;i++)if(!chosen[i]&&eligibleBase(i)&&Data.category[i]<5&&poolCandidate(i,kind,st1,st2,bridgeType))count++;
+            if(count==0)break;int q=rng.nextInt(count);
+            for(int i=0;i<Data.N;i++)if(!chosen[i]&&eligibleBase(i)&&Data.category[i]<5&&poolCandidate(i,kind,st1,st2,bridgeType)&&q--==0){chosen[i]=true;added++;break;}
+        }
+        return added;
+    }
+
+    private boolean poolCandidate(int sp,int kind,int st1,int st2,boolean[] bridgeType){
+        boolean direct=Data.famHasType(sp,st1)||Data.famHasType(sp,st2);
+        if(kind==0)return direct;
+        if(kind==1)return !direct&&(bridgeType[Data.t1[sp]]||bridgeType[Data.t2[sp]]);
+        return true;
+    }
+
+    /** Three distinct eligible base families. type=-1 means no synergy filter. */
+    public void pokemonChoices(int[] out,int category,int type,boolean requireType){
+        for(int k=0;k<out.length;k++){
+            int count=0;
+            for(int i=0;i<Data.N;i++)if(choiceCandidate(i,category,type,requireType,out,k))count++;
+            if(count==0){out[k]=-1;continue;}int q=rng.nextInt(count);
+            for(int i=0;i<Data.N;i++)if(choiceCandidate(i,category,type,requireType,out,k)&&q--==0){out[k]=i;break;}
+        }
+    }
+
+    private boolean choiceCandidate(int sp,int category,int type,boolean requireType,int[] out,int used){
+        if(!eligibleBase(sp)||Data.category[sp]!=category)return false;
+        if(requireType&&!Data.famHasType(sp,type))return false;
+        for(int i=0;i<used;i++)if(out[i]==sp)return false;
+        return true;
+    }
+
+    /** Additional picks enter the normal shop pool and also grant one free copy. */
+    public void chooseAdditional(int sp){
+        if(sp<0)return;if(Data.category[sp]<5)pool[sp]+=Data.POOL_COPIES[Data.cost[sp]];
+        if(!addUnit(sp)&&!unlimitedGold)gold+=Data.sellValue(sp);
     }
 
     public int maxRound(){return mode==MODE_THIRTY||mode==MODE_GEN1?30:MAX_ROUND;}
@@ -330,7 +422,8 @@ public final class Run {
         int sp = get(p);
         if (sp < 0) return false;
         if (!unlimitedGold) gold += Data.sellValue(sp);
-        pool[Data.fam[sp]] += Data.copies(sp);
+        int family=Data.fam[sp];
+        if(Data.category[family]<5)pool[family] += Data.copies(sp);
         clearItems(p,true);
         set(p, -1);
         return true;

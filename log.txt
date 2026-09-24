@@ -19,6 +19,19 @@ v1.4.4 - 40-Stage Road
   mô phỏng combat chỉ bắt đầu sau khi hoạt ảnh triển khai kết thúc.
 - Sửa merge: trang bị trên cả ba bản sao đều trở về túi, Pokémon tiến hóa bắt đầu
   với ba ô đồ trống để người chơi tự trang bị lại.
+- Normal/DEV 40 vòng nay bắt đầu bằng popup ba gói pool; mỗi gói hiển thị ba icon
+  hệ theo portal source gốc. Chọn gói xong phải chọn một trong ba starter Common
+  tương ứng rồi shop mới mở. Pool shop giới hạn khoảng 36 family: 50% trùng ít
+  nhất một hệ với starter, 35% là family cầu nối qua hệ phụ và 15% ngẫu nhiên.
+- Unique và Legendary bị loại hoàn toàn khỏi shop thường, kể cả sau khi bán.
+  Vòng 5/8/11 chọn một family Uncommon/Rare/Epic: nhận miễn phí và thêm family
+  đó vào pool. Vòng 10 chọn một Unique miễn phí; vòng 20 chọn một Legendary miễn
+  phí nhưng hai nhóm này không được thêm vào shop.
+- Battle HUD luôn hiện ba icon (vòng hiện tại + hai vòng kế), bỏ dòng Ta/Địch;
+  tiêu đề R... vs... chuyển sang góc phải phía trên dòng FPS.
+- Transition GO dùng đúng sprite hố đen Gacha 8 frame cùng bốn mức co giãn đã
+  dựng sẵn, thay cho hố đen vẽ bằng primitive. Run save nâng schema v2 và vẫn đọc
+  được save schema v1.
 
 v1.4.3 - Legendary Purchase Light Waves
 - Giữ nguyên 5 frame SPAWN khi mua pet. Nếu pet mua có category Legendary, cộng

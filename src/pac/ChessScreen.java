@@ -54,6 +54,9 @@ public final class ChessScreen extends Screen {
     private boolean rewardChoice=false;
     private int rewardChoiceSel=0;
     private final int[] rewardChoiceIds={-1,-1,-1};
+    private final int[] poolChoiceTypes={-1,-1,-1,-1,-1,-1,-1,-1,-1};
+    private int rewardChoiceKind=0,postChoiceMask=0;
+    private static final int CH_ITEM=1,CH_TYPE=2,CH_STARTER=3,CH_ADD=4,CH_UNIQUE=5,CH_LEGEND=6;
     /** 1: formation is sucked in, 2: allies deploy onto the battle board. */
     private int transitionPhase=0,transitionT=0;
     private static final int TRANSITION_MS=900;
@@ -94,10 +97,11 @@ public final class ChessScreen extends Screen {
         super(g);
         unlimitedGold = mode==Run.MODE_UNLIMITED;
         run = new Run((int) System.currentTimeMillis(),mode);
+        ensureDraftChoice();
         RunStorage.save(run);
     }
 
-    public ChessScreen(Game g,Run resumed){super(g);run=resumed;unlimitedGold=run.mode==Run.MODE_UNLIMITED;state=PREP;}
+    public ChessScreen(Game g,Run resumed){super(g);run=resumed;unlimitedGold=run.mode==Run.MODE_UNLIMITED;state=PREP;ensureDraftChoice();}
     /** Run snapshots are written only when a preparation round begins. */
     public void saveResume(){}
 
@@ -177,8 +181,7 @@ public final class ChessScreen extends Screen {
             case BATTLE: keyBattle(k); break;
             case RESULT:
                 if (k == Game.K_FIRE || k == Game.K_SOFT1) {
-                    if(run.round%5==0&&run.round<=35)openRewardChoice();
-                    else afterResultChoice();
+                    beginPostRoundChoices();
                 }
                 break;
             default:
@@ -197,14 +200,42 @@ public final class ChessScreen extends Screen {
         else continueNextRound();
     }
 
-    private void openRewardChoice(){rewardChoiceSel=0;run.craftedChoices(rewardChoiceIds);rewardChoice=true;}
+    private void ensureDraftChoice(){if(run.draftStage==0)openTypeChoice();else if(run.draftStage==1)openStarterChoice();}
+
+    private void openChoice(int kind){rewardChoiceKind=kind;rewardChoiceSel=0;rewardChoice=true;}
+    private void openTypeChoice(){run.typePackageChoices(poolChoiceTypes);for(int i=0;i<3;i++)rewardChoiceIds[i]=i;openChoice(CH_TYPE);}
+    private void openStarterChoice(){run.starterChoices(rewardChoiceIds);openChoice(CH_STARTER);}
+    private void openRewardChoice(){run.craftedChoices(rewardChoiceIds);openChoice(CH_ITEM);}
+
+    private void beginPostRoundChoices(){
+        postChoiceMask=0;
+        if(run.round%5==0&&run.round<=35)postChoiceMask|=1;
+        if(run.round==5||run.round==8||run.round==11)postChoiceMask|=2;
+        if(run.round==10)postChoiceMask|=4;
+        if(run.round==20)postChoiceMask|=8;
+        openNextPostChoice();
+    }
+
+    private void openNextPostChoice(){
+        if((postChoiceMask&1)!=0){postChoiceMask&=~1;openRewardChoice();return;}
+        int cat=-1,kind=0;
+        if((postChoiceMask&2)!=0){postChoiceMask&=~2;cat=run.round==5?1:(run.round==8?2:3);kind=CH_ADD;}
+        else if((postChoiceMask&4)!=0){postChoiceMask&=~4;cat=5;kind=CH_UNIQUE;}
+        else if((postChoiceMask&8)!=0){postChoiceMask&=~8;cat=6;kind=CH_LEGEND;}
+        if(kind!=0){run.pokemonChoices(rewardChoiceIds,cat,-1,false);openChoice(kind);return;}
+        afterResultChoice();
+    }
 
     private void keyRewardChoice(int k){
         if(k==Game.K_UP||k==Game.K_LEFT)rewardChoiceSel=(rewardChoiceSel+2)%3;
         else if(k==Game.K_DOWN||k==Game.K_RIGHT)rewardChoiceSel=(rewardChoiceSel+1)%3;
         else if(k==Game.K_FIRE||k==Game.K_SOFT1){
-            int id=rewardChoiceIds[rewardChoiceSel];run.giveItem(id);run.lastItem=id;
-            rewardChoice=false;afterResultChoice();
+            int id=rewardChoiceIds[rewardChoiceSel];
+            if(rewardChoiceKind==CH_TYPE){run.choosePoolTypes(poolChoiceTypes,id*3);RunStorage.save(run);openStarterChoice();return;}
+            if(rewardChoiceKind==CH_STARTER){run.chooseStarter(id);rewardChoice=false;RunStorage.save(run);return;}
+            if(rewardChoiceKind==CH_ITEM){run.giveItem(id);run.lastItem=id;}
+            else run.chooseAdditional(id);
+            rewardChoice=false;openNextPostChoice();
         }
     }
 
@@ -1310,12 +1341,10 @@ public final class ChessScreen extends Screen {
 
         // HUD
         String battleTitle="R"+run.round+"  vs "+run.enemyName;
-        String aliveText=W<200?Lang.t("T","Y")+bt.alive(0)+" "+Lang.t("Đ","F")+bt.alive(1):Lang.t("Ta ","You ")+bt.alive(0)+Lang.t("  Địch ","  Foe ")+bt.alive(1);
         String perf="x"+speed+" "+game.actualFps+"/"+Save.targetFps()+"FPS"+(bt.tick>Battle.SUDDEN_DEATH?" SUDDEN":"");
-        int battleCount=W>=320?3:2;
+        int battleCount=3;
         int battleRight=StageRoad.draw(g,3,2,run.round,run.maxRound(),24,battleCount);
-        Art.text(g,fitHud(battleTitle,W-battleRight-6),battleRight+3,1,0xFFFFFF);
-        Art.text(g,aliveText,battleRight+3,fh+2,0xB0C8FF);
+        Art.textR(g,fitHud(battleTitle,W-battleRight-6),W-3,1,0xFFFFFF);
         Art.textR(g,perf,W-3,fh+2,0xFFD030);
         paintBattleStats(g, by + 6 * cs + 2, H-(by+6*cs+2));
         if(bt.over&&endReady){
@@ -1642,7 +1671,12 @@ public final class ChessScreen extends Screen {
     private void paintRewardChoice(Graphics g){
         int W=game.W,H=game.H,fh=Art.fh,x=4,y=4,w=W-8,h=H-8;
         Art.box(g,x,y,w,h,0x101830,0xFFD030);
-        Art.textBC(g,Lang.t("CHỌN 1 TRANG BỊ MIỄN PHÍ","CHOOSE 1 FREE ITEM"),W/2,y+3,0xFFD030);
+        String title=rewardChoiceKind==CH_TYPE?Lang.t("CHỌN POOL HỆ","CHOOSE TYPE POOL"):
+            (rewardChoiceKind==CH_STARTER?Lang.t("CHỌN POKÉMON KHỞI ĐẦU","CHOOSE A STARTER"):
+            (rewardChoiceKind==CH_ITEM?Lang.t("CHỌN 1 TRANG BỊ MIỄN PHÍ","CHOOSE 1 FREE ITEM"):
+            (rewardChoiceKind==CH_ADD?Lang.t("CHỌN FAMILY BỔ SUNG","CHOOSE AN EXTRA FAMILY"):
+            (rewardChoiceKind==CH_UNIQUE?Lang.t("CHỌN UNIQUE","CHOOSE A UNIQUE"):Lang.t("CHỌN LEGENDARY","CHOOSE A LEGENDARY")))));
+        Art.textBC(g,title,W/2,y+3,0xFFD030);
         int top=y+fh+7,footer=fh+5,rowH=(h-(top-y)-footer)/3;
         if(rowH<31)rowH=31;
         for(int i=0;i<3;i++){
@@ -1650,9 +1684,23 @@ public final class ChessScreen extends Screen {
             g.setColor(i==rewardChoiceSel?0x405273:((i&1)==0?0x202B40:0x192338));
             g.fillRect(x+3,ry,w-6,rowH-2);
             if(i==rewardChoiceSel){g.setColor(0xFFE060);g.drawRect(x+3,ry,w-7,rowH-3);}
-            Art.itemIcon(g,id,x+7,ry+(rowH-24)/2);
-            Art.textB(g,ItemData.name(id),x+36,ry+2,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
-            Art.para(g,ItemData.desc(id),x+36,ry+fh+2,w-43,0x9FB5CE,rowH>=44?2:1);
+            if(rewardChoiceKind==CH_ITEM){
+                Art.itemIcon(g,id,x+7,ry+(rowH-24)/2);
+                Art.textB(g,ItemData.name(id),x+36,ry+2,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
+                Art.para(g,ItemData.desc(id),x+36,ry+fh+2,w-43,0x9FB5CE,rowH>=44?2:1);
+            }else if(rewardChoiceKind==CH_TYPE){
+                int px=x+8;
+                for(int t=0;t<3;t++){int type=poolChoiceTypes[i*3+t];Art.typeIcon(g,type,px,ry+3);px+=18;}
+                int a=poolChoiceTypes[i*3],b=poolChoiceTypes[i*3+1],c=poolChoiceTypes[i*3+2];
+                Art.textB(g,Lang.typeName(a)+" / "+Lang.typeName(b)+" / "+Lang.typeName(c),x+8,ry+fh+5,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
+                if(rowH>=47)Art.textSmall(g,Lang.t("Ba hướng starter Common","Three Common starter paths"),x+8,ry+fh*2+5,0x9FB5CE);
+            }else{
+                if(id>=0)Art.avatar(g,id,x+5,ry+(rowH-34)/2);
+                String name=id>=0?Data.name[id]:"-";
+                Art.textB(g,name,x+43,ry+2,i==rewardChoiceSel?0xFFFFFF:0xD4DCE8);
+                String desc=id>=0?Lang.typeName(Data.t1[id])+" / "+Lang.typeName(Data.t2[id])+"  "+Data.CATEGORY_NAME[Data.category[id]]+"  "+Lang.moveName(Data.skillName[id]):"";
+                Art.para(g,desc,x+43,ry+fh+2,w-50,0x9FB5CE,rowH>=44?2:1);
+            }
         }
         Art.textSmallC(g,Lang.t("↑↓ chọn  •  FIRE xác nhận","↑↓ choose  •  FIRE confirm"),W/2,H-fh-3,0x90A8C8);
     }

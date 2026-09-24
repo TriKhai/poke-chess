@@ -1,6 +1,12 @@
 POKE AUTO CHESS ME - OFFLINE REMAKE UPDATE
 ==========================================
 
+Collection generations (v1.3.2)
+- Collection now filters Pokemon by Generation 1 through 9 with keys 1/3.
+- Added 558 source-backed Gen 4-9 entries and 32px portraits.
+- Gen 4-9 are collection-only and cannot enter shop, pools, teams, AI or Battle.
+- Battle Data.N deliberately remains 386 for deterministic Gen 1-3 compatibility.
+
 Device balance and performance pass (v1.3.1)
 - Added four persisted frame modes with explicit labels: Battery 10 FPS,
   Legacy Smooth 16 FPS, Medium 20 FPS and High 25 FPS.

@@ -99,40 +99,49 @@ v1.3.1
 
 ROADMAP v1.3.2 -> v1.4.0
 
-v1.3.2 - Responsive UI
+v1.3.2 - Collection Gen 1-9
+- Collection có bộ lọc Thế hệ 1 đến 9, đổi bằng phím 1/3.
+- Giữ 386 Pokemon Gen 1-3 trong Battle; thêm 558 Pokemon Gen 4-9 và portrait
+  từ roster source gốc dưới dạng Collection-only.
+- Gen 4-9 không được đưa vào shop, pool, đội hình, AI hoặc Battle.
+- Source hiện có 944 National Dex: Gen4 107, Gen5 135, Gen6 68, Gen7 80,
+  Gen8 83, Gen9 85; không tự tạo dữ liệu/portrait cho entry source còn thiếu.
+- Nâng MIDlet-Version lên 1.3.2 và khóa số lượng từng Gen bằng regression.
+
+v1.3.3 - Responsive UI
 - Chia layout thành Compact, Standard và Large/Landscape; hỗ trợ tối thiểu
   128x160, 176x208/220, 240x320, 320x240 và màn cảm ứng lớn.
 - Battle, Collection, History, popup và menu tự co giãn; nội dung dài có scroll,
   không có tọa độ âm, chồng chữ hoặc nút nằm ngoài màn hình.
 - Thêm kiểm tra layout theo nhiều kích thước vào regression suite.
 
-v1.3.3 - Status parity
+v1.3.4 - Status parity
 - Port đủ 25 status có tài liệu trong source gốc; phân biệt status tốt/xấu,
   thời gian, cleanse, immunity, trigger và tương tác chồng trạng thái.
 - Mở rộng tab STATUS với animation, mô tả Việt/Anh và Pikachu làm mẫu.
 - Port các board effect liên quan status; test riêng từng status và tổ hợp quan trọng.
 
-v1.3.4 - Render và animation thật theo FPS
+v1.3.5 - Render và animation thật theo FPS
 - Tách tick combat 100 ms khỏi render; nội suy vị trí, HP/MP/khiên, đạn và VFX.
 - Các mức 10/16/20/25 FPS tạo khác biệt nhìn thấy rõ nhưng kết quả trận không đổi.
 - Giới hạn cache/ảnh tạm, đo frame time và tránh cấp phát trong paint/update.
 
-v1.3.5 - Gameplay/content parity
+v1.3.6 - Gameplay/content parity
 - Audit toàn bộ ability behavior, item passive, trigger và passive Pokemon với source gốc.
 - Thay các behavior chung còn lại bằng luật riêng; hoàn thiện mô tả Collection.
 - Regression theo dữ liệu cho từng ability/item/passive đã port, không để hiệu ứng giả.
 
-v1.3.6 - AI, PvE và cân bằng
+v1.3.7 - AI, PvE và cân bằng
 - Cải thiện AI chọn mục tiêu, di chuyển, dùng kỹ năng và bố trí đội hình theo vòng.
 - Hoàn thiện PvE/boss/held item cho mọi mode; cân difficulty curve, economy và damage.
 - Chạy seed simulation số lượng lớn, ghi tỷ lệ thắng/thua và chặn trận treo.
 
-v1.3.7 - Tiến trình offline hoàn chỉnh
+v1.3.8 - Tiến trình offline và UX hoàn chỉnh
 - Hoàn thiện Explore/bắt Pokemon, mở khóa family, phần thưởng và liên kết Collection.
 - Bổ sung mục tiêu, phần thưởng và kết thúc riêng cho Normal, 30 vòng và Gen 1.
 - Save/resume toàn bộ tiến trình mới, có migration và xử lý dữ liệu lỗi an toàn.
 
-v1.3.8 - UX và nội dung người chơi
+Nội dung UX trong v1.3.8
 - Hoàn thiện History, tổng kết, hướng dẫn điều khiển, glossary chỉ số/status và trợ giúp mode.
 - Rà toàn bộ Việt hóa/English, tên nút, mô tả dài, scroll, xác nhận thao tác nguy hiểm.
 - Chuẩn hóa phản hồi âm thanh/hình ảnh, trạng thái focus và điều khiển phím/cảm ứng.

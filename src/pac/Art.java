@@ -40,6 +40,8 @@ public final class Art {
     private static Image[] avatarTiny = new Image[Data.N];
     private static Image[] avatarDock = new Image[Data.N];
     private static Image[] avatarHistory = new Image[Data.N];
+    private static Image[] dexAvatar = new Image[CollectionDex.COUNT];
+    private static boolean[] dexAvatarTried = new boolean[CollectionDex.COUNT];
     private static Image[] itemIcon = new Image[ItemData.ID.length];
     private static boolean[] itemIconTried = new boolean[ItemData.ID.length];
     private static Image[] itemIconTiny = new Image[ItemData.ID.length];
@@ -581,6 +583,18 @@ public final class Art {
             }catch(Exception e){avatarHistory[sp]=null;}
         }
         if(avatarHistory[sp]!=null)g.drawImage(avatarHistory[sp],x,y,TL);else sprite(g,sp,x,y,24);
+    }
+
+    /** Collection-only portrait for Gen 4-9; index belongs to CollectionDex, not Battle Data. */
+    public static void dexAvatar(Graphics g,int index,int x,int y){
+        if(index<0||index>=CollectionDex.COUNT)return;
+        if(!dexAvatarTried[index]){
+            dexAvatarTried[index]=true;
+            try{dexAvatar[index]=Image.createImage("/dex/"+CollectionDex.DEX[index]+".png");}
+            catch(Exception e){dexAvatar[index]=null;}
+        }
+        if(dexAvatar[index]!=null)g.drawImage(dexAvatar[index],x,y,TL);
+        else{g.setColor(0x40506A);g.fillRect(x,y,32,32);textC(g,"?",x+16,y+9,0xD8E0F0);}
     }
 
     /** Gray 20px portrait for defeated units; generated once and then cached. */

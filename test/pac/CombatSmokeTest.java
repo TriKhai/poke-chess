@@ -8,6 +8,11 @@ public final class CombatSmokeTest {
 
     public static void main(String[] args) {
         check(Data.N == 386, "roster must contain Gen 1-3");
+        check(CollectionDex.COUNT==558,"collection-only Gen 4-9 roster mismatch");
+        check(CollectionDex.countGen(4)==107&&CollectionDex.countGen(5)==135&&CollectionDex.countGen(6)==68,
+              "collection Gen 4-6 classification mismatch");
+        check(CollectionDex.countGen(7)==80&&CollectionDex.countGen(8)==83&&CollectionDex.countGen(9)==85,
+              "collection Gen 7-9 classification mismatch");
         check(Data.speed[0] == 51, "Bulbasaur speed must come from source CSV");
         check(Data.speDef[0] == 4, "Bulbasaur special defense must come from source CSV");
         check("Magical Leaf".equals(Data.skillName[0]), "original ability name missing");

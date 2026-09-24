@@ -6,9 +6,11 @@ import javax.microedition.lcdui.Graphics;
 public final class CollectionScreen extends Screen {
     private int sel = 0, top = 0;
     private int tab=0,typeSel=0,itemSel=0,statusSel=0;
+    private int generation=1;
     private int itemDescScroll=0;
     private boolean detail = false;
     private boolean itemDetail = false;
+    private boolean dexDetail = false;
     private int animTime = 0, previewState = 0, previewDir = 0;
     private int previewStatus = 0, previewAttackKind = 1;
     private static final String[] CLIP = { "IDLE", "ATTACK", "VICTORY" };
@@ -24,6 +26,7 @@ public final class CollectionScreen extends Screen {
     public void update(int dt) { animTime += dt; }
 
     public void key(int k) {
+        if(dexDetail){if(k==Game.K_FIRE||k==Game.K_SOFT1||k==Game.K_SOFT2||k==Game.K_0)dexDetail=false;return;}
         if(itemDetail){
             if(k==Game.K_FIRE||k==Game.K_SOFT1||k==Game.K_SOFT2||k==Game.K_0)itemDetail=false;
             return;
@@ -51,12 +54,13 @@ public final class CollectionScreen extends Screen {
                 if(tab==0&&sel>0)sel--; else if(tab==1&&typeSel>0)typeSel--; else if(tab==2&&itemSel>0){itemSel--;itemDescScroll=0;}else if(tab==3&&statusSel>0)statusSel--;
                 break;
             case Game.K_DOWN:
-                if(tab==0&&sel<Data.N-1)sel++; else if(tab==1&&typeSel<Data.NT-1)typeSel++; else if(tab==2&&itemSel<ItemData.count()-1){itemSel++;itemDescScroll=0;}else if(tab==3&&statusSel<STATUS.length-1)statusSel++;
+                if(tab==0&&sel<pokemonCount()-1)sel++; else if(tab==1&&typeSel<Data.NT-1)typeSel++; else if(tab==2&&itemSel<ItemData.count()-1){itemSel++;itemDescScroll=0;}else if(tab==3&&statusSel<STATUS.length-1)statusSel++;
                 break;
-            case Game.K_1: if(tab==2&&itemDescScroll>0)itemDescScroll--; break;
-            case Game.K_3: if(tab==2)itemDescScroll++; break;
+            case Game.K_1: if(tab==0)changeGeneration(-1);else if(tab==2&&itemDescScroll>0)itemDescScroll--; break;
+            case Game.K_3: if(tab==0)changeGeneration(1);else if(tab==2)itemDescScroll++; break;
             case Game.K_FIRE: case Game.K_SOFT1:
-                if (tab==0&&Save.has(sel)) { detail = true; animTime = 0; }
+                if(tab==0&&generation<=3&&Save.has(currentSpecies())){detail=true;animTime=0;}
+                else if(tab==0&&generation>=4)dexDetail=true;
                 else if(tab==2)itemDetail=true;
                 break;
             case Game.K_SOFT2: case Game.K_0:
@@ -67,6 +71,7 @@ public final class CollectionScreen extends Screen {
     }
 
     public void paint(Graphics g) {
+        if(dexDetail){paintDexDetail(g);return;}
         if(itemDetail){paintItemDetail(g);return;}
         if (detail) { paintDetail(g); return; }
         int W = game.W, H = game.H, fh = Art.fh;
@@ -76,7 +81,9 @@ public final class CollectionScreen extends Screen {
         if(tab==1){paintTypes(g);return;}
         if(tab==2){paintItems(g);return;}
         if(tab==3){paintStatuses(g);return;}
-        Art.textB(g, Lang.t("Bộ sưu tập ", "Collection ") + Save.familiesUnlocked() + "/" + Data.countFamilies(), 4, fh+7, 0xFFD030);
+        int count=pokemonCount();
+        Art.textB(g,Lang.t("THẾ HỆ ","GEN ")+generation+"  "+count,4,fh+7,0xFFD030);
+        Art.textSmallR(g,Lang.t("1/3 đổi thế hệ","1/3 change Gen"),W-3,fh+8,0x80A8D0);
 
         int rowH = 34;
         int detailMinH = fh * 5 + 6;
@@ -84,22 +91,26 @@ public final class CollectionScreen extends Screen {
         int rows = (H - listY - detailMinH) / rowH;
         if (rows < 1) rows = 1;
         if (sel < top) top = sel;
+        if(sel>=count)sel=Math.max(0,count-1);
         if (sel >= top + rows) top = sel - rows + 1;
 
-        for (int r = 0; r < rows && top + r < Data.N; r++) {
+        for (int r = 0; r < rows && top + r < count; r++) {
             int i = top + r;
             int y = listY + r * rowH;
-            boolean has = Save.has(i);
+            boolean legacy=generation<=3;
+            int sp=legacy?speciesAt(i):-1,di=legacy?-1:dexAt(i);
+            boolean has = !legacy||Save.has(sp);
             if (i == sel) {
                 g.setColor(0x305090);
                 g.fillRect(0, y, W, rowH);
             }
-            if (has) Art.avatar(g,i,2,y+1);
+            if(has){if(legacy)Art.avatar(g,sp,2,y+1);else Art.dexAvatar(g,di,2,y+1);}
             else Art.text(g, "?", 2 + rowH / 3, y + (rowH - fh) / 2, 0x707080);
-            String nm = has ? Data.name[i] : "???";
-            Art.text(g, "#" + (i + 1) + " " + nm, 38, y + (rowH - fh) / 2, has ? 0xFFFFFF : 0x808090);
+            String nm=has?(legacy?Data.name[sp]:CollectionDex.NAME[di]):"???";
+            int dex=legacy?sp+1:CollectionDex.DEX[di];
+            Art.text(g, "#" + dex + " " + nm, 38, y + (rowH - fh) / 2, has ? 0xFFFFFF : 0x808090);
             if (has) {
-                Art.textR(g, Data.CATEGORY_NAME[Data.category[i]], W - 3, y + (rowH - fh) / 2, 0xB0C0E0);
+                Art.textR(g,legacy?Data.CATEGORY_NAME[Data.category[sp]]:CollectionDex.CATEGORY[di],W-3,y+(rowH-fh)/2,0xB0C0E0);
             }
         }
 
@@ -107,22 +118,46 @@ public final class CollectionScreen extends Screen {
         int detailH = H - dy;
         g.setColor(0x0C1420);
         g.fillRect(0, dy, W, detailH);
-        if (Save.has(sel)) {
-            Art.avatar(g, sel, 3, dy + 2);
+        boolean legacy=generation<=3;int sp=legacy?currentSpecies():-1,di=legacy?-1:currentDex();
+        boolean has=!legacy||Save.has(sp);
+        if (has) {
+            if(legacy)Art.avatar(g,sp,3,dy+2);else Art.dexAvatar(g,di,3,dy+2);
             int x = 38;
-            Art.typeIcon(g,Data.t1[sel],x,dy+1);x+=16;
-            if (Data.t2[sel] >= 0) Art.typeIcon(g,Data.t2[sel],x,dy+1);
-            Art.textSmall(g, "HP " + Data.hp[sel] + " AT " + Data.atk[sel] + " DF " + Data.def[sel]
-                    + "/" + Data.speDef[sel] + " SP " + Data.speed[sel], 38, dy + fh + 3, 0xE0E8FF);
-            int yy = Art.para(g, Lang.moveName(Data.skillName[sel]) + ": " + AbilityBehavior.description(sel),
-                    38, dy + fh * 2 + 3, W - 42, 0xA0FFA0, 2);
-            String evo = Data.evo[sel] >= 0 ? Lang.t("Tiến hóa: ", "Evolves: ") + Data.name[Data.evo[sel]] : Lang.t("Dạng cuối", "Final form");
-            Art.text(g, evo, 4, yy, 0xC0C0C0);
+            int t1=legacy?Data.t1[sp]:CollectionDex.T1[di],t2=legacy?Data.t2[sp]:CollectionDex.T2[di];
+            Art.typeIcon(g,t1,x,dy+1);x+=16;if(t2>=0)Art.typeIcon(g,t2,x,dy+1);
+            if(legacy){
+                Art.textSmall(g,"HP "+Data.hp[sp]+" AT "+Data.atk[sp]+" DF "+Data.def[sp]+"/"+Data.speDef[sp]+" SP "+Data.speed[sp],38,dy+fh+3,0xE0E8FF);
+                int yy=Art.para(g,Lang.moveName(Data.skillName[sp])+": "+AbilityBehavior.description(sp),38,dy+fh*2+3,W-42,0xA0FFA0,2);
+                String evo=Data.evo[sp]>=0?Lang.t("Tiến hóa: ","Evolves: ")+Data.name[Data.evo[sp]]:Lang.t("Dạng cuối","Final form");Art.text(g,evo,4,yy,0xC0C0C0);
+            }else{
+                Art.textSmall(g,Lang.t("Chỉ có trong Bộ sưu tập","Collection only"),38,dy+fh+3,0xFFD060);
+                Art.textSmall(g,Lang.t("Chưa tham gia Battle","Not available in Battle"),38,dy+fh*2+3,0x90A8C8);
+            }
         } else {
             Art.text(g, Lang.t("Chưa được khám phá.", "Not discovered yet."), 4, dy + 3, 0x9090A0);
             Art.text(g, Lang.t("Hãy bắt trong chế độ Khám phá!", "Catch it in Explore mode!"), 4, dy + fh + 3, 0x9090A0);
         }
         Art.textR(g, Lang.t("FIRE chi tiết", "FIRE detail"), W - 3, fh+7, 0x80A8D0);
+    }
+
+    private void changeGeneration(int d){generation+=d;if(generation<1)generation=9;if(generation>9)generation=1;sel=0;top=0;}
+    private int pokemonCount(){if(generation==1)return 151;if(generation==2)return 100;if(generation==3)return 135;return CollectionDex.countGen(generation);}
+    private int generationStart(){return generation==1?0:(generation==2?151:251);}
+    private int speciesAt(int local){return generationStart()+local;}
+    private int currentSpecies(){return speciesAt(sel);}
+    private int dexAt(int local){int first=CollectionDex.firstOfGen(generation);return first<0?0:first+local;}
+    private int currentDex(){return dexAt(sel);}
+
+    private void paintDexDetail(Graphics g){
+        int W=game.W,H=game.H,fh=Art.fh,di=currentDex();
+        g.setColor(0x08111E);g.fillRect(0,0,W,H);Art.box(g,3,3,W-6,H-6,0x101830,0xFFD030);
+        Art.textBC(g,"#"+CollectionDex.DEX[di]+" "+CollectionDex.NAME[di],W/2,7,0xFFFFFF);
+        int y=fh+14;Art.dexAvatar(g,di,W/2-16,y);y+=36;
+        int x=W/2-18;Art.typeIcon(g,CollectionDex.T1[di],x,y);if(CollectionDex.T2[di]>=0)Art.typeIcon(g,CollectionDex.T2[di],x+20,y);y+=20;
+        Art.textC(g,Lang.t("Thế hệ ","Generation ")+CollectionDex.GEN[di]+" - "+CollectionDex.CATEGORY[di],W/2,y,0x80D8FF);y+=fh+5;
+        Art.textC(g,Lang.t("POKEMON CHỈ TRONG BỘ SƯU TẬP","COLLECTION-ONLY POKEMON"),W/2,y,0xFFD060);y+=fh+3;
+        Art.para(g,Lang.t("Chưa được đưa vào shop, đội hình, AI hoặc Battle.","Not included in shop, teams, AI or Battle yet."),8,y,W-16,0xB8C8D8,3);
+        Art.textC(g,Lang.t("FIRE / 0: đóng","FIRE / 0: close"),W/2,H-fh-5,0x8090B0);
     }
 
     private void paintTabs(Graphics g){
@@ -234,33 +269,33 @@ public final class CollectionScreen extends Screen {
     }
 
     private void paintDetail(Graphics g) {
-        int W=game.W,H=game.H,fh=Art.fh,frame=animTime/70;
+        int W=game.W,H=game.H,fh=Art.fh,frame=animTime/70,sp=currentSpecies();
         g.setColor(0x08111E); g.fillRect(0,0,W,H);
-        Art.textB(g,"#"+(sel+1)+" "+Data.name[sel],4,2,0xFFFFFF);
-        Art.textR(g,Data.CATEGORY_NAME[Data.category[sel]],W-3,2,0xFFD060);
+        Art.textB(g,"#"+(sp+1)+" "+Data.name[sp],4,2,0xFFFFFF);
+        Art.textR(g,Data.CATEGORY_NAME[Data.category[sp]],W-3,2,0xFFD060);
 
         int chipY=fh+5,x=4;
-        Art.typeIcon(g,Data.t1[sel],x,chipY);x+=16;
-        if(Data.t2[sel]>=0)Art.typeIcon(g,Data.t2[sel],x,chipY);
+        Art.typeIcon(g,Data.t1[sp],x,chipY);x+=16;
+        if(Data.t2[sp]>=0)Art.typeIcon(g,Data.t2[sp],x,chipY);
 
-        int vw=Data.visualWidth(sel),vh=Data.visualHeight(sel),size=Math.max(vw,vh),px=W/2-vw/2,py=chipY+fh+3;
+        int vw=Data.visualWidth(sp),vh=Data.visualHeight(sp),px=W/2-vw/2,py=chipY+fh+3;
         int rawState=previewState==1?RawAtlas.ATTACK:
             (previewState==2?RawAtlas.VICTORY:RawAtlas.IDLE);
-        Art.battleSprite(g,sel,px,py,frame,rawState,previewDir);
+        Art.battleSprite(g,sp,px,py,frame,rawState,previewDir);
         Art.statusSprite(g,previewStatus,px-19,py+vh/2-8,frame);
-        Art.speciesSkillSprite(g,sel,px+vw+3,py+vh/2-16,frame);
-        Art.attackSprite(g,Data.t1[sel],previewAttackKind,W/2,py+vh+12,frame);
+        Art.speciesSkillSprite(g,sp,px+vw+3,py+vh/2-16,frame);
+        Art.attackSprite(g,Data.t1[sp],previewAttackKind,W/2,py+vh+12,frame);
 
         int y=py+vh+22;
         Art.textC(g,CLIP[previewState]+"  "+DIR[previewDir],W/2,y,0x80D8FF); y+=fh;
         Art.textC(g,"STATUS: "+STATUS[previewStatus],W/2,y,0xFFC070); y+=fh;
         String kind=previewAttackKind==0?"MELEE":(previewAttackKind==1?"RANGE":"HIT");
-        Art.textC(g,Lang.t("HIỆU ỨNG: ","ATTACK FX: ")+Lang.typeName(Data.t1[sel])+" "+kind,W/2,y,0xA0E8A0); y+=fh;
+        Art.textC(g,Lang.t("HIỆU ỨNG: ","ATTACK FX: ")+Lang.typeName(Data.t1[sp])+" "+kind,W/2,y,0xA0E8A0); y+=fh;
 
-        Art.textSmall(g,"HP "+Data.hp[sel]+"  ATK "+Data.atk[sel]+"  DEF "+Data.def[sel]+"/"+Data.speDef[sel],4,y,0xE0E8FF); y+=fh;
-        Art.textSmall(g,"SPD "+Data.speed[sel]+"  RNG "+Data.range[sel]+"  PP "+Data.mana[sel],4,y,0xE0E8FF); y+=fh;
-        Art.text(g,"Stage "+Data.stage[sel]+"  Tier "+Data.tier[sel]+"  Cost "+Data.cost[sel],4,y,0xC0C8D8); y+=fh;
-        Art.para(g,Lang.moveName(Data.skillName[sel])+": "+AbilityBehavior.description(sel),4,y,W-8,0xA0FFA0,1);
+        Art.textSmall(g,"HP "+Data.hp[sp]+"  ATK "+Data.atk[sp]+"  DEF "+Data.def[sp]+"/"+Data.speDef[sp],4,y,0xE0E8FF); y+=fh;
+        Art.textSmall(g,"SPD "+Data.speed[sp]+"  RNG "+Data.range[sp]+"  PP "+Data.mana[sp],4,y,0xE0E8FF); y+=fh;
+        Art.text(g,"Stage "+Data.stage[sp]+"  Tier "+Data.tier[sp]+"  Cost "+Data.cost[sp],4,y,0xC0C8D8); y+=fh;
+        Art.para(g,Lang.moveName(Data.skillName[sp])+": "+AbilityBehavior.description(sp),4,y,W-8,0xA0FFA0,1);
 
         Art.textC(g,"< > direction   2/8 clip",W/2,H-fh*2-2,0x8090B0);
         Art.textC(g,"1/3 status  7/9 attack  FIRE back",W/2,H-fh-1,0x8090B0);

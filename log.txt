@@ -112,6 +112,8 @@ v1.3.2 - Collection Gen 1-9
   trong chi tiết Collection; bản Lite chỉ giữ portrait và fallback tĩnh.
 - Kích thước sau build: Full 27.843.189 byte, Lite 2.910.513 byte. So với Full
   portrait-only 13.170.164 byte, animation làm tăng 14.673.025 byte (~14,0 MiB).
+- Hotfix chi tiết Gen 4-9: màn xem animation dùng cùng bố cục và phím với Gen 1-3,
+  gồm hướng, clip, status overlay và attack effect; chỉ thay stats bằng Collection-only.
 
 v1.3.3 - Responsive UI
 - Chia layout thành Compact, Standard và Large/Landscape; hỗ trợ tối thiểu

@@ -33,6 +33,10 @@ public final class CollectionScreen extends Screen {
             else if(k==Game.K_RIGHT)previewDir=(previewDir+1)&7;
             else if(k==Game.K_UP)dexAction=(dexAction+5)%6;
             else if(k==Game.K_DOWN)dexAction=(dexAction+1)%6;
+            else if(k==Game.K_1)previewStatus=(previewStatus+STATUS.length-1)%STATUS.length;
+            else if(k==Game.K_3||k==Game.K_STAR)previewStatus=(previewStatus+1)%STATUS.length;
+            else if(k==Game.K_7)previewAttackKind=(previewAttackKind+2)%3;
+            else if(k==Game.K_9)previewAttackKind=(previewAttackKind+1)%3;
             else if(k==Game.K_FIRE||k==Game.K_SOFT1||k==Game.K_SOFT2||k==Game.K_0)dexDetail=false;
             return;
         }
@@ -159,18 +163,25 @@ public final class CollectionScreen extends Screen {
 
     private void paintDexDetail(Graphics g){
         int W=game.W,H=game.H,fh=Art.fh,di=currentDex(),frame=animTime/70;
-        g.setColor(0x08111E);g.fillRect(0,0,W,H);Art.box(g,3,3,W-6,H-6,0x101830,0xFFD030);
-        Art.textSmallC(g,"#"+CollectionDex.DEX[di]+" "+CollectionDex.NAME[di],W/2,7,0xFFFFFF);
-        int y=fh+12,boxW=Math.min(88,W-16),boxH=Math.min(76,H/3),bx=(W-boxW)/2;
-        g.setColor(0x172438);g.fillRect(bx,y,boxW,boxH);
-        if(!CollectionAtlas.draw(g,di,bx,y,boxW,boxH,dexAction,previewDir,frame))Art.dexAvatar(g,di,W/2-16,y+(boxH-32)/2);
-        y+=boxH+2;
-        Art.textSmallC(g,DEX_CLIP[dexAction]+"  "+DIR[previewDir],W/2,y,0xA0E8FF);y+=fh+2;
-        int x=W/2-18;Art.typeIcon(g,CollectionDex.T1[di],x,y);if(CollectionDex.T2[di]>=0)Art.typeIcon(g,CollectionDex.T2[di],x+20,y);y+=20;
-        Art.textC(g,Lang.t("Thế hệ ","Generation ")+CollectionDex.GEN[di]+" - "+CollectionDex.CATEGORY[di],W/2,y,0x80D8FF);y+=fh+5;
-        Art.textC(g,Lang.t("POKEMON CHỈ TRONG BỘ SƯU TẬP","COLLECTION-ONLY POKEMON"),W/2,y,0xFFD060);y+=fh+3;
-        Art.textSmallC(g,Lang.t("Chưa vào shop, AI hoặc Battle","Not in shop, AI or Battle"),W/2,y,0xB8C8D8);
-        Art.textSmallC(g,Lang.t("2/8 animation  4/6 hướng  FIRE đóng","2/8 animation  4/6 direction  FIRE close"),W/2,H-fh-5,0x8090B0);
+        g.setColor(0x08111E);g.fillRect(0,0,W,H);
+        Art.textB(g,"#"+CollectionDex.DEX[di]+" "+CollectionDex.NAME[di],4,2,0xFFFFFF);
+        Art.textR(g,CollectionDex.CATEGORY[di],W-3,2,0xFFD060);
+        int chipY=fh+5,x=4;
+        Art.typeIcon(g,CollectionDex.T1[di],x,chipY);x+=16;
+        if(CollectionDex.T2[di]>=0)Art.typeIcon(g,CollectionDex.T2[di],x,chipY);
+        int vw=Math.min(72,W-28),vh=Math.min(70,H/3),px=W/2-vw/2,py=chipY+fh+3;
+        if(!CollectionAtlas.draw(g,di,px,py,vw,vh,dexAction,previewDir,frame))Art.dexAvatar(g,di,W/2-16,py+(vh-32)/2);
+        Art.statusSprite(g,previewStatus,px-19,py+vh/2-8,frame);
+        Art.attackSprite(g,CollectionDex.T1[di],previewAttackKind,W/2,py+vh+12,frame);
+        int y=py+vh+22;
+        Art.textC(g,DEX_CLIP[dexAction]+"  "+DIR[previewDir],W/2,y,0x80D8FF);y+=fh;
+        Art.textC(g,"STATUS: "+Lang.statusName(previewStatus),W/2,y,0xFFC070);y+=fh;
+        String kind=previewAttackKind==0?"MELEE":(previewAttackKind==1?"RANGE":"HIT");
+        Art.textC(g,Lang.t("HIỆU ỨNG: ","ATTACK FX: ")+Lang.typeName(CollectionDex.T1[di])+" "+kind,W/2,y,0xA0E8A0);y+=fh;
+        Art.textSmall(g,Lang.t("Thế hệ ","Generation ")+CollectionDex.GEN[di]+"  #"+CollectionDex.DEX[di],4,y,0xE0E8FF);y+=fh;
+        Art.textSmall(g,Lang.t("Chỉ trong Bộ sưu tập - chưa vào Battle","Collection only - not in Battle"),4,y,0xFFD060);
+        Art.textC(g,Lang.t("< > hướng   2/8 animation","< > direction   2/8 animation"),W/2,H-fh*2-2,0x8090B0);
+        Art.textC(g,Lang.t("1/3 status  7/9 hiệu ứng  FIRE về","1/3 status  7/9 attack  FIRE back"),W/2,H-fh-1,0x8090B0);
     }
 
     private void paintTabs(Graphics g){

@@ -9,7 +9,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
-/** Desktop-only RC gate: validates the actual JAR/JAD files delivered to phones. */
+/** Desktop-only release gate: validates the actual JAR/JAD files delivered to phones. */
 public final class ReleaseArtifactTest {
     private static void check(boolean ok,String message){
         if(!ok)throw new RuntimeException(message);
@@ -26,13 +26,13 @@ public final class ReleaseArtifactTest {
         finally{in.close();}
         return null;
     }
-    private static void verify(File jarFile,File jadFile,boolean lite,String label)throws Exception{
+    private static void verify(File jarFile,File jadFile,boolean lite,String version,String label)throws Exception{
         JarFile jar=new JarFile(jarFile);
         try{
             Manifest manifest=jar.getManifest();check(manifest!=null,"missing manifest "+jarFile);
             Attributes a=manifest.getMainAttributes();
             check("Kdic".equals(a.getValue("MIDlet-Vendor")),"vendor mismatch");
-            check("1.3.9".equals(a.getValue("MIDlet-Version")),"numeric MIDlet version mismatch");
+            check(version.equals(a.getValue("MIDlet-Version")),"numeric MIDlet version mismatch");
             check(label.equals(a.getValue("PAC-Build")),"build label mismatch");
             check(entry(jar,"pac/PacMidlet.class")&&entry(jar,"icon.png"),"runtime entry missing");
             check(entry(jar,"sp/0.png")&&entry(jar,"av/0.png")&&entry(jar,"dex/1000.png"),"fallback art missing");
@@ -46,13 +46,14 @@ public final class ReleaseArtifactTest {
             }
         }finally{jar.close();}
         check(label.equals(jad(jadFile,"PAC-Build")),"JAD build label mismatch");
+        check(version.equals(jad(jadFile,"MIDlet-Version")),"JAD version mismatch");
         check(String.valueOf(jarFile.length()).equals(jad(jadFile,"MIDlet-Jar-Size")),"JAD size mismatch");
     }
     public static void main(String[] args)throws Exception{
-        check(args.length==3,"usage: dist-dir app-name build-label");
-        File dir=new File(args[0]);String app=args[1],label=args[2];
-        verify(new File(dir,app+"-Full.jar"),new File(dir,app+"-Full.jad"),false,label);
-        verify(new File(dir,app+"-Lite.jar"),new File(dir,app+"-Lite.jad"),true,label);
+        check(args.length==4,"usage: dist-dir app-name version build-label");
+        File dir=new File(args[0]);String app=args[1],version=args[2],label=args[3];
+        verify(new File(dir,app+"-Full.jar"),new File(dir,app+"-Full.jad"),false,version,label);
+        verify(new File(dir,app+"-Lite.jar"),new File(dir,app+"-Lite.jad"),true,version,label);
         System.out.println("ReleaseArtifactTest OK: Full/Lite contents, manifest and JAD");
     }
 }

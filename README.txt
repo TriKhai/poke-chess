@@ -1,4 +1,4 @@
-POKE AUTO CHESS ME v1.3.9RC2 (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
+POKE AUTO CHESS ME v1.4.0 (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
 =====================================================================
 
 CAU TRUC
@@ -14,8 +14,10 @@ CAU TRUC
   docs/CHI_SO_VA_TRANG_THAI_POKEMON.md  bang chu viet tat, chi so va trang thai combat
 
 PHIEN BAN
-  v1.3.9RC2: con tro xep co om silhouette pet va co vong sang duoi chan;
-              pet moi mua no hieu ung xanh khi xuat hien tren hang cho.
+  v1.4.0: Stable offline; dong bang gameplay/save v9, release gate Full/Lite,
+          animation SPAWN goc va con tro silhouette + border vuong mong.
+  v1.3.9RC2: con tro xep co om silhouette pet, khong bong duoi chan;
+              pet moi mua chay 5 frame SPAWN goc tren hang cho.
   v1.3.9RC: dong bang gameplay; regression them save hong, deterministic battle
              va kiem tra truc tiep noi dung/manifest/JAD cua Full va Lite.
   v1.3.9b: gioi han them cache sprite fallback, avatar, avatar Gen 4-9 va skill

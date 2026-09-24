@@ -1,6 +1,14 @@
 POKE AUTO CHESS ME - VERSION LOG
 ================================
 
+v1.4.0 - Stable Offline Release
+- Đóng băng gameplay và save schema v9 từ baseline 1.3.9RC2.
+- Metadata Full/Lite đồng bộ MIDlet-Version và PAC-Build thành 1.4.0.
+- build-poke.bat chuyển sang target release; release gate kiểm tra regression,
+  preverify CLDC, nội dung Full/Lite, manifest, JAD, kích thước và SPAWN asset gốc.
+- Giữ nguyên toàn bộ gameplay, animation, hiệu ứng, cache LRU và fallback idle đã
+  vượt qua RC; không cắt nội dung đồ họa trong bản Full.
+
 v1.2.5
 - Chốt baseline Git cục bộ cho mã nguồn, tài nguyên runtime, tools và docs.
 - Đồng bộ MIDlet-Version thành 1.2.5.
@@ -324,8 +332,3 @@ v1.3.9 - Device QA và release candidate
 - Test Full/Lite trên emulator và thiết bị thật ở nhiều RAM, độ phân giải và orientation.
 - Soak test run dài, save/resume lặp lại, RMS đầy/hỏng, pause/resume MIDlet và thiếu asset.
 - Chốt ngân sách RAM/JAR/frame time; chỉ sửa lỗi, không thêm hệ thống gameplay mới.
-
-v1.4.0 - Stable offline release
-- Đóng băng nội dung, cân bằng và save schema; migration từ mọi save được hỗ trợ.
-- Chạy full regression, deterministic battle, responsive matrix và checklist thiết bị thật.
-- Xuất Full/Lite JAR+JAD, tài liệu/changelog hoàn chỉnh, tag Git và baseline phát triển mới.

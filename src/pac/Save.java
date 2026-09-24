@@ -11,7 +11,7 @@ public final class Save {
     private Save() {}
 
     private static final String STORE = "pacsave1";
-    private static final int VERSION = 4;
+    private static final int VERSION = 5;
 
     public static int balls = 15;
     public static int best = 0;
@@ -26,6 +26,10 @@ public final class Save {
     public static int language = Lang.VI;
     /** 0 = legacy smooth 16 FPS, 1 = battery 10 FPS, 2 = medium 20 FPS, 3 = high 25 FPS. */
     public static int performance = 0;
+    /** Explore progression: chosen lead and three real-time camp slots. */
+    public static int hero=-1;
+    public static int[] camp={-1,-1,-1};
+    public static long campStart=0;
     public static int frameDelay(){switch(performance){case 1:return 100;case 2:return 50;case 3:return 40;default:return 60;}}
     public static int targetFps(){switch(performance){case 1:return 10;case 2:return 20;case 3:return 25;default:return 16;}}
 
@@ -37,7 +41,7 @@ public final class Save {
     }
 
     public static void reset() {
-        balls = 15; best = 0; runs = 0; wins = 0; caught = 0; performance = 0;
+        balls = 15; best = 0; runs = 0; wins = 0; caught = 0; performance = 0;hero=-1;campStart=0;camp=new int[]{-1,-1,-1};
         unlocked = new boolean[Data.N];
         // starter families
         unlocked[Data.fam[find("Charmander")]] = true;
@@ -93,6 +97,7 @@ public final class Save {
                     playPath = ver >= 3 ? in.readInt() : -1;
                     performance = ver >= 4 ? in.readInt() : 0;
                     if (performance < 0 || performance > 3) performance = 0;
+                    if(ver>=5){hero=in.readInt();for(int i=0;i<3;i++)camp[i]=in.readInt();campStart=in.readLong();}
                     cheatMode = playPath == 1;
                 }
             }
@@ -122,6 +127,7 @@ public final class Save {
             out.writeInt(language);
             out.writeInt(playPath);
             out.writeInt(performance);
+            out.writeInt(hero);for(int i=0;i<3;i++)out.writeInt(camp[i]);out.writeLong(campStart);
             out.flush();
             byte[] b = bo.toByteArray();
             rs = RecordStore.openRecordStore(STORE, true);

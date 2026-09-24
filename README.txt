@@ -1,4 +1,4 @@
-POKE AUTO CHESS ME v1.3.6  (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
+POKE AUTO CHESS ME v1.3.7  (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
 =====================================================================
 
 CAU TRUC
@@ -14,6 +14,7 @@ CAU TRUC
   docs/CHI_SO_VA_TRANG_THAI_POKEMON.md  bang chu viet tat, chi so va trang thai combat
 
 PHIEN BAN
+  v1.3.7: Explore Hub, Farm Pet, Gacha, Bai Pokemon va Collection MAP 143 dungeon.
   v1.3.6: Audit ability/item; them passive source-backed Gen 1-3 va About chinh thuc.
   v1.3.5: Fixed-step combat tach render; noi suy muot va hien FPS thuc/target.
   v1.3.4: Du 25 status co tai lieu; them san trang About/Về game cho loi nhan cong dong.

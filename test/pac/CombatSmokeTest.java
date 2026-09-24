@@ -18,6 +18,14 @@ public final class CombatSmokeTest {
         check(UiLayout.profile(128,160)==UiLayout.COMPACT,"128x160 must be compact");
         check(UiLayout.profile(176,208)==UiLayout.STANDARD,"176x208 must be standard");
         check(UiLayout.profile(240,320)==UiLayout.LARGE&&UiLayout.profile(320,240)==UiLayout.LARGE,"large/landscape profile mismatch");
+        check(MapData.COUNT==143,"original DungeonPMDO map catalog mismatch");
+        Rng exploreRng=new Rng(137);int gachaPick=ExploreRules.pick(exploreRng,0,1);
+        check(gachaPick>=0&&Data.isBase(gachaPick)&&ExploreRules.gen(gachaPick)==1,"Gen-filtered gacha mismatch");
+        int oldCamp0=Save.camp[0],oldCamp1=Save.camp[1],oldCamp2=Save.camp[2];long oldCampStart=Save.campStart;
+        Save.camp[0]=0;Save.camp[1]=-1;Save.camp[2]=-1;Save.campStart=1000;
+        check(ExploreRules.campReward(1000+7200)==ExploreRules.hourlyBalls(0)*2,"offline camp reward mismatch");
+        check(ExploreRules.campReward(1000+30L*3600)==ExploreRules.hourlyBalls(0)*24,"camp reward cap mismatch");
+        Save.camp[0]=oldCamp0;Save.camp[1]=oldCamp1;Save.camp[2]=oldCamp2;Save.campStart=oldCampStart;
         check(CombatStatus.COUNT==25,"documented status count mismatch");
         CombatStatus parity=new CombatStatus();parity.apply(CombatStatus.BURN,20);parity.apply(CombatStatus.SAFEGUARD,15);
         check(parity.burn==0&&parity.safeguard==15,"Safeguard must cleanse negatives");

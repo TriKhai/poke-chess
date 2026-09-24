@@ -5,7 +5,7 @@ import javax.microedition.lcdui.Graphics;
 /** Pokedex-like list of every species; locked families are hidden. */
 public final class CollectionScreen extends Screen {
     private int sel = 0, top = 0;
-    private int tab=0,typeSel=0,itemSel=0,statusSel=0;
+    private int tab=0,typeSel=0,itemSel=0,statusSel=0,mapSel=0;
     private int generation=1;
     private int itemDescScroll=0;
     private boolean detail = false;
@@ -62,13 +62,13 @@ public final class CollectionScreen extends Screen {
             return;
         }
         switch (k) {
-            case Game.K_LEFT: tab=(tab+3)%4; top=0; itemDescScroll=0; break;
-            case Game.K_RIGHT: tab=(tab+1)%4; top=0; itemDescScroll=0; break;
+            case Game.K_LEFT: tab=(tab+4)%5; top=0; itemDescScroll=0; break;
+            case Game.K_RIGHT: tab=(tab+1)%5; top=0; itemDescScroll=0; break;
             case Game.K_UP:
-                if(tab==0&&sel>0)sel--; else if(tab==1&&typeSel>0)typeSel--; else if(tab==2&&itemSel>0){itemSel--;itemDescScroll=0;}else if(tab==3&&statusSel>0)statusSel--;
+                if(tab==0&&sel>0)sel--; else if(tab==1&&typeSel>0)typeSel--; else if(tab==2&&itemSel>0){itemSel--;itemDescScroll=0;}else if(tab==3&&statusSel>0)statusSel--;else if(tab==4&&mapSel>0)mapSel--;
                 break;
             case Game.K_DOWN:
-                if(tab==0&&sel<pokemonCount()-1)sel++; else if(tab==1&&typeSel<Data.NT-1)typeSel++; else if(tab==2&&itemSel<ItemData.count()-1){itemSel++;itemDescScroll=0;}else if(tab==3&&statusSel<STATUS.length-1)statusSel++;
+                if(tab==0&&sel<pokemonCount()-1)sel++; else if(tab==1&&typeSel<Data.NT-1)typeSel++; else if(tab==2&&itemSel<ItemData.count()-1){itemSel++;itemDescScroll=0;}else if(tab==3&&statusSel<STATUS.length-1)statusSel++;else if(tab==4&&mapSel<MapData.COUNT-1)mapSel++;
                 break;
             case Game.K_1: if(tab==0)changeGeneration(-1);else if(tab==2&&itemDescScroll>0)itemDescScroll--; break;
             case Game.K_3: if(tab==0)changeGeneration(1);else if(tab==2)itemDescScroll++; break;
@@ -95,6 +95,7 @@ public final class CollectionScreen extends Screen {
         if(tab==1){paintTypes(g);return;}
         if(tab==2){paintItems(g);return;}
         if(tab==3){paintStatuses(g);return;}
+        if(tab==4){paintMaps(g);return;}
         int count=pokemonCount();
         Art.textB(g,Lang.t("THẾ HỆ ","GEN ")+generation+"  "+count,4,fh+7,0xFFD030);
 
@@ -186,14 +187,21 @@ public final class CollectionScreen extends Screen {
     }
 
     private void paintTabs(Graphics g){
-        int W=game.W,w=W/4,h=Art.fh+5;
-        for(int i=0;i<4;i++){
-            int tw=i==3?W-i*w:w;
+        int W=game.W,w=W/5,h=Art.fh+5;
+        for(int i=0;i<5;i++){
+            int tw=i==4?W-i*w:w;
             g.setColor(i==tab?0x60708A:0x303B52);g.fillRect(i*w,0,tw-1,h);
             if(i==tab){g.setColor(0xFFD030);g.fillRect(i*w,h-2,tw-1,2);}
-            String title=i==0?"PKMN":(i==1?Lang.t("HỆ","TYPE"):(i==2?Lang.t("ĐỒ","ITEM"):"STATUS"));
+            String title=i==0?"PKMN":(i==1?Lang.t("HỆ","TYPE"):(i==2?Lang.t("ĐỒ","ITEM"):(i==3?"STATUS":"MAP")));
             Art.textSmallC(g,title,i*w+tw/2,2,i==tab?0xFFFFFF:0xA8B0C0);
         }
+    }
+
+    private void paintMaps(Graphics g){
+        int W=game.W,H=game.H,fh=Art.fh,y0=fh+8,row=fh+4,detail=fh*6,rows=UiLayout.visibleRows(H,y0,detail,row);
+        if(mapSel<top)top=mapSel;if(mapSel>=top+rows)top=mapSel-rows+1;
+        for(int r=0;r<rows&&top+r<MapData.COUNT;r++){int i=top+r,y=y0+r*row;if(i==mapSel){g.setColor(0x405273);g.fillRect(2,y,W-4,row-1);}Art.textB(g,(i+1)+". "+MapData.name(i),5,y,i==mapSel?0xFFFFFF:0xA8B5C8);}
+        int y=y0+rows*row+2;g.setColor(0x0B1422);g.fillRect(0,y,W,H-y);Art.textB(g,MapData.name(mapSel),5,y+3,0xFFD060);Art.text(g,Lang.t("Chủ đề: ","Theme: ")+MapData.theme(mapSel),5,y+fh+4,0x80D8FF);Art.para(g,MapData.desc(mapSel),5,y+fh*2+5,W-10,0xD8E8F0,3);Art.textSmallR(g,(mapSel+1)+"/"+MapData.COUNT,W-4,H-fh-1,0x8090A8);
     }
 
     private void paintStatuses(Graphics g){

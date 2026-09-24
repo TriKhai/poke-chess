@@ -1,0 +1,9 @@
+package pac;
+import javax.microedition.lcdui.Graphics;
+/** Real-time offline camp; up to three unlocked base Pokémon gather Balls. */
+public final class CampScreen extends Screen{
+ private int slot,cursor;public CampScreen(Game g){super(g);cursor=nextUnlocked(-1,1);}public void update(int dt){}
+ private int nextUnlocked(int from,int d){for(int n=1;n<=Data.N;n++){int i=(from+d*n+Data.N*2)%Data.N;if(Data.isBase(i)&&Save.has(i))return i;}return 0;}
+ public void key(int k){if(k==Game.K_LEFT)slot=(slot+2)%3;else if(k==Game.K_RIGHT)slot=(slot+1)%3;else if(k==Game.K_UP)cursor=nextUnlocked(cursor,-1);else if(k==Game.K_DOWN)cursor=nextUnlocked(cursor,1);else if(k==Game.K_FIRE||k==Game.K_SOFT1){Save.camp[slot]=cursor;if(Save.campStart<=0)Save.campStart=System.currentTimeMillis()/1000L;Save.save();}else if(k==Game.K_3){int reward=ExploreRules.campReward(System.currentTimeMillis()/1000L);if(reward>0){Save.balls+=reward;Save.campStart=System.currentTimeMillis()/1000L;Save.save();}}else if(k==Game.K_0||k==Game.K_SOFT2)game.setScreen(new ExploreHubScreen(game));}
+ public void paint(Graphics g){int W=game.W,H=game.H,fh=Art.fh;g.setColor(0x173023);g.fillRect(0,0,W,H);Art.textBC(g,Lang.t("BÃI POKÉMON","POKÉMON CAMP"),W/2,4,0xFFD030);int sw=W/3;for(int i=0;i<3;i++){int x=i*sw+(sw-32)/2,y=fh*3;if(i==slot){g.setColor(0xFFE060);g.drawRect(i*sw+2,y-3,sw-5,39);}if(Save.camp[i]>=0)Art.avatar(g,Save.camp[i],x,y);else Art.textC(g,"+",i*sw+sw/2,y+10,0x90A0B0);}Art.textC(g,Data.name[cursor],W/2,fh*8,0xFFFFFF);Art.avatar(g,cursor,W/2-16,fh*9);Art.textSmallC(g,Lang.t("Năng suất: ","Rate: ")+ExploreRules.hourlyBalls(cursor)+Lang.t(" Bóng/giờ"," Balls/hour"),W/2,fh*12+2,0xA0FFA0);int reward=ExploreRules.campReward(System.currentTimeMillis()/1000L);Art.textC(g,Lang.t("Có thể nhận: ","Claimable: ")+reward,W/2,H-fh*4,0xFFE080);Art.textSmallC(g,Lang.t("4/6 ô  2/8 pet  FIRE cử  3 nhận  0 về","4/6 slot  2/8 pet  FIRE send  3 claim  0 back"),W/2,H-fh-2,0xD0E0D0);}
+}

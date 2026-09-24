@@ -28,7 +28,7 @@ public final class MenuScreen extends Screen {
 
     private void choose() {
         switch (sel) {
-            case 0: game.setScreen(new WorldScreen(game)); break;
+            case 0: game.setScreen(new ExploreHubScreen(game)); break;
             case 1: game.setScreen(new ChessModeScreen(game)); break;
             case 2: game.setScreen(new CollectionScreen(game)); break;
             case 3: game.setScreen(new SettingsScreen(game)); break;

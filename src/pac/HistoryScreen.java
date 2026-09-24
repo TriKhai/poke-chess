@@ -8,7 +8,7 @@ public final class HistoryScreen extends Screen {
     public HistoryScreen(Game g){super(g);}
     public void update(int dt){}
     public void key(int k){if(k==Game.K_UP||k==Game.K_LEFT){if(selected>0)selected--;}else if(k==Game.K_DOWN||k==Game.K_RIGHT){if(selected+1<HistoryStore.count)selected++;}else if(k==Game.K_0||k==Game.K_SOFT2||k==Game.K_FIRE||k==Game.K_SOFT1)game.setScreen(new ChessModeScreen(game));}
-    private String mode(int m){return m==Run.MODE_THIRTY?Lang.t("30 vòng","30 rounds"):m==Run.MODE_GEN1?Lang.t("Thế hệ 1","Gen 1"):m==Run.MODE_UNLIMITED?"DEV":Lang.t("Thường","Normal");}
+    private String mode(int m){return m==Run.MODE_THIRTY?Lang.t("30 vòng","30 rounds"):m==Run.MODE_GEN1?Lang.t("Thế hệ 1","Gen 1"):m==Run.MODE_LEGEND?Lang.t("Thần thú","Legendary War"):m==Run.MODE_UNLIMITED?"DEV":Lang.t("Thường","Normal");}
     public void paint(Graphics g){int W=game.W,H=game.H,fh=Art.fh;g.setColor(0x101827);g.fillRect(0,0,W,H);Art.textBC(g,Lang.t("LỊCH SỬ ĐẤU","BATTLE HISTORY"),W/2,3,0xFFD030);
         if(HistoryStore.count==0){Art.textC(g,Lang.t("Chưa có lượt chơi đã kết thúc","No completed runs yet"),W/2,H/2,0x90A0B8);Art.textC(g,"0: "+Lang.t("về","back"),W/2,H-fh-3,0x8090B0);return;}
         int top=fh+5,av=W>=216?24:(W<176?14:20),rowH=av+fh+(W<176?4:8),visible=UiLayout.visibleRows(H,top,fh+4,rowH),first=UiLayout.firstVisible(selected,HistoryStore.count,visible);

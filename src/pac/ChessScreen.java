@@ -225,8 +225,8 @@ public final class ChessScreen extends Screen {
     private void openNextPostChoice(){
         if((postChoiceMask&1)!=0){postChoiceMask&=~1;openRewardChoice();return;}
         int cat=-1,kind=0;
-        if((postChoiceMask&2)!=0){postChoiceMask&=~2;cat=run.round==5?1:(run.round==8?2:3);kind=CH_ADD;}
-        else if((postChoiceMask&4)!=0){postChoiceMask&=~4;cat=5;kind=CH_UNIQUE;}
+        if((postChoiceMask&2)!=0){postChoiceMask&=~2;cat=run.mode==Run.MODE_LEGEND?6:(run.round==5?1:(run.round==8?2:3));kind=run.mode==Run.MODE_LEGEND?CH_LEGEND:CH_ADD;}
+        else if((postChoiceMask&4)!=0){postChoiceMask&=~4;cat=run.mode==Run.MODE_LEGEND?6:5;kind=run.mode==Run.MODE_LEGEND?CH_LEGEND:CH_UNIQUE;}
         else if((postChoiceMask&8)!=0){postChoiceMask&=~8;cat=6;kind=CH_LEGEND;}
         if(kind!=0){run.pokemonChoices(rewardChoiceIds,cat,-1,false);openChoice(kind);return;}
         afterResultChoice();

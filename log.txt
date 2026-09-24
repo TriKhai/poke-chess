@@ -48,6 +48,14 @@ v1.4.4 - 40-Stage Road
 - Màn pool được giản lược còn đúng ba option, mỗi option chỉ hiện ba icon và tên hệ.
   FIRE/chạm option mở menu hai mục Chọn/Chi tiết. Chọn xác nhận pool; Chi tiết mở
   trang riêng giải thích đầy đủ buff của từng hệ rồi cho quay lại danh sách.
+- Khi có save RMS đang chơi, chọn một mode mới không còn xóa ngay. Game hiện hộp
+  xác nhận, mặc định đặt ở Hủy; chỉ mục Xóa & chơi mới mới xóa run cũ và tạo run mới.
+- Khóa luật quà Pokémon khi 32 vị trí đã đầy: ưu tiên kiểm tra đủ bộ để tiến hóa;
+  nếu không đặt/ghép được thì tự quy đổi Pokémon quà theo giá bán thành vàng.
+- Thêm mode Thần Thú Đại Chiến 40 vòng: bỏ chọn pool hệ, tự tặng đúng một Legendary
+  đầu run; shop, mọi lựa chọn Pokémon ở mốc và toàn bộ đội hình đối thủ chỉ dùng
+  Legendary. Unique/Legendary bán ra trở lại pool riêng trong mode này; kinh tế,
+  trang bị, luật thắng/thua và các mốc còn lại giữ như run thường.
 
 v1.4.3 - Legendary Purchase Light Waves
 - Giữ nguyên 5 frame SPAWN khi mua pet. Nếu pet mua có category Legendary, cộng

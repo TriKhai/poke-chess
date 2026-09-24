@@ -41,7 +41,7 @@ public final class ProfileScreen extends Screen {
         Art.textBC(g,Save.displayName(),W/2,modelY,0xFFFFFF);modelY+=fh+1;
         if(Save.profileName.length()==0)Art.textSmallC(g,Lang.t("#: đặt tên một lần","#: set name once"),W/2,modelY,0x80D8FF);
         else Art.textSmallC(g,Lang.t("Tên đã được xác nhận","Name confirmed"),W/2,modelY,0x708098);
-        String medals=(ProgressionRules.cleared(Run.MODE_NORMAL)?"N ":"- ")+(ProgressionRules.cleared(Run.MODE_THIRTY)?"30 ":"-- ")+(ProgressionRules.cleared(Run.MODE_GEN1)?"G1":"--");
+        String medals=(ProgressionRules.cleared(Run.MODE_NORMAL)?"N ":"- ")+(ProgressionRules.cleared(Run.MODE_LEGEND)?"TT ":"-- ")+(ProgressionRules.cleared(Run.MODE_THIRTY)?"30 ":"-- ")+(ProgressionRules.cleared(Run.MODE_GEN1)?"G1":"--");
         Art.textSmallR(g,medals,W-3,modelY,0xFFD060);
         modelY+=fh+3;
 

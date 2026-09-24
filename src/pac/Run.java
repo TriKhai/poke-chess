@@ -6,7 +6,7 @@ package pac;
  */
 public final class Run {
     public static final int MAX_ROUND = 40;
-    public static final int MODE_NORMAL=0,MODE_UNLIMITED=1,MODE_THIRTY=2,MODE_GEN1=3;
+    public static final int MODE_NORMAL=0,MODE_UNLIMITED=1,MODE_THIRTY=2,MODE_GEN1=3,MODE_LEGEND=4;
     public static final int BOARD = 24, BENCH = 8;
 
     public final Rng rng;
@@ -75,7 +75,10 @@ public final class Run {
         for (int i = 0; i < enemyEquip.length; i++) enemyEquip[i] = -1;
         for (int i = 0; i < 5; i++) shop[i] = -1;
         draftStage=usesDraft()?0:2;
-        if(!usesDraft()){
+        if(mode==MODE_LEGEND){
+            for(int i=0;i<Data.N;i++)if(eligibleBase(i)&&Data.category[i]==6)pool[i]=Data.POOL_COPIES[Data.cost[i]];
+            int first=randomBaseCategory(6);if(first>=0)addUnit(first);rollShop();
+        }else if(!usesDraft()){
             for (int i = 0; i < Data.N; i++)if(eligibleBase(i)&&Data.category[i]<5)
                 pool[i] = Data.POOL_COPIES[Data.cost[i]];
             rollShop();
@@ -166,8 +169,13 @@ public final class Run {
 
     /** Additional picks enter the normal shop pool and also grant one free copy. */
     public void chooseAdditional(int sp){
-        if(sp<0)return;if(Data.category[sp]<5)pool[sp]+=Data.POOL_COPIES[Data.cost[sp]];
+        if(sp<0)return;if(Data.category[sp]<5||(mode==MODE_LEGEND&&Data.category[sp]==6))pool[sp]+=Data.POOL_COPIES[Data.cost[sp]];
         if(!addUnit(sp)&&!unlimitedGold)gold+=Data.sellValue(sp);
+    }
+
+    private int randomBaseCategory(int category){
+        int n=0;for(int i=0;i<Data.N;i++)if(eligibleBase(i)&&Data.category[i]==category)n++;
+        if(n==0)return -1;int q=rng.nextInt(n);for(int i=0;i<Data.N;i++)if(eligibleBase(i)&&Data.category[i]==category&&q--==0)return i;return -1;
     }
 
     public int maxRound(){return mode==MODE_THIRTY||mode==MODE_GEN1?30:MAX_ROUND;}
@@ -423,7 +431,7 @@ public final class Run {
         if (sp < 0) return false;
         if (!unlimitedGold) gold += Data.sellValue(sp);
         int family=Data.fam[sp];
-        if(Data.category[family]<5)pool[family] += Data.copies(sp);
+        if(Data.category[family]<5||(mode==MODE_LEGEND&&Data.category[family]==6))pool[family] += Data.copies(sp);
         clearItems(p,true);
         set(p, -1);
         return true;
@@ -513,6 +521,7 @@ public final class Run {
         for (int i = 0; i < enemyEquip.length; i++) enemyEquip[i] = -1;
         boolean boss = isBoss();
         int n;
+        if(mode==MODE_LEGEND){genLegendEnemy(r,boss);return;}
         if(mode==MODE_GEN1&&boss){gen1Boss(r);return;}
         if(EnemyFormation.apply(this))return;
         if (r == 1) n = 1;
@@ -565,6 +574,17 @@ public final class Run {
             else if (r == 20) enemyName = "CHAMPION";
             else enemyName = NAMES[rng.nextInt(NAMES.length)];
         }
+    }
+
+    private void genLegendEnemy(int r,boolean boss){
+        int n=r<=2?1:(2+r/6);if(boss)n++;if(n>8)n=8;
+        for(int k=0;k<n;k++){
+            int sp=randomBaseCategory(6);if(sp<0)sp=Data.MEWTWO;
+            int row=Data.range[sp]-1;if(row<0)row=0;if(row>2)row=2;
+            for(int tr=0;tr<3;tr++){int rr=(row+tr)%3;boolean placed=false;for(int c=0;c<8;c++){int p=rr*8+COL_ORDER[c];if(enemy[p]<0){enemy[p]=sp;placed=true;break;}}if(placed)break;}
+        }
+        enemyScale=85+r*3+(boss?18:0);
+        enemyName=boss?Lang.t("BOSS THẦN THÚ","LEGENDARY BOSS"):Lang.t("ĐỘI THẦN THÚ","LEGENDARY TEAM");
     }
 
     private int findSp(String name){for(int i=0;i<Data.N;i++)if(Data.name[i].equals(name))return i;return 0;}

@@ -272,6 +272,19 @@ public final class CombatSmokeTest {
         retry.nextRound();check(retry.round==5,"lost round advanced to the next stage");
         retry.round=40;retry.hp=100;retry.over=false;retry.applyResult(lostRound);
         check(!retry.over,"final stage loss must retry while HP remains");
+
+        Run fullGift=new Run(8642,Run.MODE_THIRTY);for(int p=0;p<Run.BOARD+Run.BENCH;p++)fullGift.set(p,p%40);
+        int giftSp=Data.MEWTWO,beforeGiftGold=fullGift.gold;fullGift.chooseAdditional(giftSp);
+        check(fullGift.gold==beforeGiftGold+Data.sellValue(giftSp),"full bench gift without merge was not converted to gold");
+        Run mergeGift=new Run(8643,Run.MODE_THIRTY);for(int p=0;p<Run.BOARD+Run.BENCH;p++)mergeGift.set(p,20+p%20);mergeGift.set(0,0);mergeGift.set(1,0);
+        int beforeMergeGold=mergeGift.gold;mergeGift.chooseAdditional(0);
+        check(mergeGift.count(Data.evo[0])==1&&mergeGift.gold==beforeMergeGold,"full bench gift did not evolve before gold conversion");
+
+        Run legendaryRun=new Run(13579,Run.MODE_LEGEND);check(legendaryRun.draftStage==2,"Legendary War must skip type draft");
+        int legendaryOwned=0;for(int p=0;p<Run.BOARD+Run.BENCH;p++)if(legendaryRun.get(p)>=0){check(Data.category[legendaryRun.get(p)]==6,"Legendary War starter is not Legendary");legendaryOwned++;}
+        check(legendaryOwned==1,"Legendary War must grant exactly one opening Pokemon");
+        for(int i=0;i<legendaryRun.shop.length;i++)if(legendaryRun.shop[i]>=0)check(Data.category[legendaryRun.shop[i]]==6,"non-Legendary leaked into Legendary shop");
+        for(int i=0;i<legendaryRun.enemy.length;i++)if(legendaryRun.enemy[i]>=0)check(Data.category[Data.fam[legendaryRun.enemy[i]]]==6,"non-Legendary enemy in Legendary War");
         check(EconomyRules.interest(59)==5,"interest cap mismatch");
         check(EconomyRules.streakBonus(-6)==3&&EconomyRules.streakBonus(1)==0,"streak economy mismatch");
         check(EconomyRules.income(20,4,true,2)==12,"income breakdown mismatch");

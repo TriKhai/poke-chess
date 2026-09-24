@@ -243,6 +243,10 @@ v1.3.8 - Tiến trình offline và UX hoàn chỉnh
   vòng cast co/giãn, species VFX và tên chiêu. Pet tự cast khi đủ 100 MP như cờ.
 - Phím * đổi tốc độ Farm x1/x2/x4; toàn bộ spawn, di chuyển, đánh, hồi MP và VFX đều
   chạy theo hệ số, đồng thời mức hiện ngay trên tiêu đề.
+- Sửa nguyên nhân khó thấy skill Farm: bỏ ngưỡng MP cứng 100, dùng đúng PP riêng
+  Data.mana và ON_ATTACK/ON_DAMAGE_MANA như Battle; hai bên tự cast khi đầy thanh.
+- Kéo VFX cast lên 1,2 giây, thêm aura tại người tung và vòng impact luôn có fallback,
+  nên hiệu ứng vẫn nhìn thấy rõ kể cả Pokémon không có file species SFX riêng.
 
 Nội dung UX trong v1.3.8
 - History/tổng kết giữ bố cục responsive; đã hoàn thiện hướng dẫn điều khiển,

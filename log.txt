@@ -56,6 +56,9 @@ v1.4.4 - 40-Stage Road
   đầu run; shop, mọi lựa chọn Pokémon ở mốc và toàn bộ đội hình đối thủ chỉ dùng
   Legendary. Unique/Legendary bán ra trở lại pool riêng trong mode này; kinh tế,
   trang bị, luật thắng/thua và các mốc còn lại giữ như run thường.
+- Điều chỉnh Thần Thú Đại Chiến: đầu run hiện ba Legendary ngẫu nhiên để chọn một
+  con miễn phí, shop chỉ mở sau khi xác nhận. Kinh tế riêng: thắng 10 vàng nền
+  +1 vàng thắng, thua 5 vàng nền; lãi, chuỗi và vàng từ item vẫn cộng tách biệt.
 
 v1.4.3 - Legendary Purchase Light Waves
 - Giữ nguyên 5 frame SPAWN khi mua pet. Nếu pet mua có category Legendary, cộng

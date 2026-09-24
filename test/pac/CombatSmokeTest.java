@@ -280,11 +280,23 @@ public final class CombatSmokeTest {
         int beforeMergeGold=mergeGift.gold;mergeGift.chooseAdditional(0);
         check(mergeGift.count(Data.evo[0])==1&&mergeGift.gold==beforeMergeGold,"full bench gift did not evolve before gold conversion");
 
-        Run legendaryRun=new Run(13579,Run.MODE_LEGEND);check(legendaryRun.draftStage==2,"Legendary War must skip type draft");
+        Run legendaryRun=new Run(13579,Run.MODE_LEGEND);check(legendaryRun.draftStage==1,"Legendary War must skip type draft and request a starter");
+        for(int i=0;i<legendaryRun.shop.length;i++)check(legendaryRun.shop[i]<0,"Legendary shop opened before starter choice");
+        int[] legendaryStarters={-1,-1,-1};legendaryRun.starterChoices(legendaryStarters);
+        check(legendaryStarters[0]!=legendaryStarters[1]&&legendaryStarters[0]!=legendaryStarters[2]&&legendaryStarters[1]!=legendaryStarters[2],"Legendary starter choices must be distinct");
+        for(int i=0;i<3;i++)check(legendaryStarters[i]>=0&&Data.category[legendaryStarters[i]]==6,"opening proposition is not Legendary");
+        legendaryRun.chooseStarter(legendaryStarters[0]);
         int legendaryOwned=0;for(int p=0;p<Run.BOARD+Run.BENCH;p++)if(legendaryRun.get(p)>=0){check(Data.category[legendaryRun.get(p)]==6,"Legendary War starter is not Legendary");legendaryOwned++;}
         check(legendaryOwned==1,"Legendary War must grant exactly one opening Pokemon");
         for(int i=0;i<legendaryRun.shop.length;i++)if(legendaryRun.shop[i]>=0)check(Data.category[legendaryRun.shop[i]]==6,"non-Legendary leaked into Legendary shop");
         for(int i=0;i<legendaryRun.enemy.length;i++)if(legendaryRun.enemy[i]>=0)check(Data.category[Data.fam[legendaryRun.enemy[i]]]==6,"non-Legendary enemy in Legendary War");
+        int[] econUs=new int[24],econFoe=new int[24];for(int i=0;i<24;i++){econUs[i]=-1;econFoe[i]=-1;}econUs[0]=0;econFoe[0]=3;
+        Battle legendWin=new Battle(econUs,econFoe,100,new Rng(91));legendWin.winner=0;legendWin.over=true;
+        Run legendWinRun=new Run(91,Run.MODE_LEGEND);legendWinRun.applyResult(legendWin);
+        check(legendWinRun.lastBaseGold==10&&legendWinRun.lastVictoryGold==1&&legendWinRun.lastGold==11,"Legendary win income must be 10 base + 1 victory without interest");
+        Battle legendLoss=new Battle(econUs,econFoe,100,new Rng(92));legendLoss.winner=1;legendLoss.over=true;
+        Run legendLossRun=new Run(92,Run.MODE_LEGEND);legendLossRun.applyResult(legendLoss);
+        check(legendLossRun.lastBaseGold==5&&legendLossRun.lastVictoryGold==0&&legendLossRun.lastGold==5,"Legendary loss income must be 5 base without interest");
         check(EconomyRules.interest(59)==5,"interest cap mismatch");
         check(EconomyRules.streakBonus(-6)==3&&EconomyRules.streakBonus(1)==0,"streak economy mismatch");
         check(EconomyRules.income(20,4,true,2)==12,"income breakdown mismatch");

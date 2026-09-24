@@ -1714,7 +1714,7 @@ public final class ChessScreen extends Screen {
         int maxScroll=Math.max(0,content-view);if(rewardChoiceScroll>maxScroll)rewardChoiceScroll=maxScroll;if(rewardChoiceScroll<0)rewardChoiceScroll=0;
         Art.box(g,x,y,w,h,0x101830,0xFFD030);
         String title=rewardChoiceKind==CH_TYPE?Lang.t("CHỌN POOL HỆ","CHOOSE TYPE POOL"):
-            (rewardChoiceKind==CH_STARTER?Lang.t("CHỌN POKÉMON KHỞI ĐẦU","CHOOSE A STARTER"):
+            (rewardChoiceKind==CH_STARTER?(run.mode==Run.MODE_LEGEND?Lang.t("CHỌN THẦN THÚ KHỞI ĐẦU","CHOOSE A LEGENDARY STARTER"):Lang.t("CHỌN POKÉMON KHỞI ĐẦU","CHOOSE A STARTER")):
             (rewardChoiceKind==CH_ITEM?Lang.t("CHỌN 1 TRANG BỊ MIỄN PHÍ","CHOOSE 1 FREE ITEM"):
             (rewardChoiceKind==CH_ADD?Lang.t("CHỌN FAMILY BỔ SUNG","CHOOSE AN EXTRA FAMILY"):
             (rewardChoiceKind==CH_UNIQUE?Lang.t("CHỌN UNIQUE","CHOOSE A UNIQUE"):Lang.t("CHỌN LEGENDARY","CHOOSE A LEGENDARY")))));

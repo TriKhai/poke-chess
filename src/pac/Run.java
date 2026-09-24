@@ -77,7 +77,7 @@ public final class Run {
         draftStage=usesDraft()?0:2;
         if(mode==MODE_LEGEND){
             for(int i=0;i<Data.N;i++)if(eligibleBase(i)&&Data.category[i]==6)pool[i]=Data.POOL_COPIES[Data.cost[i]];
-            int first=randomBaseCategory(6);if(first>=0)addUnit(first);rollShop();
+            draftStage=1;
         }else if(!usesDraft()){
             for (int i = 0; i < Data.N; i++)if(eligibleBase(i)&&Data.category[i]<5)
                 pool[i] = Data.POOL_COPIES[Data.cost[i]];
@@ -106,6 +106,7 @@ public final class Run {
     }
 
     public void starterChoices(int[] out){
+        if(mode==MODE_LEGEND){pokemonChoices(out,6,-1,false);return;}
         for(int k=0;k<out.length;k++){
             int type=poolTypes[k]>=0?poolTypes[k]:poolType,count=0;
             for(int i=0;i<Data.N;i++)if(choiceCandidate(i,0,type,true,out,k))count++;
@@ -116,6 +117,7 @@ public final class Run {
 
     /** Completes stage-zero draft, builds the restricted shop pool, gives starter, then opens shop. */
     public void chooseStarter(int starter){
+        if(mode==MODE_LEGEND){addUnit(starter);draftStage=2;rollShop();return;}
         buildTypedPool(starter);addUnit(starter);draftStage=2;rollShop();
     }
 
@@ -470,9 +472,9 @@ public final class Run {
             if (hp <= 0) { hp = 0; over = true; }
         }
         if (!over) {
-            lastBaseGold=EconomyRules.BASE_INCOME;lastInterest=EconomyRules.interest(gold);
+            lastBaseGold=mode==MODE_LEGEND?(lastWon?10:5):EconomyRules.BASE_INCOME;lastInterest=EconomyRules.interest(gold);
             lastStreakGold=EconomyRules.streakBonus(streak);lastVictoryGold=EconomyRules.victoryBonus(lastWon);lastItemGold=b.itemGold;
-            lastGold=EconomyRules.income(gold,streak,lastWon,b.itemGold);
+            lastGold=lastBaseGold+lastInterest+lastStreakGold+lastVictoryGold+Math.max(0,lastItemGold);
         }
         if(lastWon){lastItem=randomComponent();giveItem(lastItem);}
     }

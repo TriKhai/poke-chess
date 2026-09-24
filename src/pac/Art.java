@@ -60,6 +60,8 @@ public final class Art {
     private static boolean[] itemIconTinyTried = new boolean[ItemData.ID.length];
     private static Image[] itemIconMedium = new Image[ItemData.ID.length];
     private static boolean[] itemIconMediumTried = new boolean[ItemData.ID.length];
+    private static Image selectionOutline;
+    private static int selectionOutlineSp=-1,selectionOutlineSize=-1;
     private static Image[] spawnFx=new Image[5];
     private static boolean spawnFxTried;
     private static final int[] RARITY_COLOR={0xA0A0A0,0x3BC95E,0x41BFCC,0x927FFF,0xE53B3B,0xFFFFFF,0xE6CB49,0xE58EE5};
@@ -424,6 +426,29 @@ public final class Art {
         if(px<0)px=0;
         if(px+vw>screenW)px=screenW-vw;
         battleSprite(g,sp,px,y+h-vh-2,frame,RawAtlas.IDLE,7);
+    }
+
+    /** Silhouette only; deliberately no ellipse or ground shadow. */
+    public static void formationSelection(Graphics g,int sp,int x,int y,int size,int screenW,int frame,int color){
+        if(RawAtlas.drawFormationOutline(g,sp,x,y,size,size,screenW,7,frame,color))return;
+        if(selectionOutlineSp!=sp||selectionOutlineSize!=size||selectionOutline==null){
+            selectionOutline=null;Image im=scaled(sp,size);
+            if(im!=null)try{
+                int[] src=new int[size*size],out=new int[size*size];
+                im.getRGB(src,0,size,0,0,size,size);int argb=0xFF000000|(color&0xFFFFFF);
+                for(int yy=0;yy<size;yy++)for(int xx=0;xx<size;xx++){
+                    int p=yy*size+xx;if((src[p]>>>24)!=0)continue;boolean edge=false;
+                    for(int dy=-1;dy<=1&&!edge;dy++)for(int dx=-1;dx<=1;dx++){
+                        int nx=xx+dx,ny=yy+dy;
+                        if(nx>=0&&nx<size&&ny>=0&&ny<size&&(src[ny*size+nx]>>>24)!=0){edge=true;break;}
+                    }
+                    if(edge)out[p]=argb;
+                }
+                selectionOutline=Image.createRGBImage(out,size,size,true);
+            }catch(Exception e){selectionOutline=null;}
+            selectionOutlineSp=sp;selectionOutlineSize=size;
+        }
+        if(selectionOutline!=null)g.drawImage(selectionOutline,x,y,TL);
     }
 
     /** Original five-frame SPAWN animation from the source abilities atlas. */

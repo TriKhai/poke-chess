@@ -635,6 +635,8 @@ public final class ChessScreen extends Screen {
             if (held < Run.BOARD) { hx = bx + (held % 8) * cell; hy = boardY + (held / 8) * cell; }
             else { hx = bx + (held - Run.BOARD) * cell; hy = benchY; }
             g.setColor(0x80D8FF);g.drawRect(hx,hy,cell-1,cell-1);
+            int selected=run.get(held);
+            if(selected>=0)Art.formationSelection(g,selected,hx,hy,cell,game.W,visualTime/90+held+37,0xFFFFFF);
         }
         // shop
         for (int i = 0; i < 5; i++) {
@@ -675,12 +677,19 @@ public final class ChessScreen extends Screen {
             g.setColor(0xFFE040);
             g.drawRect(cx, cy, cwid - 1, chei - 1);
         }
+        if(zone<=1&&held<0){
+            int target=zone==0?row*8+col:Run.BOARD+col,sp=run.get(target);
+            if(sp>=0)Art.formationSelection(g,sp,cx,cy,cell,game.W,visualTime/90+target,0xFFFFFF);
+        }
         if (held >= 0 && zone <= 1) {
             int hs=run.get(held);
             // The drag preview must use the same raw-atlas frame, canvas and
             // bottom anchor as board/bench units. Art.sprite() is the small
             // static collection icon and made a held Gen-1 Pokemon collapse.
-            if (hs >= 0)drawSetupUnit(g,hs,cx,cy,cell,held+37);
+            if(hs>=0){
+                drawSetupUnit(g,hs,cx,cy,cell,held+37);
+                Art.formationSelection(g,hs,cx,cy,cell,game.W,visualTime/90+held+37,0xFFFFFF);
+            }
         }
 
         paintPrepDock(g,infoY,53);

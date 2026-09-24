@@ -554,7 +554,7 @@ public final class ChessScreen extends Screen {
         int W = game.W, H = game.H, fh = Art.fh;
         cell = W / 8;
         while (true) {
-            hudH = 38;
+            hudH = fh * 2 + 4;
             shopH = cell + fh + 2;
             btnH = fh + 4;
             // Reserve two item/team rows plus the original information panel.
@@ -607,14 +607,18 @@ public final class ChessScreen extends Screen {
         g.fillRect(0, 0, W, H);
 
         // HUD
-        int prepRoadSize=W<200?28:32,roadW=prepRoadSize*3+10,roadX=W-roadW-2;
-        int statsW=Math.max(24,roadX-5);
-        String roundHud=Lang.t("V","R")+run.round+"/"+run.maxRound()+" HP"+run.hp;
-        String xp=run.level>=Data.MAX_LEVEL?"MAX":run.xp+"/"+Data.XP_NEED[run.level];
-        String money=unlimitedGold?"INF":""+run.gold;
-        Art.text(g,fitHud(roundHud,statsW),3,1,run.hp>40?0xFFFFFF:0xFF7070);
-        Art.text(g,fitHud("Lv"+run.level+" "+xp+" $"+money,statsW),3,fh+2,0xB0C8FF);
-        StageRoad.draw(g,roadX,2,run.round,run.maxRound(),prepRoadSize);
+        String roundText=Lang.t("Vòng ","Round ")+run.round+"/"+run.maxRound();
+        String levelText="Lv"+run.level+" "+(run.level>=Data.MAX_LEVEL?"MAX":run.xp+"/"+Data.XP_NEED[run.level])+"  "+run.boardCount()+"/"+run.level;
+        Art.text(g,roundText,3,1,0xFFFFFF);
+        Art.uiIcon(g,1,W-43,0);Art.textR(g,""+run.hp,W-3,1,run.hp>40?0x80FF80:0xFF6060);
+        Art.uiIcon(g,7,2,fh+1);Art.text(g,levelText,18,fh+2,0xB0C8FF);
+        String money=unlimitedGold?"INF":""+run.gold;int moneyX=W-3-Art.textWidth(money)-9;
+        Art.textB(g,"$",moneyX,fh+1,0xFFD030);Art.textR(g,money,W-3,fh+2,0xFFD030);
+        int prepLeft=Math.max(3+Art.textWidth(roundText),18+Art.textWidth(levelText))+3;
+        int prepRight=Math.min(W-44,moneyX-3),prepAvail=prepRight-prepLeft;
+        int prepCount=prepAvail>=82?3:2,prepTotal=prepCount*24+(prepCount-1)*5;
+        int prepX=prepAvail>=prepTotal?prepLeft+(prepAvail-prepTotal)/2:(W-prepTotal)/2;
+        StageRoad.draw(g,prepX,2,run.round,run.maxRound(),24,prepCount);
 
         int bx = (W - 8 * cell) / 2;
         // Pass 1: paint every formation cell. Units must not be interleaved with
@@ -1100,7 +1104,7 @@ public final class ChessScreen extends Screen {
         int W = game.W, H = game.H, fh = Art.fh;
         g.setColor(0x0E141C);
         g.fillRect(0, 0, W, H);
-        int top = Math.max(fh * 2 + 4, 36);
+        int top = fh * 2 + 4;
         int panelH = H >= 280 ? 144 : 116;
         int cs = Math.min(W / 8, (H - top - panelH - 3) / 6);
         int bx = (W - cs * 8) / 2, by = top;
@@ -1255,13 +1259,14 @@ public final class ChessScreen extends Screen {
         }
 
         // HUD
-        int roadSize=W<176?28:32;
-        int roadRight=StageRoad.draw(g,3,2,run.round,run.maxRound(),roadSize);
-        int titleW=Math.max(18,W-roadRight-7);
-        String battleTitle=fitHud("R"+run.round+" vs "+run.enemyName,titleW);
-        Art.textR(g,battleTitle,W-3,1,0xFFFFFF);
+        String battleTitle="R"+run.round+"  vs "+run.enemyName;
+        String aliveText=W<200?Lang.t("T","Y")+bt.alive(0)+" "+Lang.t("Đ","F")+bt.alive(1):Lang.t("Ta ","You ")+bt.alive(0)+Lang.t("  Địch ","  Foe ")+bt.alive(1);
         String perf="x"+speed+" "+game.actualFps+"/"+Save.targetFps()+"FPS"+(bt.tick>Battle.SUDDEN_DEATH?" SUDDEN":"");
-        Art.textR(g,fitHud(perf,titleW),W-3,fh+2,0xFFD030);
+        int battleCount=W>=320?3:2;
+        int battleRight=StageRoad.draw(g,3,2,run.round,run.maxRound(),24,battleCount);
+        Art.text(g,fitHud(battleTitle,W-battleRight-6),battleRight+3,1,0xFFFFFF);
+        Art.text(g,aliveText,battleRight+3,fh+2,0xB0C8FF);
+        Art.textR(g,perf,W-3,fh+2,0xFFD030);
         paintBattleStats(g, by + 6 * cs + 2, H-(by+6*cs+2));
         if(bt.over&&endReady){
             int ph=fh+6,py=H-ph;

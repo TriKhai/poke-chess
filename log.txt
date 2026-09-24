@@ -3,7 +3,9 @@ POKE AUTO CHESS ME - VERSION LOG
 
 v1.4.4 - 40-Stage Road
 - Normal và DEV mở rộng thành 40 ải; mode 30 vòng và Gen 1 vẫn giữ mục tiêu riêng.
-- Thêm HUD ba mốc lớn: ải hiện tại sáng trắng, hai ải sau làm tối; boss dùng đúng
+- Giữ nguyên HUD hai dòng Vòng/HP và Level/Vàng; chèn lộ trình 24px vào khoảng
+  giữa, hiện 3 mốc khi đủ ngang và tự giảm còn 2. Battle giữ nguyên chiều cao hai
+  dòng, mặc định hiện 2 mốc. Ải hiện tại sáng trắng, ải sau làm tối; boss dùng đúng
   portrait đại diện từ PVEStages source gốc tại 9/14/19/24/28/32/36/40.
 - Lịch sử kết quả mở rộng 30 -> 40 điểm và đọc tương thích schema lịch sử cũ.
 - Đội hình PvE source được dời đúng lịch 40 ải; các boss Gen 1-3 có đội hình thật,

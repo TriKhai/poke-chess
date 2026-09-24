@@ -31,7 +31,12 @@ public final class StageRoad {
 
     /** Draw current stage and the next two. Returns the right edge used. */
     public static int draw(Graphics g,int x,int y,int current,int max,int size){
-        int n=Math.min(3,max-current+1);if(n<=0)return x;
+        return draw(g,x,y,current,max,size,3);
+    }
+
+    /** Same road with a responsive maximum number of visible steps. */
+    public static int draw(Graphics g,int x,int y,int current,int max,int size,int visible){
+        int n=Math.min(visible,max-current+1);if(n<=0)return x;
         int gap=5,total=n*size+(n-1)*gap;
         for(int i=0;i<n;i++){
             int round=current+i,sx=x+i*(size+gap);boolean now=i==0;

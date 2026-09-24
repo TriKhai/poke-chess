@@ -60,16 +60,25 @@ public final class RawAtlas {
         return CACHE[sp];
     }
 
+    private int visibleAction(int action,int direction){
+        if(action==IDLE){
+            short[] idle=frames[IDLE][direction],walk=frames[WALK][direction];
+            if((idle==null||idle.length<=8)&&walk!=null&&walk.length>8)return WALK;
+        }
+        return action;
+    }
+
     /** Draw one untouched atlas region using the JSON source-canvas anchor. */
     public static boolean draw(Graphics g,int sp,int x,int y,int boxW,int boxH,
                                int action,int direction,int clock){
         RawAtlas atlas=get(sp); if(atlas==null)return false;
         if(action<0||action>=6)action=IDLE;
         direction&=7;
+        int requested=action;action=atlas.visibleAction(action,direction);
         short[] clip=atlas.frames[action][direction];
         if(clip==null||clip.length==0)return false;
         int count=clip.length/8;
-        int frame=(clock/2)%count;
+        int frame=(clock/(requested==IDLE&&action==WALK?3:2))%count;
         int p=frame*8;
         int sx=clip[p]&65535,sy=clip[p+1]&65535;
         int sw=clip[p+2]&65535,sh=clip[p+3]&65535;
@@ -90,9 +99,10 @@ public final class RawAtlas {
         RawAtlas atlas=get(sp); if(atlas==null)return false;
         if(action<0||action>=6)action=IDLE;
         direction&=7;
+        int requested=action;action=atlas.visibleAction(action,direction);
         short[] clip=atlas.frames[action][direction];
         if(clip==null||clip.length==0)return false;
-        int count=clip.length/8,frame=(clock/2)%count,p=frame*8;
+        int count=clip.length/8,frame=(clock/(requested==IDLE&&action==WALK?3:2))%count,p=frame*8;
         int sw=clip[p+2]&65535,sh=clip[p+3]&65535;
         int ox=clip[p+4]&65535,oy=clip[p+5]&65535;
         int sourceW=clip[p+6]&65535,sourceH=clip[p+7]&65535;
@@ -109,9 +119,10 @@ public final class RawAtlas {
                                         int screenW,int direction,int clock){
         RawAtlas atlas=get(sp); if(atlas==null)return false;
         direction&=7;
-        short[] clip=atlas.frames[IDLE][direction];
+        int action=atlas.visibleAction(IDLE,direction);
+        short[] clip=atlas.frames[action][direction];
         if(clip==null||clip.length==0)return false;
-        int count=clip.length/8,frame=(clock/2)%count,p=frame*8;
+        int count=clip.length/8,frame=(clock/(action==WALK?3:2))%count,p=frame*8;
         int sx=clip[p]&65535,sy=clip[p+1]&65535;
         int sw=clip[p+2]&65535,sh=clip[p+3]&65535;
         boolean turn=atlas.rotated[IDLE][direction][frame]!=0;
@@ -129,9 +140,9 @@ public final class RawAtlas {
     public static boolean drawFormationOutline(Graphics g,int sp,int x,int y,int boxW,int boxH,
                                                int screenW,int direction,int clock,int color){
         RawAtlas atlas=get(sp);if(atlas==null)return false;
-        direction&=7;short[] clip=atlas.frames[IDLE][direction];
+        direction&=7;int action=atlas.visibleAction(IDLE,direction);short[] clip=atlas.frames[action][direction];
         if(clip==null||clip.length==0)return false;
-        int count=clip.length/8,frame=(clock/2)%count,p=frame*8;
+        int count=clip.length/8,frame=(clock/(action==WALK?3:2))%count,p=frame*8;
         int sx=clip[p]&65535,sy=clip[p+1]&65535,sw=clip[p+2]&65535,sh=clip[p+3]&65535;
         boolean turn=atlas.rotated[IDLE][direction][frame]!=0;
         int visibleW=turn?sh:sw,visibleH=turn?sw:sh;

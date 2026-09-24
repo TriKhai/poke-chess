@@ -50,8 +50,13 @@ public final class CollectionAtlas {
     public static boolean draw(Graphics g,int index,int x,int y,int boxW,int boxH,int action,int direction,int clock){
         CollectionAtlas atlas=get(index);if(atlas==null)return false;
         if(action<0||action>=6)action=0;direction&=7;
+        int requested=action;
+        if(action==0){
+            short[] idle=atlas.frames[0][direction],walk=atlas.frames[1][direction];
+            if((idle==null||idle.length<=8)&&walk!=null&&walk.length>8)action=1;
+        }
         short[] clip=atlas.frames[action][direction];if(clip==null||clip.length==0)return false;
-        int count=clip.length/8,frame=(clock/2)%count,p=frame*8;
+        int count=clip.length/8,frame=(clock/(requested==0&&action==1?3:2))%count,p=frame*8;
         int sx=clip[p]&65535,sy=clip[p+1]&65535,sw=clip[p+2]&65535,sh=clip[p+3]&65535;
         int ox=clip[p+4]&65535,oy=clip[p+5]&65535,sourceW=clip[p+6]&65535,sourceH=clip[p+7]&65535;
         int transform=atlas.rotated[action][direction][frame]!=0?TRANS_ROT270:TRANS_NONE;

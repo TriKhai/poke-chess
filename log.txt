@@ -280,6 +280,9 @@ v1.3.9RC2 - Formation selection và hiệu ứng mua pet
 - Hotfix RC2: thay burst primitive bằng nguyên 5 frame 32x32 của
   only_tham_khao/assets/abilities{tps}/SPAWN. Viền chọn lấy alpha từ đúng raw-atlas
   frame và transform đang hiển thị, sửa lỗi viền fallback lệch thành chấm vuông.
+- Hotfix idle: atlas gốc có 6 Pokémon chỉ chứa một frame IDLE dù WALK có 4 frame:
+  Persian, Arcanine, Sudowoodo và ba Pokémon Collection #510/#812/#995. Renderer
+  tự dùng WALK chậm tại chỗ khi được yêu cầu IDLE; Battle action khác giữ nguyên.
 
 v1.3.9RC - Release Candidate
 - Đóng băng gameplay và giữ nguyên toàn bộ animation/hiệu ứng hiện có.

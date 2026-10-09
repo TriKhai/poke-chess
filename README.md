@@ -1,6 +1,26 @@
 # POKE CHESS — Bảo bối thần kỳ
 
-Game Pokémon offline dành cho Java ME. Phiên bản build hiện tại: **1.7.18**.
+Game Pokémon offline dành cho Java ME. Dự án fan-made, miễn phí, phi thương mại — dành cho người hâm mộ, được làm bởi người hâm mộ.
+
+## Quyền Pokémon thuộc The Pokémon Company và các chủ sở hữu liên quan. Dự án có thể ngừng phát triển hoặc phát hành theo yêu cầu của chủ sở hữu quyền.
+
+Không liên kết chính thức, không được tài trợ và không tuyên bố được các chủ sở hữu Pokémon cấp phép. Quyền đối với sprite, artwork, nhạc và code bên thứ ba thuộc từng tác giả/chủ sở hữu tương ứng.
+
+**Phiên bản hiện tại:** 1.7.18 — bản thử phát hành RC1, cần kiểm thử thêm trên thiết bị.
+
+**Chơi game:** tải `PokeChess-Full.jar` và `PokeChess-Full.jad` cùng phiên bản tại [Releases](https://github.com/TriKhai/poke-chess/releases) khi bản phát hành được đăng; chạy bằng thiết bị hoặc giả lập Java ME/MIDP 2.0.
+
+**Source:** [TriKhai/poke-chess](https://github.com/TriKhai/poke-chess).
+
+**Thực hiện:** Kdic, với sự đóng góp của Cộng đồng Game Java Việt Nam.
+
+**Nguồn tham khảo/chuyển thể:** [Pokémon Auto Chess — keldaanCommunity](https://github.com/keldaanCommunity/pokemonAutoChess).
+
+**Ghi công nghệ sĩ:** [Danh sách tác giả theo từng bộ tài nguyên](CREDITS_ASSETS.md).
+
+---
+
+## Phạm vi Pokémon và tài nguyên
 
 Đợt rà Gen 1–9: topology tiến hóa cụ thể, dạng có animation cho Gen 4–9,
 kiểm thử ghép/chọn nhánh và workbook 9 sheet. Phạm vi và tài nguyên còn thiếu:

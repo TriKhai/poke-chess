@@ -6,7 +6,7 @@ Game Pokémon offline dành cho Java ME. Dự án fan-made, miễn phí, phi th�
 
 Không liên kết chính thức, không được tài trợ và không tuyên bố được các chủ sở hữu Pokémon cấp phép. Quyền đối với sprite, artwork, nhạc và code bên thứ ba thuộc từng tác giả/chủ sở hữu tương ứng.
 
-**Phiên bản hiện tại:** 1.7.18 — bản thử phát hành RC1, cần kiểm thử thêm trên thiết bị.
+**Phiên bản build hiện tại:** 1.7.40 — vá vùng chạm Shop và cộng dồn khiên Shiny/trang bị, kiểm thử hồi quy và chuẩn bị gói phát hành. Cần kiểm thử thêm trên thiết bị trước phát hành.
 
 **Chơi game:** tải `PokeChess-Full.jar` và `PokeChess-Full.jad` cùng phiên bản tại [Releases](https://github.com/TriKhai/poke-chess/releases) khi bản phát hành được đăng; chạy bằng thiết bị hoặc giả lập Java ME/MIDP 2.0.
 

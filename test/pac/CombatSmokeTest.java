@@ -246,6 +246,9 @@ public final class CombatSmokeTest {
         Explore181Test.run();
         AvatarRouteTest.run();
         ReleaseAudit181Test.run();
+        SurvivalShopTest.run();
+        SurvivalGearTest.run();
+        Survival1739Test.run();
         MusicRoutingTest.run();
         MidiResourceTest.run();
         check172Stability();

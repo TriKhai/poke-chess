@@ -1,6 +1,42 @@
 POKE AUTO CHESS ME - OFFLINE REMAKE UPDATE
 ==========================================
 
+1.7.40 - Release preparation fixes
+- Ignore the blank Buy button when inspecting equipped items; tighten slot/button touch bounds.
+- Preserve temporary equipment shields when selecting Shiny and on shield expiry.
+- Verify shop/HUD classes in the release JAR alongside existing resource/manifest/JAD audits.
+- Emulator touch, audio and device FPS remain manual release checks.
+
+1.7.39 - Shop touch/layout polish
+- Equipped slots select details only; selling requires two taps on Sell.
+- Clip recipe connectors to list bounds; retain 320x240 stats and wrapped item details.
+- Regression tests cover 18 recipes at all seven free-slot counts, quick buy, resale and bag refill.
+
+1.7.38 - Uprising economy tuning
+- Price equipment by utility/damage/defensive role, retaining component-credit arithmetic.
+- Normal kill gold capped at 5; boss gold 30 + 2 per wave capped at 100.
+- Existing boss/EXP/ultimate/passive curves checked by deterministic regression suite.
+
+1.7.37 - Shop transactions
+- Rebuild stats immediately when worn components are consumed.
+- Suppress planned quick-buy when the finished target is already stored.
+- Automatically fill free slots after purchases and sales; preserve overflow inventory.
+
+1.7.20 - Uprising equipment/crafting UI
+- Four tabs: stats, shop, equipment, craft. Landscape list left/details right.
+- Equipment: six equipped slots, description, component bag row and finished gear row.
+- Crafting: input one + input two = output preview, description and two bag rows.
+- Separate hover and two-tap actions; 7/9 tabs, 2/8 rows, 4/6 cells, 5 actions, # craft.
+- Shared draw/touch geometry and layout/recipe regression tests.
+
+1.7.19 - Pokemon Uprising shop and expanded arena
+- 1280x960 arena; reuse existing terrain, visible-cell rendering, player-relative spawn ring.
+- 0/R pauses into Stats, Shop and Craft/Gear tabs; resume or confirm end attempt.
+- Run-local gold buys ten-rank stat upgrades, components and six finished gear items.
+- Bosses drop 2-4 free collectible components; six gear slots and two-component recipes.
+- Arena passives: lifesteal, damage reduction, regeneration, ultimate cooldown/damage and cheaper dash.
+- Two-tap touch, scrollable lists, descriptions and HUD gear icons; transaction/passive/retry regressions.
+
 1.7.18 - Explore capture refresh (no equipment/shop)
 - Continuous eight-direction profile-Pokemon movement with held keys/touch dragging, Uprising interpolation and distance-based WALK/IDLE cadence.
 - New lightweight generated tiles for the three Explore maps; separate collision data.

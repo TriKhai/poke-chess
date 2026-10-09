@@ -50,6 +50,7 @@ public final class ReleaseArtifactTest {
             for(int gen=4;gen<=9;gen++)for(int size=12;size<=20;size+=4)check(entry(jar,"map/explore-gen"+gen+"-"+size+".png"),"regional Explore tiles missing: Gen "+gen+" size "+size);
             check(!entry(jar,"ui/menu-background.jpg"),"Removed menu background still packaged");
             check(entry(jar,"pac/SurvivalRun.class")&&entry(jar,"pac/SurvivalScreen.class"),"Explore defence mode missing");
+            check(entry(jar,"pac/SurvivalShop.class")&&entry(jar,"pac/SurvivalShopScreen.class")&&entry(jar,"pac/SurvivalShopLayout.class")&&entry(jar,"pac/SurvivalGearIcons.class"),"Shop or equipment HUD code missing");
             check(entry(jar,"pac/SurvivalPickScreen.class")&&entry(jar,"pac/SurvivalProgress.class"),"Defence picker/progression missing");
             check(entry(jar,"pac/SurvivalTap.class")&&entry(jar,"fx/spawn/0.png"),"Defence double-tap/death effects missing");
             check(entry(jar,"pac/SurvivalBolt.class")&&entry(jar,"fx/survival-bolt.png"),"Animated defence projectile missing");

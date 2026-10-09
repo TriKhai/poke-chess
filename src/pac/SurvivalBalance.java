@@ -4,6 +4,7 @@ package pac;
 public final class SurvivalBalance {
  private SurvivalBalance(){}
  public static final int ULTIMATE_MS=30000,DASH_MANA=20;
+ public static int killGold(int n,boolean boss){int w=wave(n);return boss?30+Math.min(70,w*2):1+Math.min(4,w/5);}
  private static int wave(int n){return Math.max(1,Math.min(10000,n));}
  public static int enemyHp(int species,int n,int role){int w=wave(n),late=Math.max(0,w-10);long hp=24+Data.hp[species]/3+w*5+late*2;if(w>=10)hp=hp*(200L+late*15L)/100;hp=Math.min(1000000L,hp);return role==3?(int)hp*3:role==2?Math.max(15,(int)hp*65/100):(int)hp;}
  public static int enemyAtk(int species,int n){int w=wave(n),late=Math.max(0,w-10);long power=Math.max(2,Data.atk[species]/3)+w/4+late/6;if(w>=10)power=power*(170L+late*10L)/100;return (int)Math.min(1000000L,power);}

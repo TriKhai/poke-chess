@@ -3,7 +3,7 @@ package pac;
 /** Generated from data/survival-map.json; art and walk geometry are independent. */
 public final class SurvivalMapData {
     private SurvivalMapData(){}
-    public static final int TILE=32,COLS=20,ROWS=15;
+    public static final int TILE=32,COLS=40,ROWS=30;
     public static final String[] GROUND={
         "23010201045010102323",
         "30100101054010010232",
@@ -21,6 +21,6 @@ public final class SurvivalMapData {
         "32101010105410101032",
         "23230101014501013232"
     };
-    public static int tile(int x,int y){return GROUND[y].charAt(x)-48;}
-    public static boolean walkable(int x,int y){return x>=12&&y>=12&&x<=628&&y<=468;}
+    public static int tile(int x,int y){return GROUND[y%GROUND.length].charAt(x%GROUND[0].length())-48;}
+    public static boolean walkable(int x,int y){return x>=12&&y>=12&&x<=SurvivalRun.WIDTH-12&&y<=SurvivalRun.HEIGHT-12;}
 }

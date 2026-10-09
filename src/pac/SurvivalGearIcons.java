@@ -1,0 +1,10 @@
+package pac;
+import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
+/** Bounded, size-aware HUD cache. No pixel processing during steady-state painting. */
+public final class SurvivalGearIcons {
+ private final Image[] normal=new Image[SurvivalShop.GEARS+SurvivalShop.PARTS],gray=new Image[SurvivalShop.GEARS+SurvivalShop.PARTS];
+ private final boolean[] tried=new boolean[SurvivalShop.GEARS+SurvivalShop.PARTS];private int cachedSize;
+ public static int[] fit(int[] pixels,int w,int h,int size,boolean grayscale){int left=w,top=h,right=-1,bottom=-1;for(int y=0;y<h;y++)for(int x=0;x<w;x++)if((pixels[y*w+x]>>>24)!=0){left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);}int[] out=new int[size*size];if(right<left)return out;int bw=right-left+1,bh=bottom-top+1,dw=size,dh=size;if(bw>bh)dh=Math.max(1,size*bh/bw);else dw=Math.max(1,size*bw/bh);int ox=(size-dw)/2,oy=(size-dh)/2;for(int y=0;y<dh;y++)for(int x=0;x<dw;x++){int c=pixels[(top+y*bh/dh)*w+left+x*bw/dw];if(grayscale){int v=(((c>>16)&255)*30+((c>>8)&255)*59+(c&255)*11)/100;c=(c&0xFF000000)|(v<<16)|(v<<8)|v;}out[(oy+y)*size+ox+x]=c;}return out;}
+ public void draw(Graphics g,int gear,int x,int y,int size,boolean cooling){if(gear<0||gear>=normal.length||size<1)return;if(size!=cachedSize){cachedSize=size;for(int i=0;i<normal.length;i++){normal[i]=gray[i]=null;tried[i]=false;}}if(!tried[gear]){tried[gear]=true;try{Image source=Image.createImage("/item/"+(gear<SurvivalShop.GEARS?SurvivalShop.GEAR_ID[gear]:ItemData.ID[SurvivalShop.ICON[gear-SurvivalShop.GEARS]])+".png");int w=source.getWidth(),h=source.getHeight();int[] pixels=new int[w*h];source.getRGB(pixels,0,w,0,0,w,h);normal[gear]=Image.createRGBImage(fit(pixels,w,h,size,false),size,size,true);gray[gear]=Image.createRGBImage(fit(pixels,w,h,size,true),size,size,true);}catch(Exception e){}}Image icon=cooling?gray[gear]:normal[gear];if(icon!=null)g.drawImage(icon,x,y,Graphics.TOP|Graphics.LEFT);else{g.setColor(cooling?0x68727C:0xFFD070);g.fillRect(x,y,size,size);}}
+}

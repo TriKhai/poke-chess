@@ -3,6 +3,7 @@
   "visual_model": "tilemap", "runtime_object_model": "scene_hooks", "collision_model": "tile_collision",
   "art_style": "project_native_pixel_inspired", "visual_asset_source": "image_gen",
   "tileSize": 32, "columns": 20, "rows": 15,
+  "worldWidth": 1280, "worldHeight": 960, "repeatX": 2, "repeatY": 2,
   "tileset": "res/fx/survival-terrain.png", "atlasColumns": 4,
   "terrain": ["grass","grass","grass","grass","earth","earth","stone","stone"],
   "ground": [
@@ -25,14 +26,15 @@
   "walkBounds": {"x":12,"y":12,"width":616,"height":456},
   "blockedTiles": [], "blockers": [],
   "sceneHooks": {
-    "playerSpawn": {"x":320,"y":240},
+    "playerSpawn": {"x":640,"y":480},
     "enemySpawnZones": [
-      {"id":"north","x":8,"y":8,"width":624,"height":1},
-      {"id":"south","x":8,"y":472,"width":624,"height":1},
-      {"id":"west","x":8,"y":8,"width":1,"height":464},
-      {"id":"east","x":632,"y":8,"width":1,"height":464}
+      {"id":"north","x":8,"y":8,"width":1264,"height":1},
+      {"id":"south","x":8,"y":952,"width":1264,"height":1},
+      {"id":"west","x":8,"y":8,"width":1,"height":944},
+      {"id":"east","x":1272,"y":8,"width":1,"height":944}
     ],
-    "cameraBounds": {"x":0,"y":0,"width":640,"height":480},
+    "cameraBounds": {"x":0,"y":0,"width":1280,"height":960},
+    "activeEnemySpawn": {"mode":"player-relative-four-sides","radiusMin":200,"radiusMax":280,"sideSpread":200,"clampMargin":8},
     "exit": "pause-confirmed-summary"
   },
   "notes": "Open arena: flat ground art is fully walkable. No fake collidable trees or rocks are baked into the tiles."

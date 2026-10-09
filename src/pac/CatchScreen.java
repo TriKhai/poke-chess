@@ -67,7 +67,7 @@ public final class CatchScreen extends Screen {
         }
         if (k != Game.K_FIRE) return;
         if (Save.balls <= 0) {
-            world.encounterDone(wx, wy, false, Lang.t("Đã hết Bóng!", "Out of Poke Balls!"));
+            world.encounterDone(wx, wy, false, Lang.t("Đã hết \uE000!", "Out of \uE000!"));
             game.setScreen(world);
             return;
         }
@@ -82,7 +82,7 @@ public final class CatchScreen extends Screen {
                 msg = Lang.t("Đã bắt ", "Caught ") + Data.name[sp] + Lang.t("! MỚI trong bộ sưu tập!", "! NEW in collection!");
             } else {
                 Save.balls++;
-                msg = Lang.t("Đã bắt ", "Caught ") + Data.name[sp] + Lang.t("! (trùng, hoàn lại bóng)", "! (duplicate, ball refunded)");
+                msg = Lang.t("Đã bắt ", "Caught ") + Data.name[sp] + Lang.t("! (trùng, hoàn lại \uE000)", "! (duplicate, \uE000 refunded)");
             }
             Save.save();
             caught = true;
@@ -135,7 +135,7 @@ public final class CatchScreen extends Screen {
         g.setColor(0xFFFFFF);
         g.fillRect(mx - 1, by - 3, 3, bh + 6);
 
-        Art.textC(g, "Poke Balls: " + Save.balls, W / 2, by + bh + 6, 0xFF9090);
+        BallArt.amount(g,BallArt.NORMAL,Save.balls,W/2-24,by+bh+6,0xFF9090);
         if (state == 0) Art.textC(g, "FIRE: throw   0: run", W / 2, H - fh - 3, 0xE0E8FF);
         else Art.textBC(g, msg, W / 2, H - fh * 2 - 6, caught ? 0xFFE040 : 0xFFFFFF);
     }

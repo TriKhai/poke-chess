@@ -13,21 +13,25 @@ public final class RawAtlas {
     public static final int IDLE=0, WALK=1, ATTACK=2, VICTORY=3, HURT=4, POSE=5;
     private static final int RAW_COUNT=Data.N;
     private static final RawAtlas[] CACHE=new RawAtlas[RAW_COUNT];
+    private static final RawAtlas[] SHINY_CACHE=new RawAtlas[RAW_COUNT];
     private static final boolean[] FAILED=new boolean[RAW_COUNT];
+    private static final boolean[] SHINY_FAILED=new boolean[RAW_COUNT];
     private static final int[] AGE=new int[RAW_COUNT];
     /** Smooth profile: enough decoded atlases for a full formation without churn. */
     private static final int MAX_CACHE=24;
     private static int clock;
     private static int outlineSp=-1,outlineDir=-1,outlineCount=0;
     private static Image[] outlineFrames;
+    private static final Image[] fixedOutline=new Image[RAW_COUNT];
+    private static final int[] fixedOutlineColor=new int[RAW_COUNT];
     private Image sheet;
     /** action/direction -> packed x,y,w,h,offsetX,offsetY,sourceW,sourceH */
     private short[][][] frames=new short[6][8][];
     private byte[][][] rotated=new byte[6][8][];
 
-    private RawAtlas(int sp) throws Exception {
-        sheet=Image.createImage("/raw/"+sp+".png");
-        InputStream input=getClass().getResourceAsStream("/raw/"+sp+".dat");
+    private RawAtlas(int sp,boolean shiny,Image sharedSheet) throws Exception {
+        sheet=sharedSheet!=null?sharedSheet:Image.createImage("/raw/"+sp+".png");
+        InputStream input=getClass().getResourceAsStream((shiny?"/shinyraw/":"/raw/")+sp+".dat");
         if(input==null)throw new Exception("missing raw atlas index");
         DataInputStream in=new DataInputStream(input);
         if(in.readInt()!=0x50414352)throw new Exception("bad raw atlas index");
@@ -45,26 +49,35 @@ public final class RawAtlas {
         in.close();
     }
 
-    private static RawAtlas get(int sp){
+    private static RawAtlas get(int sp){return get(sp,false);}
+    private static RawAtlas get(int sp,boolean shiny){
         if(sp<0||sp>=RAW_COUNT)return null;
-        if(CACHE[sp]!=null){AGE[sp]=++clock;return CACHE[sp];}
+        RawAtlas[] cache=shiny?SHINY_CACHE:CACHE;boolean[] failed=shiny?SHINY_FAILED:FAILED;
+        if(cache[sp]!=null){AGE[sp]=++clock;return cache[sp];}
         // Lite intentionally omits /raw. Remember that miss so every paint does
         // not throw another exception and reopen the same absent resource.
-        if(FAILED[sp])return null;
-        int count=0,old=-1,oldAge=Integer.MAX_VALUE;
-        for(int i=0;i<RAW_COUNT;i++)if(CACHE[i]!=null){
-            count++;if(AGE[i]<oldAge){oldAge=AGE[i];old=i;}
+        if(failed[sp])return null;
+        int count=0,old=-1,oldAge=Integer.MAX_VALUE;boolean oldShiny=false;
+        for(int i=0;i<RAW_COUNT;i++){
+            if(CACHE[i]!=null){count++;if(AGE[i]<oldAge){oldAge=AGE[i];old=i;oldShiny=false;}}
+            if(SHINY_CACHE[i]!=null){count++;if(AGE[i]<oldAge){oldAge=AGE[i];old=i;oldShiny=true;}}
         }
-        if(count>=MAX_CACHE&&old>=0){CACHE[old]=null;AGE[old]=0;}
-        try{CACHE[sp]=new RawAtlas(sp);AGE[sp]=++clock;}
-        catch(Exception e){FAILED[sp]=true;return null;}
-        return CACHE[sp];
+        if(count>=MAX_CACHE&&old>=0){if(oldShiny)SHINY_CACHE[old]=null;else CACHE[old]=null;AGE[old]=0;}
+        try{Image shared=null;if(shiny){RawAtlas normal=get(sp,false);if(normal!=null)shared=normal.sheet;}cache[sp]=new RawAtlas(sp,shiny,shared);AGE[sp]=++clock;}
+        catch(Exception e){failed[sp]=true;return null;}
+        return cache[sp];
     }
+
+    public static boolean hasShiny(int sp){return get(sp,true)!=null;}
 
     /** Draw one untouched atlas region using the JSON source-canvas anchor. */
     public static boolean draw(Graphics g,int sp,int x,int y,int boxW,int boxH,
                                int action,int direction,int clock){
-        RawAtlas atlas=get(sp); if(atlas==null)return false;
+        return draw(g,sp,x,y,boxW,boxH,action,direction,clock,false);
+    }
+    public static boolean draw(Graphics g,int sp,int x,int y,int boxW,int boxH,
+                               int action,int direction,int clock,boolean shiny){
+        RawAtlas atlas=get(sp,shiny); if(atlas==null&&shiny)atlas=get(sp,false);if(atlas==null)return false;
         if(action<0||action>=6)action=IDLE;
         direction&=7;
         short[] clip=atlas.frames[action][direction];
@@ -88,7 +101,11 @@ public final class RawAtlas {
     /** Returns the exact visible frame rectangle produced by draw(). */
     public static boolean bounds(int sp,int x,int y,int boxW,int boxH,
                                  int action,int direction,int clock,int[] out){
-        RawAtlas atlas=get(sp); if(atlas==null)return false;
+        return bounds(sp,x,y,boxW,boxH,action,direction,clock,out,false);
+    }
+    public static boolean bounds(int sp,int x,int y,int boxW,int boxH,
+                                 int action,int direction,int clock,int[] out,boolean shiny){
+        RawAtlas atlas=get(sp,shiny);if(atlas==null&&shiny)atlas=get(sp,false);if(atlas==null)return false;
         if(action<0||action>=6)action=IDLE;
         direction&=7;
         short[] clip=atlas.frames[action][direction];
@@ -108,7 +125,11 @@ public final class RawAtlas {
     /** Stable formation renderer: centres visible pixels, not transparent sourceSize. */
     public static boolean drawFormation(Graphics g,int sp,int x,int y,int boxW,int boxH,
                                         int screenW,int direction,int clock){
-        RawAtlas atlas=get(sp); if(atlas==null)return false;
+        return drawFormation(g,sp,x,y,boxW,boxH,screenW,direction,clock,false);
+    }
+    public static boolean drawFormation(Graphics g,int sp,int x,int y,int boxW,int boxH,
+                                        int screenW,int direction,int clock,boolean shiny){
+        RawAtlas atlas=get(sp,shiny);if(atlas==null&&shiny)atlas=get(sp,false);if(atlas==null)return false;
         direction&=7;
         short[] clip=atlas.frames[IDLE][direction];
         if(clip==null||clip.length==0)return false;
@@ -137,6 +158,7 @@ public final class RawAtlas {
         int visibleW=turn?sh:sw,visibleH=turn?sw:sh;
         int dx=x+(boxW-visibleW)/2;if(dx<0)dx=0;if(dx+visibleW>screenW)dx=screenW-visibleW;
         int dy=y+boxH-visibleH-2;
+        if(clock==0&&fixedOutline[sp]!=null&&fixedOutlineColor[sp]==color){g.drawImage(fixedOutline[sp],dx-2,dy-2,Graphics.TOP|Graphics.LEFT);return true;}
         if(outlineSp!=sp||outlineDir!=direction||outlineCount!=count){
             outlineSp=sp;outlineDir=direction;outlineCount=count;outlineFrames=new Image[count];
         }
@@ -152,6 +174,7 @@ public final class RawAtlas {
             for(int yy=0;yy<visibleH;yy++)for(int xx=0;xx<visibleW;xx++)if((src[yy*visibleW+xx]>>>24)!=0)out[(yy+2)*ow+xx+2]=0;
             outlineFrames[frame]=Image.createRGBImage(out,ow,oh,true);
         }catch(Exception e){return false;}
+        if(clock==0){fixedOutline[sp]=outlineFrames[frame];fixedOutlineColor[sp]=color;}
         g.drawImage(outlineFrames[frame],dx-2,dy-2,Graphics.TOP|Graphics.LEFT);
         return true;
     }

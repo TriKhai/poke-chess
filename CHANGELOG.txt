@@ -1,6 +1,206 @@
 POKE AUTO CHESS ME - OFFLINE REMAKE UPDATE
 ==========================================
 
+1.7.18 - Explore capture refresh (no equipment/shop)
+- Continuous eight-direction profile-Pokemon movement with held keys/touch dragging, Uprising interpolation and distance-based WALK/IDLE cadence.
+- New lightweight generated tiles for the three Explore maps; separate collision data.
+- Open all nine capture generations with independent quest/catch/save progress.
+- Six new generated regional atlases and distinct Gen4-9 layouts: ridges, canals, gardens, island coast, moor and canyon.
+- Keep only the current area's small atlas cached; no source artwork bundled.
+- Battle HUD/rosters/details now use active Mega/Shiny/special-form portraits, including dead-unit gray tint; exact-size cache keys prevent stale portraits.
+- Audit notes: Mega Skarmory/Tyranitar/Medicham/Darkrai lack supplied Shiny art; retain the Mega portrait (matching sprite fallback), not the base-species portrait. Shiny bonuses remain active.
+- Journal tabs: quests and caught Pokemon, with portraits, types and saved catch counts.
+- Touch support for capture prompts and immediate persistence of consumed balls.
+- Expanded music titles/composer credits in About and credit files.
+- Regression coverage for movement, map connectivity and caught-list filtering.
+
+1.7.17 - Pokemon Uprising balance (no arena equipment/shop)
+- Preserve player base stats, 30s ultimate, 20MP blink, five-ray/three-burst caps.
+- Boss EXP is 12 + wave/5 (max 30), regular EXP remains 3; rising quadratic level cost preserved.
+- Longer readable boss telegraphs/cooldowns and minimum 320ms spawn interval.
+- Shiny ultimate +25%; tank shield, ranged critical and spell resistance applied in arena.
+- Retain strong enemy scaling from wave 10; overflow-safe high-wave calculations.
+- Regression checks: 500 waves, 386 Shiny/27 Mega core forms, shields and full cooldown cycle.
+
+1.7.16 - Stability audit
+- Challenge-menu draw/hit alignment and fresh touch-confirmation state.
+- Pending Tower buff restore advances to the correct next floor.
+- Validate saved species, equipment and nonnegative inventories; normalize active Mega form.
+- Arena Zygarde 100% can Mega Evolve; reject empty/incompatible form choices.
+- Gen1-9 merge/evolution/save and four optional chess-mode regression suites passed.
+- Test details and manual-device checklist: docs/RELEASE_1716_1717.md.
+
+MIDI background music trial (v1.7.14)
+- Startup/menu: Tinh Ban Vinh Cuu; Auto Chess and Explore use the requested Littleroot remixes.
+- Approximate GM piano transcription, maximum four voices; no MP3 packaged.
+- One MMAPI player on a worker, looping; same-mode screen transitions retain playback.
+- Pause/background releases the player; Settings includes persistent music on/off.
+- MIDI parsing/routing tests; actual MMAPI playback and FPS remain device tests.
+
+Survival balance (v1.7.13; includes v1.7.12 polish)
+- Reserved projectile slots: 56 player / 16 enemy; fixed 72-slot pool.
+- Follow-up burst damage 85%, side pellets 60%; +80ms cooldown per extra burst.
+- Gentler opening waves, steeper health growth after wave 10; boss every fifth wave.
+- Bounded buff roll, capped-speed and element-selection guards, zero-aim fix.
+- Tests cover max firing and 28 enemies/72 rays over 10000 ticks; device FPS unverified.
+
+Release polish (v1.7.12)
+- Direct Gacha ball chips and two-tap Draw/Help/Auto/Back controls.
+- Shared draw/hit geometry and stale touch reset; bounded wallet cells.
+- Save/reward/retry regression checks retained; no shop or save format changes.
+
+Inline ball icon audit (v1.7.11)
+- Replaced remaining currency labels in screen titles, help, notices and descriptions.
+- PixelFont draws/Measures normal, silver and gold icons inside wrapped text.
+- No exchange, reward or save economy changes.
+
+Ball exchange and icon wallet (v1.7.10)
+- Added Ball Exchange to Explore; kept 10 normal -> 1 silver and 100 normal -> 1 gold.
+- Icon-based exchange rows, wallet, Gacha selection, catch balance and Survival reward.
+- Two-tap touch confirmation; no negative balances or destination overflow.
+
+Explore cleanup (v1.7.9)
+- Removed Pet Farm and Pokemon Camp from Explore navigation.
+- Legacy camp slots no longer lock Pokemon; save format and owned roster preserved.
+- Explore now offers Collect, Gacha and Endless Defence.
+
+Survival bug fixes (v1.7.8)
+- Continue regional evolution; preserve selected branches at later milestones.
+- Multi-choice evolution popup with paged avatars/types and touch navigation.
+- Refresh invalid attack elements after evolution/form changes.
+- Two-tap buff confirmation; retain capped fan/burst/range buffs from v1.7.7.
+- Regression suite and Full JAR/JAD checks pass; device UI/FPS testing pending.
+
+Gen 1-9 topology and source-backed forms (v1.7.6)
+- Replaced inferred later-generation evolution routes with canonical topology;
+  regional-only children stay off ordinary routes. Save species IDs preserved.
+- Packed 226 additional form resources (222 playable in the existing roster),
+  14 later Megas and Gen-1 Mega Slowbro. Skipped 52 incomplete candidates.
+- Filled source-backed Gen-1 regional pre-evolutions and three Paldea Tauros
+  breeds; purchase choice supports more than two forms.
+- Added multi-form evolution options, regional chains, White Basculin route,
+  type/synergy handling, item cycling/reset and game-scale upgrade bonuses.
+- Added all-generation merge/save/item/Mega regression and PACR artifact checks.
+- Expanded List_Pokemon.xlsx to 9 generation sheets and 1025 records; 81 missing
+  base species explicitly marked, without inventing gameplay data.
+- See docs/ALL_GEN_FORMS.md for adaptations, resource gaps and test limitations.
+
+Gen 3 forms and evolution audit (v1.7.5)
+- Added 11 complete Mega animation sets; 16 supported Gen-3 Megas in total.
+- Added Galar Zigzagoon/Linoone -> Obstagoon, Castform weather and Purple Kecleon.
+- Added Wurmple, Kirlia, Snorunt, Clamperl and Nincada species-choice routes.
+  Shedinja is a choice, not an extra free unit.
+- Fixed Budew/Roselia/Roserade and Chingling/Chimecho family links; full-bench
+  regional merging, Galar-chain synergy deduplication and Primal Groudon Fire.
+- Added 138 Gen-3 merge/branch/save cases and packaged PACR validation.
+- Updated List_Pokemon.xlsx with Gen 3 (135 rows), preserving Gen 1/2 sheets.
+- Portrait-only/incomplete Megas remain disabled; missing shiny art uses normal.
+
+Explore polish (v1.7.4)
+- Restored thicker segmented enemy HP bars; full-width XP strip on detail border.
+- Actual slow idle animation; brighter/longer normal rays; reused shop spawn
+  flash in reverse for KO and delayed player-defeat summary.
+- Fresh double-tap direction blinks 64px with normalized diagonals, bounds,
+  900ms cooldown and brief evade. Holding/repeating directions never blinks.
+- Enemy-centred AoE ultimate hits every enemy within its area. Upgrade to 2/3
+  areas, secondary damage 65%, overlap mask prevents repeated hits.
+- Melee/ranged/fast enemy roles; fifth-wave boss with fixed 700ms warning zone.
+- Reduced wave stat pressure, added cleared-boss-wave Ball reward. Fixed pools
+  and regression/stress coverage; no new Gen2 form imports.
+
+Explore endless defence (v1.7.3)
+- Split bottom HUD: compact player/locked-enemy cards with portraits/types;
+  controls moved to slim header. No target-health panel above the map.
+- Ultimate now damages one locked target, with species effects anchored at the
+  enemy impact point rather than caster. Multi-target upgrade deferred.
+- Arena expansion: dedicated owned-pet picker (profile unchanged), first-form
+  starts, selected evolution branches and legendary exceptions; auto evolution
+  at Lv5/10 and regional-choice popup. Full HP/MP on every level-up.
+- * cycles locked targets with a dedicated target HP HUD; R/0 opens pause menu
+  with confirmed end-attempt. Directional movement continues while firing.
+- Four skill tiers at Lv1/5/10/15; thicker elemental rays with bounded DoT,
+  piercing, chaining, slow and knockback. Mega/Primal Lv15, Shiny Lv12.
+- Fixed pools of 72 rays and 8 timed fruit pickups; move/attack/fire-rate buffs
+  and rare 3-second invincibility, refresh-only stacking and paused timers.
+- Automated regressions cover hits/misses, target changes, families/branches,
+  evolution/refill/forms, fruit expiry/cleanup and bounded projectile pools.
+- Added a generated, palette-compressed 8-tile grass/earth/stone arena, with
+  project-native tile data and separate walk/spawn/camera metadata. Art is 5.9 KB.
+- Arena movement interpolates between fixed simulation ticks. Walk animation is
+  distance-driven, idle is static, and attack/hurt animations start at frame zero.
+  Enemy attack/idle states are now distinct from walking. Held diagonal keys work.
+- New THU LINH / ENDLESS DEFENCE entry, separate from Farm, collection and chess.
+- Uses an owned/non-camped pet from a separate picker. No implicit change to
+  the selected profile or permanent collection.
+- 640x480 camera-follow grass arena with 8-way fixed-step movement, radar,
+  source-backed directional animation, hit numbers and ultimate wave effects.
+- Manual normal attack: 5/FIRE. Manual area ultimate: #, full energy required.
+  Movement: hold 2/4/6/8/joystick; 1/3/7/9 diagonals. * targets, R/0 pauses.
+- Endless enemy waves from four edges, increasing health/damage/spawn pressure;
+  28 active enemies maximum and at most six ordinary species per wave.
+- Kill XP pauses combat for three upgrade choices: stats, supported Mega/Primal
+  or Shiny. Ordinary evolution is automatic. All upgrades are run-only.
+- On defeat or confirmed end: summary and normal Balls = floor(KOs/5) + cleared
+  waves. Exactly-once claim per attempt. Retry resets buffs, XP and wave state.
+- In-progress defence attempts are not resumed after closing the application.
+- Desktop tests cover control, movement/bounds, frame-rate independence, waves,
+  defeat, buffs/forms and reward idempotence. Physical device/emulator QA pending.
+
+Gen 1 stability pass (v1.7.2)
+- Formation markers reduced to one red dot for supported Mega/Memory/Cube forms.
+  Removed Shiny and evolution-tier dots from these on-board markers.
+- Fixed standalone regional forms being consumed by a new three-copy merge.
+  Already transformed standalone Pokemon are not eligible for that merge.
+- Pending evolution selection follows Pokemon swaps and clears when sold.
+- Mega Gengar base stats: HP 380, ATK 40, DEF 12 (previously 260/30/10,
+  which downgraded normal Gengar HP/ATK). Mega Alakazam range stays at 4.
+- Upgrade consumable descriptions no longer begin with an empty punctuation mark.
+- Added 314 Gen 1 upgrade/save/move checks, in addition to the existing
+  regional routes, synergy, combat and Full release artifact tests.
+- No new Gen 2 forms imported. Visual emulator QA and Excel notes are pending.
+
+Equipment and upgrade information (v1.7.1)
+- Synergy counts now select the highest evolution tier per family/form. Regional
+  and normal branches count separately; duplicate and Shiny copies do not stack.
+  Preparation, battle, recount and resumed saves use the same selection rule.
+- Fruit detail uses two consumed rows and one inventory row, six circular slots
+  each; duplicate consumption history is saved and information is below the rows.
+- Preparation hover and detail stats now include fruit, held stat bonuses,
+  Shiny and Mega/Special transformations through the same upgrade routine as combat.
+  Team synergies and battle-triggered passives remain combat-only.
+- FIRE selects an item directly and targets the formation row; no Details action menu.
+- # opens hovered Pokemon/item details. Pokemon popup has Details, Equipment and
+  Consumed Fruit tabs; 1/3 switches tabs, up/down changes equipment row.
+- Equipment tab allows equipping inventory items and returning occupied slots to bag.
+- Crafting separates owned components and finished items into two horizontal rows,
+  with an inline effect panel and dedicated Craft/Reset/Close controls.
+- Gen-1 regression coverage retained. No Gen-2 resources imported; Full-only build.
+
+Gen-1 evolution completion (v1.7.0)
+- Audited all 16 regional Gen-1 choices with both branches and normal/Shiny states:
+  triple merge, pending choice save/resume, fruit preservation, movement, battle types.
+- Mr. Mime has no configured predecessor: merging three copies now offers the
+  normal/Galar choice. No new species or portrait-only forms enter the roll pool.
+- Corrected Mega Charizard X Fire/Dragon types before battle synergy counting.
+- Six Gen-1 Mega forms tested with and without Shiny, including save/resume.
+- Evolution popup preserves Shiny previews and wraps regional labels on small screens.
+- Full-only build; Gen-1 spreadsheet tracks imported forms, missing animations,
+  automated checks and remaining emulator verification separately.
+
+SpriteCollab evolution choices and focused lab (v1.6.9)
+- Imported full 8-direction normal/Shiny animation sets for Gen-1 Mega Charizard X,
+  Alakazam, Gengar, Kangaskhan, Aerodactyl and Mewtwo Y. Portrait-only forms excluded.
+- Added 25 source-backed regional final-form resources from SpriteCollab-master.
+- After a triple merge reaches a supported final evolution, choose normal or regional
+  form in a small popup. Two-stage lines use the same final-evolution choice.
+- Regional forms preserve Shiny and fruit growth; types update in combat, synergies,
+  hover outlines and information panels. Regional base stats use the normal form.
+- Primal/Origin/other special transformations still use the shop Memory Disc.
+- Generation lab selects base Pokemon from a compact avatar grid with a detail panel;
+  shop rerolls are locked to the selected species, including Legendary base species.
+- Run snapshot v11 preserves pending choices and continues loading v1-v10 snapshots.
+- Added atlas validation, sprite contact sheets and SpriteCollab credits/license.
+
 Personal profile foundation (v1.3.8)
 - Added My Profile to the main menu with an animated partner Pokemon model.
 - Player name defaults to Kẻ vô danh/Nameless and can only be confirmed once.
@@ -280,8 +480,8 @@ Exact UI colors and readable synergy thresholds (v1.1.6c)
 - Active rows use gold/white; inactive rows use the original subdued gray palette.
 - MIDlet-Vendor remains KhaiLy; numeric MIDlet-Version remains 1.1.6.
 
-NRO-sized text and supplied pixel item sources (v1.1.6b)
-- Changed normal UI text from thin tahoma_7 to NRO-style bold tahoma_7b.
+Compact text and supplied pixel item sources (v1.1.6b)
+- Changed normal UI text from thin tahoma_7 to compact bold tahoma_7b.
 - Keeps the corrected 11px line height: between v1.1.6 and old MIDP text sizes.
 - Replaced generated 24px item files with the supplied item_tps_pixel originals.
 - Original 90px pixel icons are loaded directly and nearest-scaled once to a cached 24px icon.
@@ -295,7 +495,7 @@ Bitmap font emergency layout fix (v1.1.6a)
 - Numeric MIDlet-Version remains 1.1.6 for strict JAD compatibility.
 
 Compact global font and item collection foundation (v1.1.6)
-- Replaced MIDP system text drawing with the Vietnamese NRO-style 7px bitmap font.
+- Replaced MIDP system text drawing with the Vietnamese compact 7px bitmap font.
 - Centralized text measurement/wrapping on the compact renderer across all screens.
 - Added the first 10 original crafting components to Collection > Items.
 - Added bilingual names, stat descriptions and component classification.

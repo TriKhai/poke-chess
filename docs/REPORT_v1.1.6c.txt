@@ -1,7 +1,7 @@
 POKE AUTO CHESS ME v1.1.6c
 ==========================
 
-- Restored exact legacy UI colors while retaining the NRO-sized tahoma_7b face.
+- Restored exact legacy UI colors while retaining the Compact tahoma_7b face.
 - PixelFont recolors the white alpha atlas to the RGB requested by Art.text calls.
 - Six recently used colors are cached as Image atlases.
 - Synergy icon rows increased from 11px to 16px to prevent icon overlap.

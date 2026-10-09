@@ -4,22 +4,25 @@ import java.io.DataInputStream;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-/** Compact Vietnamese 7px bitmap font adapted from the NRO reference renderer. */
+/** Compact Vietnamese 7px bitmap font renderer. */
 public final class PixelFont {
     private static final String CHARS=" 0123456789+-*='_?.,<>/[]{}!@#$%^&*():aáàảãạâấầẩẫậăắằẳẵặbcdđeéèẻẽẹêếềểễệfghiíìỉĩịjklmnoóòỏõọôốồổỗộơớờởỡợpqrstuúùủũụưứừửữựvxyýỳỷỹỵzwAÁÀẢÃẠĂẰẮẲẴẶÂẤẦẨẪẬBCDĐEÉÈẺẼẸÊẾỀỂỄỆFGHIÍÌỈĨỊJKLMNOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢPQRSTUÚÙỦŨỤƯỨỪỬỮỰVXYÝỲỶỸỴZW";
     private static final int TL=Graphics.TOP|Graphics.LEFT;
     private final int[][] glyph;
     private final Image source;
     private final int[] sourcePixels;
-    private final Image[] colorCache=new Image[6];
-    private final int[] cacheColor={-1,-1,-1,-1,-1,-1};
-    private final int[] cacheAge=new int[6];
+    /** One preparation frame uses well over six UI colours.  A six-slot LRU
+     * rebuilt the complete bitmap-font atlas repeatedly and caused GC spikes. */
+    private final Image[] colorCache=new Image[16];
+    private final int[] cacheColor=new int[16];
+    private final int[] cacheAge=new int[16];
     private int age=1,sourceW,sourceH;
     private final int spacing;
     private int height=8;
 
     public PixelFont(String base,boolean bold){
         spacing=bold?0:0;
+        for(int i=0;i<cacheColor.length;i++)cacheColor[i]=-1;
         glyph=loadMetrics("/font/"+base);
         source=load("/font/"+base+"_white.png");
         if(source!=null){sourceW=source.getWidth();sourceH=source.getHeight();sourcePixels=new int[sourceW*sourceH];source.getRGB(sourcePixels,0,sourceW,0,0,sourceW,sourceH);}
@@ -41,7 +44,7 @@ public final class PixelFont {
     }
 
     public int height(){return height;}
-    public int width(String s){int w=0;for(int i=0;i<s.length();i++){int k=CHARS.indexOf(s.charAt(i));if(k<0||k>=glyph.length)k=0;w+=glyph[k][2]+spacing;}return w;}
+    public int width(String s){int w=0;for(int i=0;i<s.length();i++){if(BallArt.symbolType(s.charAt(i))>=0){w+=14;continue;}int k=CHARS.indexOf(s.charAt(i));if(k<0||k>=glyph.length)k=0;w+=glyph[k][2]+spacing;}return w;}
     private Image colored(int color){
         color&=0xFFFFFF;
         for(int i=0;i<colorCache.length;i++)if(cacheColor[i]==color&&colorCache[i]!=null){cacheAge[i]=age++;return colorCache[i];}
@@ -57,6 +60,7 @@ public final class PixelFont {
     public void draw(Graphics g,String s,int x,int y,int color){
         Image im=colored(color);if(im==null)return;
         for(int i=0;i<s.length();i++){
+            int ball=BallArt.symbolType(s.charAt(i));if(ball>=0){BallArt.small(g,ball,x,y+(height-12)/2);x+=14;continue;}
             int k=CHARS.indexOf(s.charAt(i));if(k<0||k>=glyph.length)k=0;int[] q=glyph[k];
             if(q[2]>0&&q[3]>0)g.drawRegion(im,q[0],q[1],q[2],q[3],0,x,y,TL);
             x+=q[2]+spacing;

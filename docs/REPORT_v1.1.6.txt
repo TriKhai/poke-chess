@@ -2,7 +2,7 @@ POKE AUTO CHESS ME v1.1.6
 =========================
 
 GLOBAL FONT
-- All Art text helpers now use a 7px Vietnamese bitmap font based on the NRO technique.
+- All Art text helpers now use a 7px Vietnamese bitmap font based on the compact bitmap technique.
 - Width measurement and paragraph wrapping use bitmap glyph widths.
 - The game no longer depends on emulator-specific MIDP font height for its main UI text.
 

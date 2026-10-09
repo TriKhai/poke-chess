@@ -5,12 +5,17 @@ import javax.microedition.lcdui.Graphics;
 /** Browse the last five completed Auto Chess runs. */
 public final class HistoryScreen extends Screen {
     private int selected;
+    private boolean clearAsk,cleared;
     public HistoryScreen(Game g){super(g);}
     public void update(int dt){}
-    public void key(int k){if(k==Game.K_UP||k==Game.K_LEFT){if(selected>0)selected--;}else if(k==Game.K_DOWN||k==Game.K_RIGHT){if(selected+1<HistoryStore.count)selected++;}else if(k==Game.K_0||k==Game.K_SOFT2||k==Game.K_FIRE||k==Game.K_SOFT1)game.setScreen(new ChessModeScreen(game));}
-    private String mode(int m){return m==Run.MODE_THIRTY?Lang.t("30 vòng","30 rounds"):m==Run.MODE_GEN1?Lang.t("Thế hệ 1","Gen 1"):m==Run.MODE_LEGEND?Lang.t("Thần thú","Legendary War"):m==Run.MODE_UNLIMITED?"DEV":Lang.t("Thường","Normal");}
+    public void key(int k){
+        if(clearAsk){if(k==Game.K_FIRE||k==Game.K_SOFT1){RunStorage.clear();HistoryStore.clear();selected=0;clearAsk=false;cleared=true;}else if(k==Game.K_0||k==Game.K_SOFT2||k==Game.K_POUND)clearAsk=false;return;}
+        if(k==Game.K_POUND){clearAsk=true;return;}
+        if(k==Game.K_UP||k==Game.K_LEFT){if(selected>0)selected--;}else if(k==Game.K_DOWN||k==Game.K_RIGHT){if(selected+1<HistoryStore.count)selected++;}else if(k==Game.K_0||k==Game.K_SOFT2||k==Game.K_FIRE||k==Game.K_SOFT1)game.setScreen(new ChessModeScreen(game));
+    }
+    private String mode(int m){if(ExtraChessRules.mode(m))return ExtraChessRules.name(m);int gen=ProgressionRules.generationForMode(m);return m==Run.MODE_THIRTY?Lang.t("Đại chiến trang bị","Item War"):ProgressionRules.isGeneration(m)?Lang.t("Thế hệ ","Gen ")+gen:m==Run.MODE_ENDLESS?Lang.t("Vô tận","Endless"):m==Run.MODE_LEGEND?Lang.t("Thần thú","Legendary War"):m==Run.MODE_UNLIMITED?"DEV":Lang.t("Thường","Normal");}
     public void paint(Graphics g){int W=game.W,H=game.H,fh=Art.fh;g.setColor(0x101827);g.fillRect(0,0,W,H);Art.textBC(g,Lang.t("LỊCH SỬ ĐẤU","BATTLE HISTORY"),W/2,3,0xFFD030);
-        if(HistoryStore.count==0){Art.textC(g,Lang.t("Chưa có lượt chơi đã kết thúc","No completed runs yet"),W/2,H/2,0x90A0B8);Art.textC(g,"0: "+Lang.t("về","back"),W/2,H-fh-3,0x8090B0);return;}
+        if(HistoryStore.count==0){Art.textC(g,cleared?Lang.t("Đã dọn run và lịch sử","Run and history cleared"):Lang.t("Chưa có lượt chơi đã kết thúc","No completed runs yet"),W/2,H/2,cleared?0x70E890:0x90A0B8);Art.textC(g,Lang.t("#: dọn dữ liệu   0: về","#: clear data   0: back"),W/2,H-fh-3,0x8090B0);if(clearAsk)paintClearAsk(g);return;}
         int top=fh+5,av=W>=216?24:(W<176?14:20),rowH=av+fh+(W<176?4:8),visible=UiLayout.visibleRows(H,top,fh+4,rowH),first=UiLayout.firstVisible(selected,HistoryStore.count,visible);
         for(int h=first;h<HistoryStore.count&&h<first+visible;h++){
             int y=top+(h-first)*rowH,color=HistoryStore.victory[h]?0xFFD060:0xFF7070;
@@ -19,10 +24,11 @@ public final class HistoryScreen extends Screen {
             String result=HistoryStore.victory[h]?Lang.t("Nhà Vô Địch","Champion"):Lang.t("Kẻ bại trận","Defeated");
             Art.textSmall(g,result+" - "+mode(HistoryStore.mode[h])+" [HP:"+HistoryStore.hp[h]+", $:"+HistoryStore.gold[h]+"]",6,y+2,color);
             int start=3,step=Math.max(1,(W-6-av)/8),ay=y+fh+3;
-            for(int i=0;i<9;i++){int sp=HistoryStore.team[h][i],ax=start+i*step;g.setColor(sp>=0?0xD9DEDF:0x222D3D);g.fillRect(ax,ay,av,av);if(sp>=0){if(av==24)Art.avatarHistory(g,sp,ax,ay);else Art.avatarMini(g,sp,ax,ay);}g.setColor(sp>=0?0x526780:0x303B4D);g.drawRect(ax,ay,av-1,av-1);}
+            for(int i=0;i<9;i++){int sp=HistoryStore.team[h][i],ax=start+i*step;g.setColor(sp>=0?0xD9DEDF:0x222D3D);g.fillRect(ax,ay,av,av);if(sp>=0){PetAvatar.draw(g,sp,HistoryStore.forms[h][i],(HistoryStore.flags[h][i]&2)!=0,(HistoryStore.flags[h][i]&1)!=0,ax,ay,av);}g.setColor(sp>=0?0x526780:0x303B4D);g.drawRect(ax,ay,av-1,av-1);}
         }
-        Art.textSmallC(g,Lang.t("2/8: chọn   0: về","2/8: select   0: back"),W/2,H-fh-2,0x8090B0);
+        Art.textSmallC(g,Lang.t("2/8: chọn   #: dọn   0: về","2/8: select   #: clear   0: back"),W/2,H-fh-2,0x8090B0);if(clearAsk)paintClearAsk(g);
     }
+    private void paintClearAsk(Graphics g){int W=game.W,H=game.H,fh=Art.fh,w=Math.min(W-14,220),h=fh*6+14,x=(W-w)/2,y=(H-h)/2;Art.box(g,x,y,w,h,0x111827,0xFF6058);Art.textBC(g,Lang.t("DỌN DỮ LIỆU CHƠI?","CLEAR PLAY DATA?"),W/2,y+4,0xFF7068);Art.para(g,Lang.t("Xóa run đang chơi và toàn bộ lịch sử. Bộ sưu tập, \uE000 và hồ sơ vẫn được giữ.","Deletes the active run and all history. Collection, \uE000 and profile are kept."),x+7,y+fh+8,w-14,0xE0D8DC,3);Art.textSmallC(g,Lang.t("5: xác nhận   0/#: hủy","5: confirm   0/#: cancel"),W/2,y+h-fh-5,0xFFD060);}
     static void drawGraph(Graphics g,int[] data,int n,int x,int y,int w,int h){
         g.setColor(0x182438);g.fillRect(x,y,w,h);g.setColor(0x526780);g.drawRect(x,y,w-1,h-1);
         if(n<=0)return;

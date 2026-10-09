@@ -1,0 +1,39 @@
+{
+  "id": "meadow-defence", "map_mode": "tile_mode", "engine_target": "Java_ME_project_native",
+  "visual_model": "tilemap", "runtime_object_model": "scene_hooks", "collision_model": "tile_collision",
+  "art_style": "project_native_pixel_inspired", "visual_asset_source": "image_gen",
+  "tileSize": 32, "columns": 20, "rows": 15,
+  "tileset": "res/fx/survival-terrain.png", "atlasColumns": 4,
+  "terrain": ["grass","grass","grass","grass","earth","earth","stone","stone"],
+  "ground": [
+    "23010201045010102323",
+    "30100101054010010232",
+    "21010201045010100123",
+    "01010101454010101010",
+    "01010104450101010101",
+    "10101444550101441010",
+    "44444545676745454444",
+    "55545454767654545555",
+    "01010104676701010101",
+    "10101010454010101010",
+    "01010101045401010101",
+    "10101010104540101010",
+    "23010101014540100123",
+    "32101010105410101032",
+    "23230101014501013232"
+  ],
+  "walkBounds": {"x":12,"y":12,"width":616,"height":456},
+  "blockedTiles": [], "blockers": [],
+  "sceneHooks": {
+    "playerSpawn": {"x":320,"y":240},
+    "enemySpawnZones": [
+      {"id":"north","x":8,"y":8,"width":624,"height":1},
+      {"id":"south","x":8,"y":472,"width":624,"height":1},
+      {"id":"west","x":8,"y":8,"width":1,"height":464},
+      {"id":"east","x":632,"y":8,"width":1,"height":464}
+    ],
+    "cameraBounds": {"x":0,"y":0,"width":640,"height":480},
+    "exit": "pause-confirmed-summary"
+  },
+  "notes": "Open arena: flat ground art is fully walkable. No fake collidable trees or rocks are baked into the tiles."
+}

@@ -45,6 +45,13 @@ public final class Battle {
     public int[] boardFxX=new int[MAXBOARDFX],boardFxY=new int[MAXBOARDFX];
     public int[] boardFxSp=new int[MAXBOARDFX],boardFxTtl=new int[MAXBOARDFX];
     private int boardFxNext=0;
+    private static final int MAXDELAY=12,MAXHAZARD=8;
+    private Unit[] delayedSource=new Unit[MAXDELAY],delayedTarget=new Unit[MAXDELAY];
+    private int[] delayedTicks=new int[MAXDELAY],delayedDamage=new int[MAXDELAY],delayedArea=new int[MAXDELAY];
+    private int delayedNext;
+    private int[] hazardX=new int[MAXHAZARD],hazardY=new int[MAXHAZARD],hazardSide=new int[MAXHAZARD],hazardDamage=new int[MAXHAZARD],hazardTtl=new int[MAXHAZARD];
+    private Unit[] hazardSource=new Unit[MAXHAZARD];private int hazardNext;
+    private int[] lastSkillSp={-1,-1};
 
     private final Rng rng;
 
@@ -62,20 +69,33 @@ public final class Battle {
     }
 
     public Battle(int[] pBoard, int[] eBoard, int eScale, Rng rng, int[] pEquip,int[] eEquip) {
+        this(pBoard,eBoard,eScale,rng,pEquip,eEquip,null,null,null,null,null,null,null);
+    }
+
+    public Battle(int[] pBoard,int[] eBoard,int eScale,Rng rng,int[] pEquip,int[] eEquip,int[] hpBoost,int[] atkBoost,int[] defBoost,int[] speDefBoost,int[] speedBoost,int[] manaBoost,int[] apBoost) {
+        this(pBoard,eBoard,eScale,rng,pEquip,eEquip,hpBoost,atkBoost,defBoost,speDefBoost,speedBoost,manaBoost,apBoost,null);
+    }
+
+    public Battle(int[] pBoard,int[] eBoard,int eScale,Rng rng,int[] pEquip,int[] eEquip,int[] hpBoost,int[] atkBoost,int[] defBoost,int[] speDefBoost,int[] speedBoost,int[] manaBoost,int[] apBoost,int[] synergyBonus) {
+        this(pBoard,eBoard,eScale,rng,pEquip,eEquip,hpBoost,atkBoost,defBoost,speDefBoost,speedBoost,manaBoost,apBoost,synergyBonus,null);
+    }
+    public Battle(int[] pBoard,int[] eBoard,int eScale,Rng rng,int[] pEquip,int[] eEquip,int[] hpBoost,int[] atkBoost,int[] defBoost,int[] speDefBoost,int[] speedBoost,int[] manaBoost,int[] apBoost,int[] synergyBonus,int[] forms) {
         this.rng = rng;
         for (int i = 0; i < 24; i++) {
-            if (pBoard[i] >= 0) addUnit(pBoard[i], 0, i % 8, 3 + i / 8, 100, pEquip, i);
-            if (eBoard[i] >= 0) addUnit(eBoard[i], 1, i % 8, 2 - i / 8, eScale, eEquip, i);
+            if (pBoard[i] >= 0) addUnit(pBoard[i], 0, i % 8, 3 + i / 8, 100, pEquip, i,hpBoost,atkBoost,defBoost,speDefBoost,speedBoost,manaBoost,apBoost);
+            if (eBoard[i] >= 0) addUnit(eBoard[i], 1, i % 8, 2 - i / 8, eScale, eEquip, i,null,null,null,null,null,null,null);
         }
+        if(forms!=null)for(int i=0;i<n;i++){Unit u=units[i];int p=(u.y-3)*8+u.x;if(u.side==0&&p>=0&&p<forms.length){if(forms[p]==-1){u.mega=true;u.type1=MegaData.type1(u.sp);u.type2=MegaData.type2(u.sp);}else{u.specialForm=forms[p];u.type1=EvolutionVariantData.type1(u.sp,forms[p]);u.type2=EvolutionVariantData.type2(u.sp,forms[p]);if(SpecialFormData.evolutionVariant(forms[p])||GenThreeFormData.contains(forms[p]))SpecialFormData.apply(u,forms[p]);}}}
         countSyn(0, synP);
         countSyn(1, synE);
+        if(synergyBonus!=null)for(int i=0;i<Data.NT&&i<synergyBonus.length;i++)synP[i]+=synergyBonus[i];
         applySyn(0, synP);
         applySyn(1, synE);
         for(int i=0;i<n;i++){ItemEffects.onStart(this,units[i]);PokemonPassive.onStart(units[i]);}
         for (int i = 0; i < MAXFX; i++) fxTtl[i] = 0;
     }
 
-    private void addUnit(int sp, int side, int x, int y, int scale, int[] held, int heldPos) {
+    private void addUnit(int sp, int side, int x, int y, int scale, int[] held, int heldPos,int[] hpBoost,int[] atkBoost,int[] defBoost,int[] speDefBoost,int[] speedBoost,int[] manaBoost,int[] apBoost) {
         Unit u = new Unit();
         u.sp = sp; u.side = side; u.x = x; u.y = y; u.px = x; u.py = y;
         u.facing = side == 0 ? 4 : 0;
@@ -91,6 +111,7 @@ public final class Battle {
         u.range = Data.range[sp];
         u.cd = CombatRules.cooldownTicks(1000, u.speed);
         u.maxMana = Data.mana[sp];
+        if(heldPos>=0){if(hpBoost!=null)u.maxHp+=hpBoost[heldPos];if(atkBoost!=null)u.atk+=atkBoost[heldPos];if(defBoost!=null)u.def+=defBoost[heldPos];if(speDefBoost!=null)u.speDef+=speDefBoost[heldPos];if(speedBoost!=null)u.speed+=speedBoost[heldPos];if(manaBoost!=null)u.mana+=manaBoost[heldPos];if(apBoost!=null)u.skillBonus+=apBoost[heldPos];u.hp=u.maxHp;u.prevHp=u.hp;}
         if(held!=null&&heldPos>=0)for(int s=0;s<3;s++){
             int id=held[heldPos*3+s];if(id<0)continue;
             u.items[s]=id;
@@ -99,25 +120,25 @@ public final class Battle {
             u.mana+=ItemData.MP[id];u.skillBonus+=ItemData.AP[id];u.crit+=ItemData.CRIT[id];
             u.shield+=ItemData.SHIELD[id];u.shieldDone+=ItemData.SHIELD[id];
         }
+        u.cd=CombatRules.cooldownTicks(1000,u.speed);
         if(u.maxMana>0&&u.mana>u.maxMana)u.mana=u.maxMana;
         units[n++] = u;
         grid[y * COLS + x] = u;
     }
 
-    /** Counts each evolution family once; copies and later stages never stack synergy. */
+    /** Count the highest tier of each family/form, ignoring duplicate and shiny copies. */
     public void countSyn(int side, int[] cnt) {
         for (int i = 0; i < Data.NT; i++) cnt[i] = 0;
-        boolean[] familySeen = new boolean[Data.N];
         for (int i = 0; i < n; i++) {
             Unit u = units[i];
-            if (u.side != side) continue;
-            int family=Data.fam[u.sp];
-            if(familySeen[family])continue;
-            familySeen[family]=true;
-            cnt[Data.t1[u.sp]]++;
-            if (Data.t2[u.sp] >= 0) cnt[Data.t2[u.sp]]++;
+            if (u.side != side||supersededForm(i)) continue;
+            int t1=u.primaryType(),t2=u.secondaryType();
+            cnt[t1]++;
+            if(t2>=0&&t2!=t1)cnt[t2]++;
         }
     }
+
+    private boolean supersededForm(int index){Unit u=units[index];for(int i=0;i<n;i++){Unit v=units[i];if(v.side==u.side&&SynergyEffects.supersedes(v.sp,v.mega?-1:v.specialForm,i,u.sp,u.mega?-1:u.specialForm,index))return true;}return false;}
 
     private static boolean hasType(int sp, int t) {
         return Data.t1[sp] == t || Data.t2[sp] == t;
@@ -152,6 +173,12 @@ public final class Battle {
             if (u.cast > 0) u.cast--;
             if (u.attack > 0) u.attack--;
             if (u.alive) {
+                if((u.fruitMask&(1<<ConsumableData.ASPEAR))!=0)u.status.freeze=0;
+                if((u.fruitMask&(1<<ConsumableData.CHESTO))!=0)u.status.sleep=0;
+                if((u.fruitMask&(1<<ConsumableData.PECHA))!=0)u.status.poison=0;
+                if((u.fruitMask&(1<<ConsumableData.PERSIM))!=0)u.status.confusion=0;
+                if((u.fruitMask&(1<<ConsumableData.RAWST))!=0)u.status.burn=0;
+                if((u.fruitMask&(1<<ConsumableData.LUM))!=0&&u.status.hasNegative()&&(u.fruitUsedMask&(1<<ConsumableData.LUM))==0){u.fruitUsedMask|=1<<ConsumableData.LUM;u.status.clearNegative();}
                 u.status.update(this, u);
                 u.stun = u.status.stun;
                 if(u.alive)ItemEffects.onTick(this,u);
@@ -164,6 +191,7 @@ public final class Battle {
             skillFxAge[k]++;
         }
         for (int k = 0; k < MAXBOARDFX; k++) if (boardFxTtl[k] > 0) boardFxTtl[k]--;
+        updateAdvancedSkills();
 
         boolean rev = (tick & 1) == 1;
         for (int k = 0; k < n; k++) {
@@ -201,6 +229,12 @@ public final class Battle {
     }
 
     /** Remove combat-only frames once simulation stops so the result pose is clean. */
+    public void forcePlayerVictory(){
+        for(int i=0;i<n;i++)if(units[i].side==1){units[i].alive=false;units[i].hp=0;}
+        over=true;winner=0;clearTransientVisuals();
+    }
+
+    /** Remove combat-only frames once simulation stops so the result pose is clean. */
     public void clearTransientVisuals(){
         for(int i=0;i<MAXFX;i++)fxTtl[i]=0;
         for(int i=0;i<MAXSHOT;i++)shotTtl[i]=0;
@@ -222,17 +256,20 @@ public final class Battle {
         return dx * dx + dy * dy;
     }
 
-    private Unit findTarget(Unit u) {
+    private Unit findTarget(Unit u) {return findTarget(u,null);}
+
+    private Unit findTarget(Unit u,Unit skip) {
         Unit best = null;
         int bd = 99;
         for (int i = 0; i < n; i++) {
             Unit t = units[i];
-            if (!t.alive || t.side == u.side) continue;
+            if (!t.alive || t.side == u.side || t==skip) continue;
             int d = dist(u, t);
-            if (d < bd || (d == bd && best != null && t.hp < best.hp)) {
+            if (d < bd || (d == bd && best != null && t.hp*best.maxHp<best.hp*t.maxHp)) {
                 bd = d; best = t;
             }
         }
+        if(best==null&&skip!=null&&skip.alive&&skip.side!=u.side)best=skip;
         return best;
     }
 
@@ -242,7 +279,27 @@ public final class Battle {
         return best;
     }
 
+    int effectiveSkillSp(Unit u){return u.copiedSkillSp>=0?u.copiedSkillSp:u.sp;}
+    int lastSkill(int side){return side>=0&&side<2?lastSkillSp[side]:-1;}
+    int assistSkill(Unit caster){for(int i=0;i<n;i++){Unit a=units[i];if(a.alive&&a.side==caster.side&&a!=caster){String s=Data.skillName[effectiveSkillSp(a)].toUpperCase();if(s.indexOf("ASSIST")<0&&s.indexOf("MIMIC")<0&&s.indexOf("COPYCAT")<0&&s.indexOf("ENCORE")<0)return effectiveSkillSp(a);}}return -1;}
+    void repeatAbility(Unit caster,Unit target,int skillSp){
+        if(skillSp<0||skillSp>=Data.N||target==null||!target.alive)return;int a=Math.max(1,caster.atk*(100+caster.skillBonus)/100),ability=Data.abil[skillSp];addSkillFx(ability==1||ability==3||ability==6?caster:target,skillSp);
+        if(ability==1)itemHeal(caster,caster,a*3);else if(ability==2){for(int i=0;i<n;i++){Unit u=units[i];if(u.alive&&u.side!=caster.side&&dist(u,target)<=1)itemDamage(caster,u,a,Battle.ITEM_SPECIAL);}}else if(ability==3){caster.atk+=Math.max(1,caster.atk/5);caster.speed+=10;}else if(ability==6)abilityShield(caster,caster,Math.max(1,caster.maxHp/4));else if(ability==7){int d=itemDamage(caster,target,a*2,Battle.ITEM_SPECIAL);itemHeal(caster,caster,d);}else itemDamage(caster,target,a*(ability==8?3:2)/1,Battle.ITEM_SPECIAL);
+        SkillEffects.apply(caster,target,skillSp);
+    }
+
+    private Unit abilityTarget(Unit caster,Unit fallback){
+        String skill=Data.skillName[effectiveSkillSp(caster)].toUpperCase();Unit best=fallback;
+        if(skill.indexOf("GUILLOTINE")>=0||skill.indexOf("FISSURE")>=0||skill.indexOf("HORN DRILL")>=0||skill.indexOf("SHEER COLD")>=0){for(int i=0;i<n;i++){Unit e=units[i];if(e.alive&&e.side!=caster.side&&(best==null||e.hp*best.maxHp<best.hp*e.maxHp))best=e;}return best;}
+        if(Data.abil[effectiveSkillSp(caster)]==2||skill.indexOf("FUTURE SIGHT")>=0||skill.indexOf("SURF")>=0||skill.indexOf("EARTHQUAKE")>=0){int score=-1;for(int i=0;i<n;i++){Unit center=units[i];if(!center.alive||center.side==caster.side)continue;int hits=0;for(int j=0;j<n;j++){Unit e=units[j];if(e.alive&&e.side!=caster.side&&dist(e,center)<=1)hits++;}if(hits>score){score=hits;best=center;}}}
+        return best;
+    }
+    Unit smartAbilityTarget(Unit caster,Unit fallback){return abilityTarget(caster,fallback);}
+
+    private boolean enemyHazard(int side,int x,int y){for(int i=0;i<MAXHAZARD;i++)if(hazardTtl[i]>0&&hazardSide[i]!=side&&hazardX[i]==x&&hazardY[i]==y)return true;return false;}
+
     private void act(Unit u) {
+        u.speed=CombatRules.cappedSpeed(u.speed);
         if (u.status.blocksAction()) { u.state = Unit.IDLE; return; }
         if(u.status.confusion>0&&rng.pct(25)){statusDamage(u,Math.max(1,u.maxHp/20));u.state=Unit.IDLE;return;}
         if (u.moveLeft > 0) { u.moveLeft--; u.state = Unit.MOVING; return; }
@@ -250,10 +307,12 @@ public final class Battle {
         if (u.cdLeft > 0) u.cdLeft--;
         Unit t = u.target;
         if(u.status.charm>0||u.status.possessed>0)t=findCharmedTarget(u);
-        else if (t == null || !t.alive || t.side==u.side || (tick % 3) == 0) t = findTarget(u);
+        else if (t == null || !t.alive || t.side==u.side) t = findTarget(u);
+        else if(u.stuck>=3){Unit old=t;t=findTarget(u,old);u.stuck=0;}
         u.target = t;
         if (t == null) return;
         if (dist(u, t) <= u.range) {
+            u.stuck=0;
             u.state = Unit.ATTACKING;
             if (u.cdLeft <= 0) {
                 attackOrCast(u, t);
@@ -262,14 +321,14 @@ public final class Battle {
             }
         } else {
             u.state = Unit.MOVING;
-            if(!u.status.blocksMove()&&!PokemonPassive.blocksMove(u))move(u, t);
+            if(!u.status.blocksMove()&&!PokemonPassive.blocksMove(u)){if(move(u,t))u.stuck=0;else u.stuck++;}
         }
     }
 
-    private void move(Unit u, Unit t) {
+    private boolean move(Unit u, Unit t) {
         int curD = dist(u, t);
         int curE = dist2(u.x, u.y, t.x, t.y);
-        int bx = -1, by = -1, bd = 99, be = 99999;
+        int bx = -1, by = -1, bd = 99, be = 99999;boolean bh=true;
         for (int dy = -1; dy <= 1; dy++) {
             for (int dx = -1; dx <= 1; dx++) {
                 if (dx == 0 && dy == 0) continue;
@@ -278,11 +337,11 @@ public final class Battle {
                 if (grid[ny * COLS + nx] != null) continue;
                 int d = Math.max(Math.abs(nx - t.x), Math.abs(ny - t.y));
                 int e = dist2(nx, ny, t.x, t.y);
-                boolean better = d < bd || (d == bd && e < be);
-                if (better) { bd = d; be = e; bx = nx; by = ny; }
+                boolean hz=enemyHazard(u.side,nx,ny);boolean better=(bh&&!hz)||bh==hz&&(d < bd || (d == bd && e < be));
+                if (better) { bd = d; be = e; bx = nx; by = ny;bh=hz; }
             }
         }
-        if (bx < 0) return;
+        if (bx < 0) return false;
         // only move if it actually gets closer (or a sideways step that lowers euclid distance)
         if (bd < curD || (bd == curD && be < curE)) {
             u.px=u.x; u.py=u.y;
@@ -291,11 +350,13 @@ public final class Battle {
             u.facing = faceDir(bx - u.px, by - u.py);
             grid[by * COLS + bx] = u;
             // Original source: 500 / (0.5 + speed/100) ms per cell.
-            int effective=u.status.effectiveSpeed(u.speed),denom=50+effective;
+            int effective=CombatRules.cappedSpeed(u.status.effectiveSpeed(u.speed)),denom=50+effective;
             u.moveTicks=Math.max(1,(500+denom/2)/denom);
             u.moveLeft=u.moveTicks;
             ItemEffects.onMove(u);
+            return true;
         }
+        return false;
     }
 
     private void attackOrCast(Unit u, Unit t) {
@@ -304,10 +365,11 @@ public final class Battle {
         u.attackY = t.y;
         u.facing = faceDir(t.x - u.x, t.y - u.y);
         if (u.maxMana > 0 && u.mana >= u.maxMana && u.status.silence <= 0) {
+            t=abilityTarget(u,t);if(t==null)return;u.attackX=t.x;u.attackY=t.y;u.facing=faceDir(t.x-u.x,t.y-u.y);
             u.state = Unit.CASTING;
             u.mana = 0;
             u.cast = 2;
-            addShot(u, t, Data.TCOL[Data.t1[u.sp]], 1);
+            addShot(u, t, Data.TCOL[u.primaryType()], 1);
             cast(u, t);
         } else {
             if (u.range > 1) addShot(u, t, u.side == 0 ? 0x80C8FF : 0xFF9070, 0);
@@ -325,11 +387,12 @@ public final class Battle {
     }
 
     private void cast(Unit u, Unit t) {
+        int skillSp=u.copiedSkillSp>=0?u.copiedSkillSp:u.sp,ability=Data.abil[skillSp];
         SynergyEffects.onCast(this,u);
-        addSkillFx(Data.abil[u.sp] == 1 || Data.abil[u.sp] == 3 || Data.abil[u.sp] == 6 ? u : t, u.sp);
+        addSkillFx(ability == 1 || ability == 3 || ability == 6 ? u : t, skillSp);
         int bonus = 100 + u.skillBonus;
         int a = u.atk * bonus / 100;
-        switch (Data.abil[u.sp]) {
+        switch (ability) {
             case 0:
                 damage(u, t, a * 250 / 100, SPECIAL, false, false);
                 break;
@@ -397,13 +460,16 @@ public final class Battle {
                 damage(u, t, a, SPECIAL, false, false);
                 break;
         }
-        SkillEffects.apply(u, t);
+        if((u.fruitMask&(1<<ConsumableData.LEPPA))!=0&&(u.fruitUsedMask&(1<<ConsumableData.LEPPA))==0){u.fruitUsedMask|=1<<ConsumableData.LEPPA;u.mana=Math.min(u.maxMana,u.mana+25);}
+        if((u.fruitMask&(1<<ConsumableData.GOLDEN_PINAP))!=0&&(u.fruitUsedMask&(1<<ConsumableData.GOLDEN_PINAP))==0){u.fruitUsedMask|=1<<ConsumableData.GOLDEN_PINAP;u.mana=Math.min(u.maxMana,u.mana+30);}
+        SkillEffects.apply(u, t,skillSp);
         AbilityBehavior.apply(this,u,t);
         ItemEffects.onCast(this,u);
-        String skill=Data.skillName[u.sp].toUpperCase();
+        String skill=Data.skillName[skillSp].toUpperCase();
         if(skill.indexOf("SMOKE")>=0 || skill.indexOf("GAS")>=0 || skill.indexOf("SPIKE")>=0 ||
            skill.indexOf("WEB")>=0 || skill.indexOf("TERRAIN")>=0 || skill.indexOf("EMBER")>=0 ||
            skill.indexOf("FIRESTARTER")>=0) addBoardFx(t.x,t.y,u.sp,35);
+        lastSkillSp[u.side]=skillSp;
     }
 
     private boolean damage(Unit src, Unit tgt, int raw, int attackType, boolean basic, boolean crit) {
@@ -417,6 +483,8 @@ public final class Battle {
 
     private int damageRet(Unit src, Unit tgt, int raw, int attackType, boolean basic, boolean crit,boolean triggerItems) {
         if (!tgt.alive) return 0;
+        if(attackType==SPECIAL&&(tgt.fruitMask&(1<<ConsumableData.ROWAP))!=0&&!tgt.fruitSkillBlocked){tgt.fruitSkillBlocked=true;addFx(tgt,0,2,0xB080FF);return 0;}
+        if(crit&&(src.fruitMask&(1<<ConsumableData.LANSAT))!=0&&(src.fruitUsedMask&(1<<ConsumableData.LANSAT))==0){src.fruitUsedMask|=1<<ConsumableData.LANSAT;raw+=60;}
         if (tgt.status.protect > 0) {
             addFx(tgt, 0, 2, 0x80E8FF);
             return 0;
@@ -454,6 +522,11 @@ public final class Battle {
         addFx(tgt, dealt, crit ? 3 : 0, crit ? 0xFFD030 : (src.side == 0 ? 0xFFFFFF : 0xFF8080));
         if (src.lifesteal > 0) heal(src, dealt * src.lifesteal / 100);
         if(triggerItems){ItemEffects.onDamageDealt(this,src,tgt,dealt,attackType);ItemEffects.onDamageReceived(this,tgt,src,dmg,blocked,attackType,basic,crit,shieldBefore);}PokemonPassive.onDamaged(this,tgt);
+        if(tgt.alive&&tgt.hp*2<tgt.maxHp&&(tgt.fruitMask&(1<<ConsumableData.AGUAV))!=0&&(tgt.fruitUsedMask&(1<<ConsumableData.AGUAV))==0){tgt.fruitUsedMask|=1<<ConsumableData.AGUAV;heal(tgt,40);}
+        if(tgt.alive&&tgt.hp*2<tgt.maxHp&&(tgt.fruitMask&(1<<ConsumableData.SITRUS))!=0&&(tgt.fruitUsedMask&(1<<ConsumableData.SITRUS))==0){tgt.fruitUsedMask|=1<<ConsumableData.SITRUS;heal(tgt,60);}
+        if(tgt.alive&&tgt.hp*100<tgt.maxHp*35&&(tgt.fruitMask&(1<<ConsumableData.LIECHI))!=0&&(tgt.fruitUsedMask&(1<<ConsumableData.LIECHI))==0){tgt.fruitUsedMask|=1<<ConsumableData.LIECHI;tgt.atk+=4;}
+        if(tgt.alive&&tgt.hp*100<tgt.maxHp*35&&(tgt.fruitMask&(1<<ConsumableData.SALAC))!=0&&(tgt.fruitUsedMask&(1<<ConsumableData.SALAC))==0){tgt.fruitUsedMask|=1<<ConsumableData.SALAC;tgt.cdLeft=0;}
+        if(triggerItems&&basic&&src!=null&&tgt.alive&&(tgt.fruitMask&(1<<ConsumableData.JABOCA))!=0)itemDamage(tgt,src,20,ITEM_TRUE);
         if (tgt.hp <= 0) kill(tgt,src);
         return dealt;
     }
@@ -484,6 +557,7 @@ public final class Battle {
         addFx(u, 0, 4, u.side == 0 ? 0x80C8FF : 0xFF8060);
         SynergyEffects.onKill(this,killer,u);
         ItemEffects.onKill(this,killer,u);
+        PokemonPassive.onKill(this,killer,u);
     }
 
     /** Called by CombatStatus; status damage is true damage and cannot grant mana. */
@@ -504,6 +578,13 @@ public final class Battle {
     boolean itemChance(int percent){return rng.pct(percent);}
     void itemHeal(Unit source,Unit target,int amount){heal(source,target,amount);}
     int itemDamage(Unit source,Unit target,int raw,int type){return damageRet(source,target,raw,type,false,false,false);}
+    void abilityShield(Unit source,Unit target,int amount){if(amount<1)amount=1;target.shield+=amount;target.shieldDone+=amount;addFx(target,amount,1,0x60C0FF);}
+
+    boolean reviveAlly(Unit source){
+        Unit pick=null;for(int i=0;i<n;i++){Unit u=units[i];if(u.alive||u.side!=source.side)continue;if(pick==null||Data.tier[u.sp]>Data.tier[pick.sp])pick=u;}
+        if(pick==null)return false;int bx=-1,by=-1,best=99;for(int y=0;y<ROWS;y++)for(int x=0;x<COLS;x++)if(grid[y*COLS+x]==null){int d=Math.max(Math.abs(x-source.x),Math.abs(y-source.y));if(d<best){best=d;bx=x;by=y;}}
+        if(bx<0)return false;pick.x=pick.px=bx;pick.y=pick.py=by;pick.hp=Math.max(1,pick.maxHp*35/100);pick.prevHp=pick.hp;pick.alive=true;pick.state=Unit.IDLE;pick.target=null;pick.status.clearNegative();grid[by*COLS+bx]=pick;addFx(pick,pick.hp,1,0x80FFB0);return true;
+    }
 
     Unit lowestAdjacentEnemy(Unit source,Unit center){
         Unit best=null;
@@ -517,12 +598,35 @@ public final class Battle {
         if(bx!=u.x||by!=u.y){grid[u.y*COLS+u.x]=null;u.px=u.x;u.py=u.y;u.x=bx;u.y=by;grid[by*COLS+bx]=u;}
     }
 
+    void relocateNear(Unit u,Unit target){
+        if(target==null||!target.alive)return;int bx=u.x,by=u.y,best=99;
+        for(int y=0;y<ROWS;y++)for(int x=0;x<COLS;x++)if(grid[y*COLS+x]==null){int d=Math.max(Math.abs(x-target.x),Math.abs(y-target.y));if(d<best){best=d;bx=x;by=y;}}
+        if(bx!=u.x||by!=u.y){grid[u.y*COLS+u.x]=null;u.px=u.x;u.py=u.y;u.x=bx;u.y=by;grid[by*COLS+bx]=u;}
+    }
+
+    void pushAway(Unit source,Unit target){
+        if(target==null||!target.alive)return;int bx=target.x,by=target.y,best=dist(source,target);
+        for(int y=0;y<ROWS;y++)for(int x=0;x<COLS;x++)if(grid[y*COLS+x]==null){int d=Math.max(Math.abs(x-source.x),Math.abs(y-source.y));if(d>best){best=d;bx=x;by=y;}}
+        moveUnit(target,bx,by);
+    }
+    void pullNear(Unit source,Unit target){if(target==null||!target.alive)return;int bx=target.x,by=target.y,best=99;for(int y=0;y<ROWS;y++)for(int x=0;x<COLS;x++)if(grid[y*COLS+x]==null){int d=Math.max(Math.abs(x-source.x),Math.abs(y-source.y));if(d<best){best=d;bx=x;by=y;}}moveUnit(target,bx,by);}
+    void swapUnits(Unit a,Unit b){if(a==null||b==null||!a.alive||!b.alive)return;int ax=a.x,ay=a.y,bx=b.x,by=b.y;grid[ay*COLS+ax]=b;grid[by*COLS+bx]=a;a.px=ax;a.py=ay;b.px=bx;b.py=by;a.x=bx;a.y=by;b.x=ax;b.y=ay;}
+    private void moveUnit(Unit u,int x,int y){if(x==u.x&&y==u.y)return;grid[u.y*COLS+u.x]=null;u.px=u.x;u.py=u.y;u.x=x;u.y=y;grid[y*COLS+x]=u;}
+
+    void scheduleAbility(Unit source,Unit target,int damage,int delay,int area){int k=delayedNext++%MAXDELAY;delayedSource[k]=source;delayedTarget[k]=target;delayedDamage[k]=Math.max(1,damage);delayedTicks[k]=Math.max(1,delay);delayedArea[k]=Math.max(0,area);}
+    void placeHazard(Unit source,int x,int y,int damage,int duration){int k=hazardNext++%MAXHAZARD;hazardSource[k]=source;hazardX[k]=x;hazardY[k]=y;hazardSide[k]=source.side;hazardDamage[k]=Math.max(1,damage);hazardTtl[k]=Math.max(1,duration);addBoardFx(x,y,source.sp,duration);}
+    boolean summonClone(Unit source){if(n>=units.length)return false;int bx=-1,by=-1,best=99;for(int y=0;y<ROWS;y++)for(int x=0;x<COLS;x++)if(grid[y*COLS+x]==null){int d=Math.max(Math.abs(x-source.x),Math.abs(y-source.y));if(d<best){best=d;bx=x;by=y;}}if(bx<0)return false;int old=n;addUnit(source.sp,source.side,bx,by,35,null,-1,null,null,null,null,null,null,null);Unit clone=units[old];clone.maxHp=Math.max(1,source.maxHp*35/100);clone.hp=clone.maxHp;clone.atk=Math.max(1,source.atk*50/100);PokemonPassive.onStart(clone);return true;}
+    private void updateAdvancedSkills(){
+        for(int k=0;k<MAXDELAY;k++)if(delayedTicks[k]>0&&--delayedTicks[k]==0){Unit src=delayedSource[k],target=delayedTarget[k];if(src!=null&&target!=null&&target.alive){int tx=target.x,ty=target.y;for(int i=0;i<n;i++){Unit u=units[i];if(u.alive&&u.side!=src.side&&Math.max(Math.abs(u.x-tx),Math.abs(u.y-ty))<=delayedArea[k])itemDamage(src,u,delayedDamage[k],ITEM_SPECIAL);}addSkillFx(target,src.sp);}delayedSource[k]=delayedTarget[k]=null;}
+        for(int k=0;k<MAXHAZARD;k++)if(hazardTtl[k]>0){hazardTtl[k]--;if(hazardTtl[k]%10==0){Unit src=hazardSource[k];if(src!=null)for(int i=0;i<n;i++){Unit u=units[i];if(u.alive&&u.side!=hazardSide[k]&&u.x==hazardX[k]&&u.y==hazardY[k]){itemDamage(src,u,hazardDamage[k],ITEM_SPECIAL);u.status.apply(CombatStatus.WOUND,20);}}}}
+    }
+
     private void addShot(Unit a, Unit b, int col, int kind) {
         int k = shotNext;
         shotNext = (shotNext + 1) % MAXSHOT;
         shotX0[k] = a.x; shotY0[k] = a.y;
         shotX1[k] = b.x; shotY1[k] = b.y;
-        shotCol[k] = col; shotKind[k] = kind; shotType[k] = Data.t1[a.sp]; shotTtl[k] = 4;
+        shotCol[k] = col; shotKind[k] = kind; shotType[k] = a.primaryType(); shotTtl[k] = 4;
     }
 
     private void addSkillFx(Unit u, int ability) {

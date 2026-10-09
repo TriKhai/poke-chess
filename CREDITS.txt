@@ -1,8 +1,25 @@
+Music credit update (1.7.18, information supplied by project owner):
+- Littleroot Town (Remix) - Pokemon: Ruby, Sapphire & Emerald.
+  Composed by: Go Ichinose, Morikazu Aoki, Junichi Masuda, Hitomi Sato.
+- Hyper Potions - Littleroot Town (Pokemon Ruby & Sapphire); remix by Hyper Potions.
+- Packaged music uses mono 48 kbps MP3; older MIDI notes below are historical.
+- New Explore tiles: built-in imagegen; assets/tilesets/explore-v2/source.prompt.txt.
+- Six new regional atlases: built-in imagegen; assets/tilesets/explore-gen4 through explore-gen9/source.prompt.txt.
+
 Sprites in res/sp were cropped from the atlases of
 https://github.com/keldaanCommunity/pokemonAutoChess (app/public/src/assets/pokemons/<dex>.png).
 The repository code is GPL-3.0. The sprites come from the PMDCollab SpriteCollab project; the
 credits.txt next to each portrait in the original repo names the authors and lists CC BY-NC 4.0
 for some of them and Chunsoft/Nintendo/Pokemon IP for the rest. Personal, non-commercial use only.
 Do not redistribute the jar publicly without checking those terms.
-Compact Vietnamese bitmap font technique/assets: NRO reference source supplied by the project owner.
+Compact Vietnamese bitmap font: project-owner-created, as confirmed by the project owner.
 Item source artwork: item{tps}.zip supplied by the project owner; converted to 24px PNG8 for J2ME.
+
+Music test assets (1.7.14): automatic MIDI piano transcriptions of user-provided MP3s.
+- Auto Chess: Littleroot Town (Remix) - Pokemon Ruby, Sapphire & Emerald, video c4qHrexNRS8.
+- Explore: Hyper Potions - Littleroot Town (Pokemon Ruby & Sapphire), video jV3w2PZn8z4.
+- Startup/menu: Tinh Ban Vinh Cuu - Cindy V, Pokemon Ash & Pikachu AMV, video 43QBA4OD1x4.
+Original recordings remain in only_tham_khao/music and are not packaged.
+Transcription tool: Spotify Basic Pitch 0.4.0 (Apache-2.0), ONNX; https://github.com/spotify/basic-pitch.
+MIDI conversion does not establish permission to redistribute these compositions/arrangements.
+Music distribution rights have not been verified; this build is for local playback testing.

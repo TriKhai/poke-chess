@@ -1,0 +1,12 @@
+MP3 music for local testing, from user-provided sources:
+menu.mp3: Tinh Ban Vinh Cuu - Cindy V; composer Luong Bang Quang, video 43QBA4OD1x4.
+autochess.mp3: Littleroot Town (Remix), Pokemon Ruby/Sapphire/Emerald, video c4qHrexNRS8.
+explore.mp3: Hyper Potions - Littleroot Town, Pokemon Ruby/Sapphire, video jV3w2PZn8z4.
+Tool: Spotify Basic Pitch 0.4.0 (Apache-2.0), https://github.com/spotify/basic-pitch.
+All three songs: mono 48 kbps MP3 at 22050 Hz, no cover art, full songs retained.
+Autochess MP3: 1406137 bytes; explore MP3: 1274480 bytes.
+Menu: user-provided 64 kbps MP3 transcoded to mono 48 kbps, 22050 Hz, without cover art.
+Menu MP3: 905213 bytes, approximately 151 seconds; full song retained.
+Only compressed game MP3s are packaged. Old MIDI files and reference MP3s are excluded.
+Conversion does not grant redistribution rights to compositions or arrangements.
+Rights not verified for a public release.

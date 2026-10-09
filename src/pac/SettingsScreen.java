@@ -10,19 +10,24 @@ public final class SettingsScreen extends Screen {
     public SettingsScreen(Game game) { super(game); }
 
     public void update(int dt) { }
+    private int rowGap(){return UiLayout.compact(game.W,game.H)?Art.fh+5:Art.fh*2+8;}
+    private int rowTop(){return UiLayout.compact(game.W,game.H)?Art.fh*3:Math.max(Art.fh*3,game.H/3-rowGap()/2);}
+    public boolean pointer(int x,int y){if(confirmReset)return false;int gap=rowGap(),top=rowTop(),index=(y-top+3)/gap;if(x>=8&&x<game.W-8&&y>=top-3&&index<5&&(y-top+3)%gap<Art.fh+6){selected=index;if(confirmTouch(selected))key(Game.K_FIRE);return true;}if(y>=game.H-Art.fh-8){key(Game.K_0);return true;}return true;}
 
     public void key(int key) {
+        if(key!=Game.K_FIRE&&key!=Game.K_SOFT1)resetTouchChoice();
         if(confirmReset){
             if(key==Game.K_FIRE||key==Game.K_SOFT1){Save.resetProgress();Save.save();RunStorage.clear();HistoryStore.clear();confirmReset=false;selected=0;}
             else if(key==Game.K_0||key==Game.K_SOFT2)confirmReset=false;
             return;
         }
         if (key == Game.K_UP || key == Game.K_DOWN)
-            selected = (selected + 1) % 4;
+            selected = (selected + (key==Game.K_UP?4:1)) % 5;
         else if (key == Game.K_LEFT || key == Game.K_RIGHT || key == Game.K_FIRE || key == Game.K_SOFT1) {
             if (selected == 0) Lang.toggle();
             else if (selected == 1) { nextPerformance();Save.save(); }
-            else if(selected==2)confirmReset=true;
+            else if(selected==2)Music.toggle();
+            else if(selected==3)confirmReset=true;
             else game.setScreen(new MenuScreen(game));
         } else if (key == Game.K_SOFT2 || key == Game.K_0)
             game.setScreen(new MenuScreen(game));
@@ -33,14 +38,15 @@ public final class SettingsScreen extends Screen {
         g.setColor(0x101827); g.fillRect(0, 0, W, H);
         Art.textBC(g, Lang.t("CÀI ĐẶT", "SETTINGS"), W / 2, 10, 0xFFD030);
 
-        boolean compact=UiLayout.compact(W,H);int gap=compact?fh+5:fh*2+8;
-        int y = compact?fh*3:H/3;
+        boolean compact=UiLayout.compact(W,H);int gap=rowGap();
+        int y = rowTop();
         drawRow(g, 0, y, Lang.t("Ngôn ngữ", "Language"),
                 Save.language == Lang.VI ? "Tiếng Việt" : "English");
         drawRow(g, 1, y + gap, Lang.t("Hiệu năng", "Performance"),
                 performanceName());
-        drawRow(g, 2, y + gap*2, Lang.t("Chơi lại từ đầu", "Start over"), "");
-        drawRow(g, 3, y + gap*3, Lang.t("Quay lại", "Back"), "");
+        drawRow(g, 2, y + gap*2, Lang.t("Nhạc nền", "Music"),!Music.enabled()?Lang.t("Tắt","Off"):Music.lastError.length()>0?Lang.t("Lỗi phát","Error"):Lang.t("Bật","On"));
+        drawRow(g, 3, y + gap*3, Lang.t("Chơi lại từ đầu", "Start over"), "");
+        drawRow(g, 4, y + gap*4, Lang.t("Quay lại", "Back"), "");
 
         if(!compact)Art.textC(g, selected == 0
                 ? Lang.t("TRÁI/PHẢI hoặc FIRE để đổi", "LEFT/RIGHT or FIRE to change")

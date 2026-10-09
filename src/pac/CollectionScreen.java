@@ -5,13 +5,13 @@ import javax.microedition.lcdui.Graphics;
 /** Pokedex-like list of every species; locked families are hidden. */
 public final class CollectionScreen extends Screen {
     private int sel = 0, top = 0;
-    private int tab=0,typeSel=0,itemSel=0,statusSel=0,mapSel=0;
+    private int tab=0,typeSel=0,itemSel=0,itemGroup=0,statusSel=0,stageSel=0;
     private int generation=1;
     private int itemDescScroll=0;
     private boolean detail = false;
     private boolean itemDetail = false;
     private boolean dexDetail = false;
-    private boolean mapDetail = false;
+    private boolean previewShiny = false;
     private int dexAction = 0;
     private int animTime = 0, previewState = 0, previewDir = 0;
     private int previewStatus = 0, previewAttackKind = 1;
@@ -30,7 +30,6 @@ public final class CollectionScreen extends Screen {
     public void update(int dt) { animTime += dt; }
 
     public void key(int k) {
-        if(mapDetail){if(k==Game.K_LEFT||k==Game.K_UP){mapSel=(mapSel+MapData.COUNT-1)%MapData.COUNT;MapPreview.clear();}else if(k==Game.K_RIGHT||k==Game.K_DOWN){mapSel=(mapSel+1)%MapData.COUNT;MapPreview.clear();}else if(k==Game.K_FIRE||k==Game.K_SOFT1||k==Game.K_SOFT2||k==Game.K_0){mapDetail=false;MapPreview.clear();}return;}
         if(dexDetail){
             if(k==Game.K_LEFT)previewDir=(previewDir+7)&7;
             else if(k==Game.K_RIGHT)previewDir=(previewDir+1)&7;
@@ -40,6 +39,7 @@ public final class CollectionScreen extends Screen {
             else if(k==Game.K_3||k==Game.K_STAR)previewStatus=(previewStatus+1)%STATUS.length;
             else if(k==Game.K_7)previewAttackKind=(previewAttackKind+2)%3;
             else if(k==Game.K_9)previewAttackKind=(previewAttackKind+1)%3;
+            else if(k==Game.K_POUND&&CollectionAtlas.hasShiny(currentDex()))previewShiny=!previewShiny;
             else if(k==Game.K_FIRE||k==Game.K_SOFT1||k==Game.K_SOFT2||k==Game.K_0)dexDetail=false;
             return;
         }
@@ -57,6 +57,7 @@ public final class CollectionScreen extends Screen {
                 case Game.K_3: case Game.K_STAR: previewStatus = (previewStatus + 1) % STATUS.length; break;
                 case Game.K_7: previewAttackKind = (previewAttackKind + 2) % 3; break;
                 case Game.K_9: previewAttackKind = (previewAttackKind + 1) % 3; break;
+                case Game.K_POUND: if(ShinyData.available(currentSpecies()))previewShiny=!previewShiny; break;
                 case Game.K_FIRE: case Game.K_SOFT1: case Game.K_SOFT2: case Game.K_0:
                     detail = false; break;
                 default: break;
@@ -64,21 +65,22 @@ public final class CollectionScreen extends Screen {
             return;
         }
         switch (k) {
-            case Game.K_LEFT: tab=(tab+4)%5; top=0; itemDescScroll=0; break;
-            case Game.K_RIGHT: tab=(tab+1)%5; top=0; itemDescScroll=0; break;
+            case Game.K_LEFT: tab=(tab+4)%5;top=0;itemDescScroll=0; break;
+            case Game.K_RIGHT: tab=(tab+1)%5;top=0;itemDescScroll=0; break;
             case Game.K_UP:
-                if(tab==0&&sel>0)sel--; else if(tab==1&&typeSel>0)typeSel--; else if(tab==2&&itemSel>0){itemSel--;itemDescScroll=0;}else if(tab==3&&statusSel>0)statusSel--;else if(tab==4&&mapSel>0)mapSel--;
+                if(tab==0&&sel>0)sel--; else if(tab==1&&typeSel>0)typeSel--; else if(tab==2&&itemSel>0){itemSel--;itemDescScroll=0;}else if(tab==3&&statusSel>0)statusSel--;else if(tab==4&&stageSel>0)stageSel--;
                 break;
             case Game.K_DOWN:
-                if(tab==0&&sel<pokemonCount()-1)sel++; else if(tab==1&&typeSel<Data.NT-1)typeSel++; else if(tab==2&&itemSel<ItemData.count()-1){itemSel++;itemDescScroll=0;}else if(tab==3&&statusSel<STATUS.length-1)statusSel++;else if(tab==4&&mapSel<MapData.COUNT-1)mapSel++;
+                if(tab==0&&sel<pokemonCount()-1)sel++; else if(tab==1&&typeSel<Data.NT-1)typeSel++; else if(tab==2&&itemSel<itemGroupCount()-1){itemSel++;itemDescScroll=0;}else if(tab==3&&statusSel<STATUS.length-1)statusSel++;else if(tab==4&&stageSel<StageRoad.CATALOG_COUNT-1)stageSel++;
                 break;
-            case Game.K_1: if(tab==0)changeGeneration(-1);else if(tab==2&&itemDescScroll>0)itemDescScroll--; break;
-            case Game.K_3: if(tab==0)changeGeneration(1);else if(tab==2)itemDescScroll++; break;
+            case Game.K_1: if(tab==0)changeGeneration(-1);else if(tab==2){itemGroup=(itemGroup+3)%4;itemSel=top=itemDescScroll=0;} break;
+            case Game.K_3: if(tab==0)changeGeneration(1);else if(tab==2){itemGroup=(itemGroup+1)%4;itemSel=top=itemDescScroll=0;} break;
+            case Game.K_7: if(tab==2&&itemDescScroll>0)itemDescScroll--; break;
+            case Game.K_9: if(tab==2)itemDescScroll++; break;
             case Game.K_FIRE: case Game.K_SOFT1:
-                if(tab==0&&generation<=3&&Save.has(currentSpecies())){detail=true;animTime=0;}
-                else if(tab==0&&generation>=4)dexDetail=true;
+                if(tab==0&&generation<=3&&Save.has(currentSpecies())){detail=true;previewShiny=false;animTime=0;}
+                else if(tab==0&&generation>=4){dexDetail=true;previewShiny=false;}
                 else if(tab==2)itemDetail=true;
-                else if(tab==4){mapDetail=true;MapPreview.clear();}
                 break;
             case Game.K_SOFT2: case Game.K_0:
                 game.setScreen(new MenuScreen(game));
@@ -88,7 +90,6 @@ public final class CollectionScreen extends Screen {
     }
 
     public void paint(Graphics g) {
-        if(mapDetail){paintMapDetail(g);return;}
         if(dexDetail){paintDexDetail(g);return;}
         if(itemDetail){paintItemDetail(g);return;}
         if (detail) { paintDetail(g); return; }
@@ -99,7 +100,7 @@ public final class CollectionScreen extends Screen {
         if(tab==1){paintTypes(g);return;}
         if(tab==2){paintItems(g);return;}
         if(tab==3){paintStatuses(g);return;}
-        if(tab==4){paintMaps(g);return;}
+        if(tab==4){paintStages(g);return;}
         int count=pokemonCount();
         Art.textB(g,Lang.t("THẾ HỆ ","GEN ")+generation+"  "+count,4,fh+7,0xFFD030);
 
@@ -117,7 +118,8 @@ public final class CollectionScreen extends Screen {
             int y = listY + r * rowH;
             boolean legacy=generation<=3;
             int sp=legacy?speciesAt(i):-1,di=legacy?-1:dexAt(i);
-            boolean has = !legacy||Save.has(sp);
+            int dex=legacy?sp+1:CollectionDex.DEX[di];
+            boolean has = Save.ownsDex(dex);
             if (i == sel) {
                 g.setColor(0x305090);
                 g.fillRect(0, y, W, rowH);
@@ -125,7 +127,6 @@ public final class CollectionScreen extends Screen {
             if(has){if(legacy)Art.avatar(g,sp,2,y+1);else Art.dexAvatar(g,di,2,y+1);}
             else Art.text(g, "?", 2 + rowH / 3, y + (rowH - fh) / 2, 0x707080);
             String nm=has?(legacy?Data.name[sp]:CollectionDex.NAME[di]):"???";
-            int dex=legacy?sp+1:CollectionDex.DEX[di];
             Art.text(g, "#" + dex + " " + nm, 38, y + (rowH - fh) / 2, has ? 0xFFFFFF : 0x808090);
             if (has) {
                 Art.textR(g,legacy?Data.CATEGORY_NAME[Data.category[sp]]:CollectionDex.CATEGORY[di],W-3,y+(rowH-fh)/2,0xB0C0E0);
@@ -137,7 +138,7 @@ public final class CollectionScreen extends Screen {
         g.setColor(0x0C1420);
         g.fillRect(0, dy, W, detailH);
         boolean legacy=generation<=3;int sp=legacy?currentSpecies():-1,di=legacy?-1:currentDex();
-        boolean has=!legacy||Save.has(sp);
+        boolean has=Save.ownsDex(legacy?sp+1:CollectionDex.DEX[di]);
         if (has) {
             if(legacy)Art.avatar(g,sp,3,dy+2);else Art.dexAvatar(g,di,3,dy+2);
             int x = 38;
@@ -148,12 +149,18 @@ public final class CollectionScreen extends Screen {
                 int yy=Art.para(g,Lang.moveName(Data.skillName[sp])+": "+AbilityBehavior.description(sp),38,dy+fh*2+3,W-42,0xA0FFA0,2);
                 String evo=Data.evo[sp]>=0?Lang.t("Tiến hóa: ","Evolves: ")+Data.name[Data.evo[sp]]:Lang.t("Dạng cuối","Final form");Art.text(g,evo,4,yy,0xC0C0C0);
             }else{
-                Art.textSmall(g,Lang.t("Chỉ có trong Bộ sưu tập","Collection only"),38,dy+fh+3,0xFFD060);
-                Art.textSmall(g,Lang.t("Chưa tham gia Battle","Not available in Battle"),38,dy+fh*2+3,0x90A8C8);
+                int battleSp=Data.speciesForDex(CollectionDex.DEX[di]);
+                if(battleSp>=0){
+                    Art.textSmall(g,"HP "+Data.hp[battleSp]+" AT "+Data.atk[battleSp]+" DF "+Data.def[battleSp]+"/"+Data.speDef[battleSp]+" SP "+Data.speed[battleSp],38,dy+fh+3,0xE0E8FF);
+                    Art.para(g,Lang.moveName(Data.skillName[battleSp])+": "+AbilityBehavior.description(battleSp),38,dy+fh*2+3,W-42,0xA0FFA0,2);
+                }else{
+                    Art.textSmall(g,Lang.t("Chỉ có trong Bộ sưu tập","Collection only"),38,dy+fh+3,0xFFD060);
+                    Art.textSmall(g,Lang.t("Chưa tham gia Battle","Not available in Battle"),38,dy+fh*2+3,0x90A8C8);
+                }
             }
         } else {
             Art.text(g, Lang.t("Chưa được khám phá.", "Not discovered yet."), 4, dy + 3, 0x9090A0);
-            Art.text(g, Lang.t("Hãy bắt cóc trong chế độ Khám phá!", "Catch it in Explore mode!"), 4, dy + fh + 3, 0x9090A0);
+            Art.text(g, Lang.t("Hãy thu thập trong chế độ Khám Phá!", "Collect it in Explore mode!"), 4, dy + fh + 3, 0x9090A0);
         }
         Art.textR(g, Lang.t("FIRE chi tiết", "FIRE detail"), W - 3, fh+7, 0x80A8D0);
         Art.textSmallR(g,Lang.t("1/3: đổi thế hệ","1/3: change Gen"),W-3,H-fh-2,0x80A8D0);
@@ -176,18 +183,25 @@ public final class CollectionScreen extends Screen {
         Art.typeIcon(g,CollectionDex.T1[di],x,chipY);x+=16;
         if(CollectionDex.T2[di]>=0)Art.typeIcon(g,CollectionDex.T2[di],x,chipY);
         int vw=Math.min(72,W-28),vh=Math.min(70,H/3),px=W/2-vw/2,py=chipY+fh+3;
-        if(!CollectionAtlas.draw(g,di,px,py,vw,vh,dexAction,previewDir,frame))Art.dexAvatar(g,di,W/2-16,py+(vh-32)/2);
+        if(!CollectionAtlas.draw(g,di,px,py,vw,vh,dexAction,previewDir,frame,previewShiny))Art.dexAvatar(g,di,W/2-16,py+(vh-32)/2);
+        int battleSp=Data.speciesForDex(CollectionDex.DEX[di]);
         Art.statusSprite(g,previewStatus,px-19,py+vh/2-8,frame);
+        if(battleSp>=0)Art.speciesSkillSprite(g,battleSp,px+vw+3,py+vh/2-16,frame);
         Art.attackSprite(g,CollectionDex.T1[di],previewAttackKind,W/2,py+vh+12,frame);
         int y=py+vh+22;
         Art.textC(g,CLIP[dexAction]+"  "+DIR[previewDir],W/2,y,0x80D8FF);y+=fh;
         Art.textC(g,"STATUS: "+Lang.statusName(previewStatus),W/2,y,0xFFC070);y+=fh;
         String kind=previewAttackKind==0?"MELEE":(previewAttackKind==1?"RANGE":"HIT");
         Art.textC(g,Lang.t("HIỆU ỨNG: ","ATTACK FX: ")+Lang.typeName(CollectionDex.T1[di])+" "+kind,W/2,y,0xA0E8A0);y+=fh;
-        Art.textSmall(g,Lang.t("Thế hệ ","Generation ")+CollectionDex.GEN[di]+"  #"+CollectionDex.DEX[di],4,y,0xE0E8FF);y+=fh;
-        Art.textSmall(g,Lang.t("Chỉ trong Bộ sưu tập - chưa vào Battle","Collection only - not in Battle"),4,y,0xFFD060);
+        if(battleSp>=0){
+            Art.textSmall(g,"HP "+Data.hp[battleSp]+" ATK "+Data.atk[battleSp]+" DEF "+Data.def[battleSp]+"/"+Data.speDef[battleSp],4,y,0xE0E8FF);y+=fh;
+            Art.para(g,Lang.moveName(Data.skillName[battleSp])+": "+AbilityBehavior.description(battleSp),4,y,W-8,0xA0FFA0,2);
+        }else{
+            Art.textSmall(g,Lang.t("Thế hệ ","Generation ")+CollectionDex.GEN[di]+"  #"+CollectionDex.DEX[di],4,y,0xE0E8FF);y+=fh;
+            Art.textSmall(g,Lang.t("Chỉ trong Bộ sưu tập - chưa vào Battle","Collection only - not in Battle"),4,y,0xFFD060);
+        }
         Art.textC(g,Lang.t("< > hướng   2/8 animation","< > direction   2/8 animation"),W/2,H-fh*2-2,0x8090B0);
-        Art.textC(g,Lang.t("1/3 status  7/9 hiệu ứng  FIRE về","1/3 status  7/9 attack  FIRE back"),W/2,H-fh-1,0x8090B0);
+        Art.textC(g,Lang.t("1/3 status  7/9 FX  # Shiny  FIRE về","1/3 status  7/9 FX  # Shiny  FIRE back"),W/2,H-fh-1,0x8090B0);
     }
 
     private void paintTabs(Graphics g){
@@ -196,19 +210,17 @@ public final class CollectionScreen extends Screen {
             int tw=i==4?W-i*w:w;
             g.setColor(i==tab?0x60708A:0x303B52);g.fillRect(i*w,0,tw-1,h);
             if(i==tab){g.setColor(0xFFD030);g.fillRect(i*w,h-2,tw-1,2);}
-            String title=i==0?"PKMN":(i==1?Lang.t("HỆ","TYPE"):(i==2?Lang.t("ĐỒ","ITEM"):(i==3?"STATUS":"MAP")));
+            String title=i==0?"PKMN":(i==1?Lang.t("HỆ","TYPE"):(i==2?Lang.t("ĐỒ","ITEM"):(i==3?"STS":Lang.t("ẢI","STG"))));
             Art.textSmallC(g,title,i*w+tw/2,2,i==tab?0xFFFFFF:0xA8B0C0);
         }
     }
 
-    private void paintMaps(Graphics g){
-        int W=game.W,H=game.H,fh=Art.fh,y0=fh+8,row=fh+4,detail=fh*6,rows=UiLayout.visibleRows(H,y0,detail,row);
-        if(mapSel<top)top=mapSel;if(mapSel>=top+rows)top=mapSel-rows+1;
-        for(int r=0;r<rows&&top+r<MapData.COUNT;r++){int i=top+r,y=y0+r*row;if(i==mapSel){g.setColor(0x405273);g.fillRect(2,y,W-4,row-1);}Art.textB(g,(i+1)+". "+MapData.name(i),5,y,i==mapSel?0xFFFFFF:0xA8B5C8);}
-        int y=y0+rows*row+2;g.setColor(0x0B1422);g.fillRect(0,y,W,H-y);Art.textB(g,MapData.name(mapSel),5,y+3,0xFFD060);Art.text(g,Lang.t("Chủ đề: ","Theme: ")+MapData.theme(mapSel),5,y+fh+4,0x80D8FF);Art.para(g,MapData.desc(mapSel),5,y+fh*2+5,W-10,0xD8E8F0,2);Art.textSmall(g,"FIRE: "+Lang.t("xem map","view map"),5,H-fh-1,0x80D8FF);Art.textSmallR(g,(mapSel+1)+"/"+MapData.COUNT,W-4,H-fh-1,0x8090A8);
+    private void paintStages(Graphics g){
+        int W=game.W,H=game.H,fh=Art.fh,y0=fh+8,row=34,detail=fh*7,rows=UiLayout.visibleRows(H,y0,detail,row);if(rows<1)rows=1;
+        if(stageSel<top)top=stageSel;if(stageSel>=top+rows)top=stageSel-rows+1;
+        for(int r=0;r<rows&&top+r<StageRoad.CATALOG_COUNT;r++){int i=top+r,y=y0+r*row;if(i==stageSel){g.setColor(0x405273);g.fillRect(2,y,W-4,row-2);}StageRoad.drawCatalogIcon(g,i,5,y+2,28);Art.textB(g,StageRoad.catalogName(i),39,y+7,i==stageSel?0xFFFFFF:0xA8B5C8);}
+        int y=y0+rows*row;g.setColor(0x0B1422);g.fillRect(0,y,W,H-y);Art.textB(g,StageRoad.catalogName(stageSel),5,y+4,0xFFD060);Art.para(g,StageRoad.catalogDesc(stageSel),5,y+fh+6,W-10,0xD8E8F0,Math.max(1,(H-y-fh*3)/fh));Art.textSmallR(g,(stageSel+1)+"/"+StageRoad.CATALOG_COUNT,W-4,H-fh-1,0x8090B0);
     }
-
-    private void paintMapDetail(Graphics g){int W=game.W,H=game.H,fh=Art.fh,top=fh+5,bottom=fh*4+3;g.setColor(0x080E18);g.fillRect(0,0,W,H);Art.textBC(g,MapData.name(mapSel),W/2,2,0xFFD060);int ph=H-top-bottom;if(ph<32)ph=32;if(!MapPreview.draw(g,mapSel,2,top,W-4,ph)){g.setColor(0x1C3040);g.fillRect(5,top+5,W-10,ph-10);Art.textC(g,Lang.t("Lite: không đóng gói ảnh map","Lite: map image not packaged"),W/2,top+ph/2,0xA8B8C8);}int y=top+ph+2;Art.textC(g,Lang.t("Chủ đề: ","Theme: ")+MapData.theme(mapSel),W/2,y,0x80D8FF);Art.textSmallC(g,MapData.ID[mapSel]+"  "+(mapSel+1)+"/"+MapData.COUNT,W/2,y+fh,0xA8B5C8);Art.textSmallC(g,Lang.t("4/6: đổi map   FIRE/0: về","4/6: change map   FIRE/0: back"),W/2,H-fh-1,0x8090B0);}
 
     private void paintStatuses(Graphics g){
         int W=game.W,H=game.H,fh=Art.fh,pikachu=24,frame=animTime/70;
@@ -275,28 +287,35 @@ public final class CollectionScreen extends Screen {
     }
 
     private void paintItems(Graphics g){
-        int W=game.W,H=game.H,fh=Art.fh,y0=fh+8,row=27,detailMinH=fh*7+8;
+        int W=game.W,H=game.H,fh=Art.fh,subY=fh+7,subH=fh+4,y0=subY+subH+2,row=27,detailMinH=fh*7+8;
+        String[] groups={Lang.t("VẬT PHẨM","ITEMS"),Lang.t("TRÁI","FRUIT"),Lang.t("ĐÁ","STONES"),"GEM"};int gw=W/4;
+        for(int i=0;i<4;i++){int x=i*gw,w=i==3?W-x:gw-1;g.setColor(i==itemGroup?0x405273:0x222E42);g.fillRect(x,subY,w,subH);if(i==itemGroup){g.setColor(0xFFD030);g.fillRect(x,subY+subH-2,w,2);}Art.textSmallC(g,groups[i],x+w/2,subY+1,i==itemGroup?0xFFFFFF:0x8D9AAF);}
         int rows=(H-y0-detailMinH)/row;if(rows<1)rows=1;
-        if(itemSel<top)top=itemSel;if(itemSel>=top+rows)top=itemSel-rows+1;
-        for(int r=0;r<rows&&top+r<ItemData.count();r++){
-            int i=top+r,y=y0+r*row;if(i==itemSel){g.setColor(0x405273);g.fillRect(0,y,W,row-1);}
-            Art.itemIcon(g,i,2,y+1);Art.textB(g,ItemData.name(i),30,y+3,i==itemSel?0xFFFFFF:0xC8D0E0);
+        int count=itemGroupCount();if(itemSel>=count)itemSel=Math.max(0,count-1);if(itemSel<top)top=itemSel;if(itemSel>=top+rows)top=itemSel-rows+1;
+        for(int r=0;r<rows&&top+r<count;r++){
+            int rank=top+r,i=itemAtGroup(rank),y=y0+r*row;if(rank==itemSel){g.setColor(0x405273);g.fillRect(0,y,W,row-1);}
+            Art.itemIcon(g,i,2,y+1);Art.textB(g,ItemData.name(i),30,y+3,rank==itemSel?0xFFFFFF:0xC8D0E0);
             Art.textSmall(g,ItemData.ID[i],30,y+fh+3,0x7088A0);
         }
+        int shown=itemAtGroup(itemSel);if(shown<0)return;
         int py=y0+rows*row,detailH=H-py;Art.box(g,2,py,W-4,detailH,0x101827,0x526780);
-        Art.itemIcon(g,itemSel,5,py+4);Art.textB(g,ItemData.name(itemSel),34,py+4,0xFFD060);
-        Art.textSmall(g,ItemData.kind(itemSel),34,py+fh+4,0x80D8FF);
+        Art.itemIcon(g,shown,5,py+4);Art.textB(g,ItemData.name(shown),34,py+4,0xFFD060);
+        Art.textSmall(g,ItemData.kind(shown),34,py+fh+4,0x80D8FF);
         int textY=py+fh*2+4,visible=(H-textY-fh-3)/fh;if(visible<1)visible=1;
-        String[] wrapped=Art.wrap(ItemData.desc(itemSel),W-14,64);
+        String[] wrapped=Art.wrap(ItemData.desc(shown),W-14,64);
         int maxScroll=Math.max(0,wrapped.length-visible);if(itemDescScroll>maxScroll)itemDescScroll=maxScroll;
         for(int line=0;line<visible&&itemDescScroll+line<wrapped.length;line++)Art.textSmall(g,wrapped[itemDescScroll+line],5,textY+line*fh,0xD8E0F0);
         if(maxScroll>0){
-            Art.textSmallR(g,Lang.t("1/3 cuộn ","1/3 scroll ")+(itemDescScroll+1)+"/"+(maxScroll+1),W-5,H-fh-2,0x80A8D0);
+            Art.textSmallR(g,Lang.t("7/9 cuộn ","7/9 scroll ")+(itemDescScroll+1)+"/"+(maxScroll+1),W-5,H-fh-2,0x80A8D0);
             int barH=Math.max(4,(H-textY)*visible/wrapped.length),barY=textY+(H-textY-barH)*itemDescScroll/Math.max(1,maxScroll);
             g.setColor(0x607898);g.fillRect(W-3,barY,2,barH);
         }
-        Art.textR(g,(itemSel+1)+"/"+ItemData.count(),W-5,py+4,0x8090A8);
+        Art.textR(g,(itemSel+1)+"/"+count,W-5,py+4,0x8090A8);
     }
+
+    private boolean inItemGroup(int id){String s=ItemData.ID[id];if(itemGroup==1)return s.indexOf("_BERRY")>=0;if(itemGroup==2)return s.indexOf("_STONE")>=0||s.indexOf("_ROCK")>=0;if(itemGroup==3)return s.indexOf("_GEM")>=0;return s.indexOf("_BERRY")<0&&s.indexOf("_STONE")<0&&s.indexOf("_ROCK")<0&&s.indexOf("_GEM")<0;}
+    private int itemGroupCount(){int n=0;for(int i=0;i<ItemData.count();i++)if(inItemGroup(i))n++;return n;}
+    private int itemAtGroup(int rank){for(int i=0,n=0;i<ItemData.count();i++)if(inItemGroup(i)){if(n==rank)return i;n++;}return -1;}
 
     private void paintItemDetail(Graphics g){
         int W=game.W,H=game.H,fh=Art.fh;
@@ -304,15 +323,16 @@ public final class CollectionScreen extends Screen {
         Art.box(g,3,3,W-6,H-6,0x101830,0xFFD030);
         Art.textBC(g,Lang.t("CHI TIẾT VẬT PHẨM","ITEM DETAILS"),W/2,7,0xFFD030);
         int y=fh+12;
-        Art.itemIcon(g,itemSel,8,y);
-        Art.textB(g,ItemData.name(itemSel),36,y,0xFFFFFF);
-        Art.textSmall(g,ItemData.ID[itemSel],36,y+fh,0x8798B0);
+        int shown=itemAtGroup(itemSel);if(shown<0)return;
+        Art.itemIcon(g,shown,8,y);
+        Art.textB(g,ItemData.name(shown),36,y,0xFFFFFF);
+        Art.textSmall(g,ItemData.ID[shown],36,y+fh,0x8798B0);
         y+=29;
         g.setColor(0x40506A);g.drawLine(7,y,W-8,y);y+=5;
-        Art.textB(g,ItemData.kind(itemSel),8,y,0x80D8FF);y+=fh+4;
+        Art.textB(g,ItemData.kind(shown),8,y,0x80D8FF);y+=fh+4;
         int lines=(H-y-fh*2-8)/fh;if(lines<1)lines=1;
-        Art.para(g,ItemData.desc(itemSel),8,y,W-16,0xE0E8F0,lines);
-        Art.textSmallR(g,(itemSel+1)+"/"+ItemData.count(),W-8,fh+12,0x8090A8);
+        Art.para(g,ItemData.desc(shown),8,y,W-16,0xE0E8F0,lines);
+        Art.textSmallR(g,(itemSel+1)+"/"+itemGroupCount(),W-8,fh+12,0x8090A8);
         Art.textC(g,Lang.t("FIRE / 0: đóng","FIRE / 0: close"),W/2,H-fh-5,0x8090B0);
     }
 
@@ -328,7 +348,7 @@ public final class CollectionScreen extends Screen {
 
         int vw=Data.visualWidth(sp),vh=Data.visualHeight(sp),px=W/2-vw/2,py=chipY+fh+3;
         int rawState=previewState;
-        Art.battleSprite(g,sp,px,py,frame,rawState,previewDir);
+        Art.battleSprite(g,sp,px,py,frame,rawState,previewDir,previewShiny);
         Art.statusSprite(g,previewStatus,px-19,py+vh/2-8,frame);
         Art.speciesSkillSprite(g,sp,px+vw+3,py+vh/2-16,frame);
         Art.attackSprite(g,Data.t1[sp],previewAttackKind,W/2,py+vh+12,frame);
@@ -345,6 +365,6 @@ public final class CollectionScreen extends Screen {
         Art.para(g,Lang.moveName(Data.skillName[sp])+": "+AbilityBehavior.description(sp),4,y,W-8,0xA0FFA0,1);
 
         Art.textC(g,"< > direction   2/8 clip",W/2,H-fh*2-2,0x8090B0);
-        Art.textC(g,"1/3 status  7/9 attack  FIRE back",W/2,H-fh-1,0x8090B0);
+        Art.textC(g,"1/3 status  7/9 FX  # Shiny  FIRE back",W/2,H-fh-1,0x8090B0);
     }
 }

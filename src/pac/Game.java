@@ -24,6 +24,10 @@ public final class Game extends GameCanvas implements Runnable {
 
     private final int[] queue = new int[16];
     private int qHead = 0, qTail = 0;
+    /** Held directions are sampled by the game loop so devices without keyRepeated still move. */
+    private volatile int heldDirections;
+    public static final int K_DASH_BASE=40;private final SurvivalTap arenaTaps=new SurvivalTap();public void resetArenaInput(){heldDirections=0;arenaTaps.reset();}
+    private long nextHeldMove;
 
     public Game(PacMidlet m) {
         super(false);
@@ -32,8 +36,10 @@ public final class Game extends GameCanvas implements Runnable {
     }
 
     public void setScreen(Screen s) {
+        heldDirections=0;arenaTaps.reset();
         screen = s;
         s.onShow();
+        Music.screen(s);
     }
 
     public void quit() {
@@ -42,8 +48,13 @@ public final class Game extends GameCanvas implements Runnable {
 
     public void requestProfileName(){midlet.requestProfileName();}
 
+    public boolean releaseIdentityOk(){return midlet.releaseIdentityOk();}
+
+    public void openMain(){if(Save.playPath<0)setScreen(new PlayPathScreen(this));else setScreen(new MenuScreen(this));}
+
     public synchronized void start() {
         if (running) return;
+        Music.pause(false);
         Thread next = new Thread(this);
         thread = next;
         running = true;
@@ -52,7 +63,10 @@ public final class Game extends GameCanvas implements Runnable {
 
     public synchronized void stop() {
         running = false;
+        Music.pause(true);
     }
+    protected void hideNotify(){Music.pause(true);}
+    protected void showNotify(){Music.pause(false);}
 
     public void persist(){Screen s=screen;if(s instanceof ChessScreen)((ChessScreen)s).saveResume();}
 
@@ -111,14 +125,26 @@ public final class Game extends GameCanvas implements Runnable {
         }
     }
 
+    private static int directionBit(int k){return k==K_UP?1:(k==K_DOWN?2:(k==K_LEFT?4:(k==K_RIGHT?8:0)));}
+    private static int diagonalBit(int k){return k==K_1?16:k==K_3?32:k==K_7?64:k==K_9?128:0;}
+    /** Continuous movement for the arena; does not depend on keyRepeated. */
+    public int heldDirection(){return combinedHeldDirection(heldDirections);}
+    static int combinedHeldDirection(int mask){int base=mask&15;if((mask&16)!=0)base|=5;if((mask&32)!=0)base|=9;if((mask&64)!=0)base|=6;if((mask&128)!=0)base|=10;return combinedDirection(base);}
+
+    /** Package-visible for input regression tests. Opposite directions cancel. */
+    static int combinedDirection(int mask){int v=((mask&1)!=0?1:0)-((mask&2)!=0?1:0),h=((mask&4)!=0?1:0)-((mask&8)!=0?1:0);if(v>0)return h>0?K_1:(h<0?K_3:K_UP);if(v<0)return h>0?K_7:(h<0?K_9:K_DOWN);return h>0?K_LEFT:(h<0?K_RIGHT:K_NONE);}
+
     protected void keyPressed(int kc) {
-        push(map(kc));
+        int k=map(kc),bit=directionBit(k)|diagonalBit(k);
+        if(bit!=0){boolean fresh=(heldDirections&bit)==0;heldDirections|=bit;int held=heldDirection();if(fresh&&screen instanceof SurvivalScreen&&arenaTaps.press(held,System.currentTimeMillis()))push(K_DASH_BASE+held);push(held);nextHeldMove=System.currentTimeMillis()+125;}
+        else push(k);
     }
 
     protected void keyRepeated(int kc) {
-        int k = map(kc);
-        if (k >= K_UP && k <= K_RIGHT) push(k);
+        int k=map(kc);if((directionBit(k)|diagonalBit(k))==0)push(k);
     }
+
+    protected void keyReleased(int kc){int k=map(kc),bit=directionBit(k)|diagonalBit(k);if(bit!=0)heldDirections&=~bit;}
 
     /** touch fallback: screen acts as a big d-pad, bottom-left = back. */
     protected void pointerPressed(int x, int y) {
@@ -133,6 +159,8 @@ public final class Game extends GameCanvas implements Runnable {
     }
 
     // ---- loop ----------------------------------------------------------
+    protected void pointerDragged(int x,int y){if(screen!=null)screen.pointerDrag(x,y);}
+    protected void pointerReleased(int x,int y){if(screen!=null)screen.pointerRelease(x,y);}
 
     public void run() {
         Thread owner=Thread.currentThread();

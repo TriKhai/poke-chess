@@ -1,0 +1,370 @@
+
+0144/0001 Galar
+sprite
+2024-12-21 22:21:55.056603	<@!544245909639397378>	CUR	CC_BY-NC_4	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,SpAttack,RearUp,Swing,Double,Rotate,Hop
+2025-02-01 21:41:25.939807	<@!544245909639397378>	CUR	CC_BY-NC_4	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,SpAttack,RearUp,Swing,Double,Rotate,Hop
+2025-02-03 02:36:10.233014	<@!544245909639397378>	CUR	CC_BY-NC_4	Sleep
+
+portrait
+2020-12-16 22:56:07.471065	<@!183561486893842432>	CUR	PMDCollab_1	Normal
+2021-08-30 23:08:02.361831	<@!183561486893842432>	CUR	PMDCollab_1	Angry,Crying,Determined,Dizzy,Happy,Inspired,Joyous,Normal,Pain,Sad,Shouting,Sigh,Special0,Special1,Stunned,Surprised,Teary-Eyed,Worried
+2024-04-14 23:13:01.132092	<@!330751862590406656>	CUR	CC_BY-NC_4	Special2
+
+
+0145/0001 Galar
+sprite
+2023-01-27 18:44:50.234038	JHONY_REX	CUR	PMDCollab_1	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,Strike,Emit,SpAttack,Swing,Double,Rotate,Hop
+2023-03-31 07:43:28.424436	<@!330751862590406656>	CUR	PMDCollab_1	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,Emit,Swing,Double,Rotate,Hop
+
+portrait
+2020-12-16 22:56:11.541302	<@!183561486893842432>	CUR	PMDCollab_1	Normal
+
+
+0146/0001 Galar
+sprite
+2021-11-17 00:25:52.720661	JHONY_REX	CUR	PMDCollab_1	Walk,Attack,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate,Cringe
+
+portrait
+2020-12-16 22:56:14.727141	<@!183561486893842432>	OLD	PMDCollab_1	Normal
+2021-10-12 23:56:40.352772	EZERART	CUR	PMDCollab_1	Normal
+2021-10-14 14:36:34.929524	<@!533406104256905257>	CUR	PMDCollab_1	Angry,Crying,Determined,Dizzy,Happy,Inspired,Joyous,Pain,Sad,Shouting,Sigh,Special0,Special2,Special3,Stunned,Surprised,Teary-Eyed,Worried
+2024-02-25 02:49:42.508431	<@!533406104256905257>	CUR	CC_BY-NC_4	Sad,Joyous,Happy,Crying,Inspired,Sigh,Pain,Shouting,Surprised,Stunned,Angry,Teary-Eyed,Dizzy,Special2,Worried,Determined,Special0,Special3
+
+
+0157/0001 Hisui
+sprite
+2023-07-16 15:25:42.900168	<@!330751862590406656>	CUR	PMDCollab_2	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,Strike,Twirl,Swing,Double,Rotate,Hop
+2024-07-31 01:44:12.222459	<@!157796074457661440>	CUR	CC_BY-NC_4	EventSleep,Wake,Eat,Tumble,Pose,Pull,Pain,Float,DeepBreath,Nod,Sit,LookUp,Sink,Trip,Laying,LeapForth,Head,Cringe,LostBalance,TumbleBack,HitGround,Faint
+
+portrait
+2022-03-06 09:14:36.043678	<@!356635814668664832>	CUR	PMDCollab_1	Normal,Special1
+2022-10-09 23:55:20.964287	<@!330751862590406656>	CUR	PMDCollab_1	Happy,Worried
+2023-10-29 02:24:47.236283	<@!157796074457661440>	CUR	PMDCollab_2	Sad,Joyous,Crying,Inspired,Sigh,Pain,Shouting,Surprised,Stunned,Angry,Teary-Eyed,Dizzy,Determined
+
+
+0172/0001 Spiky
+sprite
+2022-07-16 12:36:10.580653	<@!215638650434617345>	CUR	PMDCollab_1	Idle,Walk,Sleep,Hurt,Attack,Charge,Appeal,Sing,Shock,Swing,Double,Rotate,Hop,QuickStrike
+2023-04-29 22:15:04.695337	<@!454421330058805251>	CUR	PMDCollab_1	EventSleep,Wake,Eat,Tumble,Pose,Pull,Pain,Float,DeepBreath,Nod,Sit,LookUp,Sink,Trip,Laying,LeapForth,Head,Cringe,LostBalance,TumbleBack,HitGround,Faint
+2023-06-18 20:09:18.216199	<@!454421330058805251>	CUR	PMDCollab_2	Wake,Nod
+2023-07-24 20:50:32.696087	<@!454421330058805251>	CUR	PMDCollab_2	Pose,Nod,Trip,LeapForth,HitGround
+2023-10-13 20:12:51.115193	<@!454421330058805251>	CUR	PMDCollab_2	Shock,Pose,Pain,Nod,Trip,HitGround,Faint
+2024-08-20 01:37:50.327777	<@!454421330058805251>	CUR	CC_BY-NC_4	Idle,Walk,Hurt,Attack,Charge,Appeal,Shock,Swing,Double,Rotate,Hop,QuickStrike,EventSleep,Wake,Eat,Tumble,Pose,Pull,Pain,Float,Nod,LookUp,Sink,Trip,Laying,LeapForth,Head,Cringe,LostBalance,TumbleBack,HitGround,Faint
+2025-08-17 17:32:06.032742	<@!454421330058805251>	CUR	CC_BY-NC_4	EventSleep,Wake,Eat,Tumble,Pose,Pull,Float,Nod,Trip,Laying,LeapForth,LostBalance,TumbleBack,HitGround,Faint
+2025-08-17 22:35:04.581845	<@!454421330058805251>	CUR	CC_BY-NC_4	Nod,LeapForth
+
+
+0194/0002 Paldea
+sprite
+2024-03-16 01:27:37.940685	<@!402958234371227648>	CUR	CC_BY-NC_4	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,Strike,Twirl,Swing,Double,Rotate,Hop,EventSleep,Wake,Eat,Tumble,Pose,Pull,Pain,Float,DeepBreath,Nod,Sit,LookUp,Sink,Trip,Laying,LeapForth,Head,Cringe,LostBalance,TumbleBack,HitGround,Faint
+
+portrait
+2022-08-03 17:36:36.532450	<@!702275233125630042>	CUR	PMDCollab_1	Normal
+
+
+0199/0001 Galar
+sprite
+2025-02-25 06:07:28.829991	<@!229131140903075840>	CUR	CC_BY-NC_4	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,Strike,RearUp,Swing,Double,Rotate,Hop
+
+portrait
+2023-01-02 23:30:59.277059	<@!544245909639397378>	CUR	PMDCollab_1	Normal
+2023-05-05 15:49:28.842530	<@!544245909639397378>	CUR	PMDCollab_1	Normal^
+2023-05-05 19:40:07.728199	<@!356635814668664832>	CUR	PMDCollab_1	Normal,Normal^
+2025-07-28 17:50:16.013717	<@!229131140903075840>	CUR	CC_BY-NC_4	Sad,Joyous,Happy,Crying,Inspired,Sigh,Pain,Shouting,Surprised,Stunned,Angry,Teary-Eyed,Dizzy,Worried,Determined,Special0
+
+
+0201/0001 B
+sprite
+2020-10-07 17:58:43.932809	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.932809	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+2025-05-26 19:07:31.928872	<@!108260609241423872>	CUR	CC_BY-NC_4	Sad,Joyous,Happy,Crying,Inspired,Sigh,Pain,Shouting,Surprised,Stunned,Angry,Teary-Eyed,Dizzy,Worried,Determined
+
+
+0201/0002 C
+sprite
+2020-10-07 17:58:43.909873	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.909873	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+2025-05-26 19:08:57.988572	<@!108260609241423872>	CUR	CC_BY-NC_4	Sad,Joyous,Happy,Crying,Inspired,Sigh,Pain,Shouting,Surprised,Stunned,Angry,Teary-Eyed,Dizzy,Worried,Determined
+
+
+0201/0003 D
+sprite
+2020-10-07 17:58:43.906879	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.907877	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+
+
+0201/0004 E
+sprite
+2020-10-07 17:58:43.904884	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.904884	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+2022-06-19 00:41:29.643881	<@!229363481852379136>	CUR	PMDCollab_1	Sad,Joyous,Sad^,Joyous^,Happy,Crying,Inspired,Sigh,Happy^,Crying^,Inspired^,Sigh^,Pain,Shouting,Surprised,Stunned,Pain^,Shouting^,Surprised^,Stunned^,Angry,Teary-Eyed,Dizzy,Angry^,Teary-Eyed^,Dizzy^,Worried,Determined,Worried^,Determined^
+
+
+0201/0005 F
+sprite
+2020-10-07 17:58:43.900896	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.901894	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+
+
+0201/0006 G
+sprite
+2020-10-07 17:58:43.898900	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.898900	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+2022-08-12 02:13:08.039169	<@!779213287576436746>	CUR	PMDCollab_1	Sad,Joyous,Sad^,Joyous^,Happy,Crying,Inspired,Sigh,Happy^,Crying^,Inspired^,Sigh^,Pain,Shouting,Surprised,Stunned,Pain^,Shouting^,Surprised^,Stunned^,Angry,Teary-Eyed,Dizzy,Angry^,Teary-Eyed^,Dizzy^,Worried,Determined,Worried^,Determined^
+
+
+0201/0007 H
+sprite
+2020-10-07 17:58:43.896906	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.896906	CHUNSOFT	CUR	Unspecified	Normal
+
+
+0201/0008 I
+sprite
+2020-10-07 17:58:43.894911	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.894911	CHUNSOFT	CUR	Unspecified	Normal
+
+
+0201/0009 J
+sprite
+2020-10-07 17:58:43.891919	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.892918	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+
+
+0201/0010 K
+sprite
+2020-10-07 17:58:43.953754	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.953754	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+
+
+0201/0011 L
+sprite
+2020-10-07 17:58:43.951759	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.952757	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+2026-06-01 16:30:23.538656	<@!228595807132057600>	CUR	CC_BY-NC_4	Sad,Joyous,Happy,Crying,Inspired,Sigh,Pain,Shouting,Surprised,Stunned,Angry,Teary-Eyed,Dizzy,Worried,Determined
+
+
+0201/0012 M
+sprite
+2020-10-07 17:58:43.949764	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.950761	CHUNSOFT	CUR	Unspecified	Normal
+
+
+0201/0013 N
+sprite
+2020-10-07 17:58:43.947770	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.948766	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+
+
+0201/0014 O
+sprite
+2020-10-07 17:58:43.945775	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.946772	CHUNSOFT	CUR	Unspecified	Normal
+
+
+0201/0015 P
+sprite
+2020-10-07 17:58:43.943780	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.944779	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+
+
+0201/0016 Q
+sprite
+2020-10-07 17:58:43.941787	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.942785	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+
+
+0201/0017 R
+sprite
+2020-10-07 17:58:43.938794	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.939790	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+
+
+0201/0018 S
+sprite
+2020-10-07 17:58:43.936799	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.937796	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+
+
+0201/0019 T
+sprite
+2020-10-07 17:58:43.934805	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.935802	CHUNSOFT	CUR	Unspecified	Normal
+
+
+0201/0020 U
+sprite
+2020-10-07 17:58:43.929818	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.930815	CHUNSOFT	CUR	Unspecified	Normal
+
+
+0201/0021 V
+sprite
+2020-10-07 17:58:43.926829	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.927824	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+
+
+0201/0022 W
+sprite
+2020-10-07 17:58:43.923834	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.924831	CHUNSOFT	CUR	Unspecified	Normal
+
+
+0201/0023 X
+sprite
+2020-10-07 17:58:43.920844	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.921840	CHUNSOFT	CUR	Unspecified	Normal
+
+
+0201/0024 Y
+sprite
+2020-10-07 17:58:43.917851	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.918848	CHUNSOFT	CUR	Unspecified	Normal
+
+
+0201/0025 Z
+sprite
+2020-10-07 17:58:43.915857	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.916853	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+
+
+0201/0026 Exclamation
+sprite
+2020-10-07 17:58:43.913860	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.913860	CHUNSOFT	CUR	Unspecified	Normal
+
+
+0201/0027 Question
+sprite
+2020-10-07 17:58:43.911867	CHUNSOFT	CUR	Unspecified	Walk,Attack,Strike,Shoot,Twirl,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2020-10-07 17:58:43.911867	CHUNSOFT	CUR	Unspecified	Normal,Normal^
+
+
+0208/0001 Mega
+sprite
+2024-06-21 18:28:05.222321	<@!544245909639397378>	CUR	CC_BY-NC_4	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,Strike,Appeal,Dance,Emit,Swing,Double,Rotate,Hop
+
+portrait
+2022-08-19 06:15:02.120814	<@!779213287576436746>	CUR	PMDCollab_1	Normal
+
+
+0211/0001 Hisui
+sprite
+2022-05-23 06:12:36.436278	<@!702275233125630042>	CUR	PMDCollab_1	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,Strike,Withdraw,Swing,Double,Rotate,Hop
+2026-01-04 03:35:11.918634	<@!488809643838144543>	CUR	CC_BY-NC_4	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,Withdraw,Swing,Double,Rotate,Hop
+
+portrait
+2022-02-06 20:42:06.868186	<@!237286997645983744>	CUR	PMDCollab_1	Normal
+2025-12-31 06:10:30.117836	<@!488809643838144543>	CUR	CC_BY-NC_4	Normal,Sad,Joyous,Happy,Crying,Inspired,Sigh,Pain,Shouting,Surprised,Stunned,Angry,Teary-Eyed,Dizzy,Worried,Determined,Special0
+
+
+0215/0001 Hisui
+sprite
+2022-09-14 15:17:45.959673	<@!576876006636519434>	CUR	PMDCollab_1	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,MultiScratch,Twirl,Swing,Double,Rotate,Hop
+2022-09-18 02:23:44.585093	<@!576876006636519434>	CUR	PMDCollab_1	Idle,Walk,Sleep,Attack,Charge,Shoot,MultiScratch,Hop
+2022-09-24 16:16:32.945184	<@!576876006636519434>	CUR	PMDCollab_1	Walk,Sleep,MultiScratch,EventSleep,Wake,Eat,Tumble,Pose,Pull,Pain,Float,DeepBreath,Nod,Sit,LookUp,Sink,Trip,Laying,LeapForth,Head,Cringe,LostBalance,TumbleBack,HitGround,Faint,Fainted
+2023-04-04 20:45:14.107055	<@!576876006636519434>	CUR	PMDCollab_1	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,MultiScratch,Swing,Double,Rotate,Hop,EventSleep,Wake,Eat,Tumble,Pose,Pull,Pain,Float,DeepBreath,Nod,Sit,LookUp,Sink,Trip,Laying,LeapForth,Head,Cringe,LostBalance,TumbleBack,HitGround,Faint,Fainted
+
+portrait
+2022-05-05 21:58:27.412160	<@!356635814668664832>	CUR	PMDCollab_1	Normal,Normal^
+2024-05-06 00:02:02.426536	<@!216640380408430592>	CUR	CC_BY-NC_4	Happy,Happy^
+2024-05-19 23:56:28.041117	<@!356635814668664832>	CUR	CC_BY-NC_4	Normal,Sad,Joyous,Normal^,Sad^,Joyous^,Happy,Crying,Inspired,Sigh,Happy^,Crying^,Inspired^,Sigh^,Pain,Shouting,Surprised,Stunned,Pain^,Shouting^,Surprised^,Stunned^,Angry,Teary-Eyed,Dizzy,Angry^,Teary-Eyed^,Dizzy^,Worried,Determined,Worried^,Determined^
+
+
+0222/0001 Galar
+sprite
+2021-03-28 22:19:36.906173	<@!702275233125630042>	CUR	PMDCollab_1	Walk,Attack,Strike,Shoot,Shake,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate
+
+portrait
+2021-03-23 02:31:44.300921	<@!356635814668664832>	CUR	PMDCollab_1	Normal,Happy,Pain,Angry,Worried,Sad,Crying,Shouting,Teary-Eyed,Determined,Joyous,Inspired,Surprised,Dizzy,Special0,Sigh,Stunned
+
+
+0227/0001 Mega
+sprite
+2026-04-08 05:16:00.317858	<@!225949425292410880>	CUR	CC_BY-NC_4	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,Strike,Twirl,Swing,Double,Rotate,Hop
+2026-06-05 19:55:19.402648	<@!225949425292410880>	CUR	CC_BY-NC_4	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,Strike,Swing,Double,Rotate,Hop
+
+portrait
+2025-10-24 14:48:59.022293	<@!288510084273668096>	CUR	CC_BY-NC_4	Normal
+
+
+0229/0001 Mega
+sprite
+2021-11-03 10:57:45.255498	<@!276369635304275968>	CUR	PMDCollab_1	Walk,Attack,Strike,Shoot,Dance,Shake,Sleep,Hurt,Idle,Swing,Double,Hop,Charge,Rotate,Injured,Special0,Fainted
+
+portrait
+2021-11-03 02:34:23.563648	<@!276369635304275968>	CUR	PMDCollab_1	Normal
+
+
+0248/0001 Mega
+sprite
+2025-11-09 04:13:31.835683	<@!702275233125630042>	CUR	CC_BY-NC_4	Idle,Walk,Sleep,Hurt,Attack,Charge,Shoot,Strike,Twirl,Swing,Double,Rotate,Hop
+
+portrait
+2022-03-24 00:21:16.949084	<@!537560911716810763>	CUR	PMDCollab_1	Normal
+
+
+0249/0001 Shadow
+sprite
+2021-04-20 02:52:35.882837	<@!177522243985866754>	CUR	PMDCollab_1	Attack,Charge,Double,Hop,Hover,Hurt,Idle,Rotate,Shoot,Sleep,Special0,Swing,Walk
+2022-01-08 08:01:31.815202	<@!177522243985866754>	CUR	PMDCollab_1	Attack,Charge,Double,EventSleep,Hop,Hurt,Idle,Rotate,Shake,Shoot,Sleep,Swing,Walk
+
+portrait
+2021-01-18 00:56:02.139398	<@!533406104256905257>	CUR	PMDCollab_1	Angry,Crying,Determined,Dizzy,Happy,Inspired,Joyous,Normal,Pain,Sad,Shouting,Sigh,Special3,Stunned,Surprised,Teary-Eyed,Worried
+2021-01-20 00:25:24.520911	<@!533406104256905257>	CUR	PMDCollab_1	Angry,Crying,Determined,Dizzy,Happy,Inspired,Joyous,Normal,Pain,Sad,Shouting,Sigh,Special3,Stunned,Surprised,Teary-Eyed,Worried
+2022-11-02 15:51:19.990311	<@!576876006636519434>	CUR	PMDCollab_1	Normal,Sad,Joyous,Happy,Crying,Inspired,Sigh,Pain,Shouting,Surprised,Stunned,Angry,Teary-Eyed,Dizzy,Worried,Determined,Special3
+

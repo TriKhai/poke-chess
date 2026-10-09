@@ -18,8 +18,7 @@ public final class PacMidlet extends MIDlet {
             Save.load();
             Art.init();
             game = new Game(this);
-            if (Save.playPath < 0) game.setScreen(new PlayPathScreen(game));
-            else game.setScreen(new MenuScreen(game));
+            game.setScreen(new StartupNoticeScreen(game));
         }
         Display.getDisplay(this).setCurrent(game);
         game.start();
@@ -38,6 +37,8 @@ public final class PacMidlet extends MIDlet {
         destroyApp(true);
         notifyDestroyed();
     }
+
+    public boolean releaseIdentityOk(){String vendor=getAppProperty("MIDlet-Vendor");return "Kdic".equals(vendor);}
 
     public void requestProfileName(){
         if(Save.profileName.length()!=0)return;

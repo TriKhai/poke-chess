@@ -2,7 +2,7 @@ POKE AUTO CHESS ME v1.1.6b
 ==========================
 
 FONT
-- Normal and bold UI text now use tahoma_7b, matching the visual weight of NRO menus.
+- Normal and bold UI text now use tahoma_7b, matching the visual weight of compact menus.
 - Corrected line height remains 11px, read from the tallest bitmap glyph.
 - This is larger/thicker than v1.1.6a tahoma_7 but smaller than the old MIDP font.
 

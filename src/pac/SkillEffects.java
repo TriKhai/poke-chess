@@ -5,7 +5,10 @@ public final class SkillEffects {
     private SkillEffects() {}
 
     public static void apply(Unit caster, Unit target) {
-        String name = Data.skillName[caster.sp].toUpperCase();
+        apply(caster,target,caster.sp);
+    }
+    public static void apply(Unit caster, Unit target,int skillSp) {
+        String name = Data.skillName[skillSp].toUpperCase();
         if (target != null && target.alive) {
         if (has(name, "TOXIC") || has(name, "POISON") || has(name, "SLUDGE") || has(name, "VENOM")) {
             target.status.apply(CombatStatus.POISON,50);

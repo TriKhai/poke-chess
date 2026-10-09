@@ -1,8 +1,0 @@
-/build/
-/only_tham_khao/
-*.class
-*.log
-*.tmp
-.idea/
-Thumbs.db
-Desktop.ini

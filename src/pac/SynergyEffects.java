@@ -3,6 +3,17 @@ package pac;
 /** Original thresholds plus CLDC-safe offline combat synergy effects. */
 public final class SynergyEffects {
     private SynergyEffects() {}
+    /** Regional branches count separately; Mega/special upgrades share the original family. */
+    public static boolean supersedes(int candidate,int candidateForm,int candidateIndex,int sp,int form,int index){
+        int branch=LaterFormData.synergyBranch(sp,form)!=0?LaterFormData.synergyBranch(sp,form):GenThreeFormData.regional(form)||Data.nationalDex(sp)==862?74:SpecialFormData.evolutionVariant(form)?form:EvolutionBranchData.synergyBranch(sp);
+        int candidateBranch=LaterFormData.synergyBranch(candidate,candidateForm)!=0?LaterFormData.synergyBranch(candidate,candidateForm):GenThreeFormData.regional(candidateForm)||Data.nationalDex(candidate)==862?74:SpecialFormData.evolutionVariant(candidateForm)?candidateForm:EvolutionBranchData.synergyBranch(candidate);
+        if(Data.fam[candidate]!=Data.fam[sp])return false;
+        if(candidateBranch!=branch)return LaterFormData.region(candidate,candidateForm)==LaterFormData.region(sp,form)&&Data.tier[candidate]>Data.tier[sp]&&CanonicalEvolutionData.ancestor(sp,candidate);
+        if(Data.tier[candidate]!=Data.tier[sp])return Data.tier[candidate]>Data.tier[sp];
+        boolean upgraded=candidateForm!=0&&candidateBranch==0,currentUpgraded=form!=0&&branch==0;
+        if(upgraded!=currentUpgraded)return upgraded;
+        return candidateIndex<index;
+    }
     private static final int[][] TH={
       {3,5,7,9},{2,4,6,8},{3,6,9,0},{3,5,7,9},{3,5,7,0},{2,4,6,0},{3,5,7,0},{2,4,6,8},
       {2,4,6,8},{3,5,7,0},{2,4,6,8},{2,4,6,8},{3,5,7,0},{2,4,6,8},{2,4,6,8},{3,5,7,0},
@@ -12,7 +23,7 @@ public final class SynergyEffects {
     public static int tier(int type,int count){if(type<0||type>=TH.length)return 0;int lv=0;for(int i=0;i<4;i++)if(TH[type][i]>0&&count>=TH[type][i])lv=i+1;return lv;}
     public static int threshold(int type,int i){return type>=0&&type<TH.length&&i>=0&&i<4?TH[type][i]:0;}
     public static String marks(int type,int count){int lv=tier(type,count);StringBuffer b=new StringBuffer();for(int i=0;i<4&&TH[type][i]>0;i++){if(i>0)b.append(' ');if(lv==i+1)b.append('(');b.append(TH[type][i]);if(lv==i+1)b.append(')');}return b.toString();}
-    private static boolean has(Unit u,int t){return Data.t1[u.sp]==t||Data.t2[u.sp]==t;}
+    private static boolean has(Unit u,int t){return u.primaryType()==t||u.secondaryType()==t;}
     private static int itemCount(Unit u){int n=0;for(int i=0;i<3;i++)if(u.items[i]>=0)n++;return n;}
     private static void hp(Unit u,int amount){u.maxHp=Math.max(1,u.maxHp+amount);u.hp=u.maxHp;}
     private static void hpPct(Unit u,int p){hp(u,u.maxHp*p/100);}

@@ -80,7 +80,7 @@ public final class ItemEffects {
         if(has(u,STAR_DUST))shield(u,Math.max(1,u.maxMana/2));
     }
 
-    public static void onKill(Battle b,Unit killer,Unit dead){if(killer!=null&&has(killer,AMULET_COIN)){killer.itemKillCount++;if(killer.side==0)b.itemGold++;}}
+    public static void onKill(Battle b,Unit killer,Unit dead){if(killer==null)return;if(has(killer,AMULET_COIN)){killer.itemKillCount++;if(killer.side==0)b.itemGold++;}if(killer.side==0&&((killer.fruitMask&(1<<ConsumableData.NANAB))!=0||(killer.fruitMask&(1<<ConsumableData.GOLDEN_NANAB))!=0))b.itemGold++;}
 
     /** @return true when death was replaced by a one-time resurrection. */
     public static boolean onDeath(Battle b,Unit u,Unit killer){

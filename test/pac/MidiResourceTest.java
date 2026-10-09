@@ -1,0 +1,10 @@
+package pac;
+import java.io.InputStream;
+import javax.sound.midi.*;
+/** Desktop parser verifies packaged MIDI; not an MMAPI/device audio benchmark. */
+public final class MidiResourceTest {
+ private static void check(boolean b,String m){if(!b)throw new RuntimeException(m);}
+ private static int voiceLimit(String name){return name.endsWith("menu.mid")?32:4;}
+ public static void verify(InputStream input,String name)throws Exception {Sequence seq;try{seq=MidiSystem.getSequence(input);}finally{input.close();}check(seq.getTickLength()>0,"empty MIDI "+name);int notes=0,active=0,peak=0;java.util.TreeMap times=new java.util.TreeMap();Track[] tracks=seq.getTracks();for(int i=0;i<tracks.length;i++)for(int j=0;j<tracks[i].size();j++){MidiEvent event=tracks[i].get(j);MidiMessage msg=event.getMessage();if(msg instanceof ShortMessage){ShortMessage sm=(ShortMessage)msg;int command=sm.getCommand();check(command!=ShortMessage.PITCH_BEND,"pitch bends in lightweight MIDI");int kind=command==ShortMessage.NOTE_ON&&sm.getData2()>0?1:command==ShortMessage.NOTE_OFF||command==ShortMessage.NOTE_ON&&sm.getData2()==0?0:-1;if(kind<0)continue;if(kind==1)notes++;Long tick=new Long(event.getTick());int[] delta=(int[])times.get(tick);if(delta==null){delta=new int[2];times.put(tick,delta);}delta[kind]++;}}java.util.Iterator it=times.values().iterator();while(it.hasNext()){int[] delta=(int[])it.next();active-=delta[0];check(active>=0,"unpaired note off");active+=delta[1];peak=Math.max(peak,active);}check(notes>=20&&active==0&&peak<=voiceLimit(name),"MIDI note/polyphony validation "+name+" notes="+notes+" active="+active+" peak="+peak);System.out.println("MIDI OK: "+name+" notes="+notes+" peak voices="+peak+" duration="+seq.getMicrosecondLength()/1000000L+"s");}
+ public static void run(){try{for(int i=1;i<=2;i++){String path=i==1?"/music/autochess.mid":"/music/explore.mid";InputStream in=new java.io.FileInputStream("res"+path);check(in!=null,"missing "+path);verify(in,path);}}catch(Exception e){throw new RuntimeException(e.toString());}}
+}

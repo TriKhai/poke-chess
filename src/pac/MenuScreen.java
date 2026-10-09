@@ -6,6 +6,8 @@ public final class MenuScreen extends Screen {
     private int sel = 0;
     private int t = 0;
 
+    private int menuTop(){boolean compact=UiLayout.compact(game.W,game.H);int y0=6+Art.fh*2+(compact?2:10);return compact?y0+Art.fh:y0+48;}
+
     public MenuScreen(Game g) {
         super(g);
     }
@@ -39,13 +41,16 @@ public final class MenuScreen extends Screen {
         }
     }
 
+    public boolean pointer(int x,int y){int fh=Art.fh;boolean compact=UiLayout.compact(game.W,game.H);int top=menuTop(),gap=compact?fh+1:fh+2;if(x>=game.W/8&&x<game.W*7/8&&y>=top-1&&y<top-1+gap*Lang.menu().length){sel=(y-top+1)/gap;if(confirmTouch(sel))key(Game.K_FIRE);}return true;}
     public void paint(Graphics g) {
+        
+        
         int W = game.W, H = game.H, fh = Art.fh;
         for (int i = 0; i < 8; i++) {
             g.setColor(0x102040 + (i * 0x000A08));
             g.fillRect(0, H * i / 8, W, H / 8 + 1);
         }
-        Art.textBC(g, "POKE AUTO CHESS", W / 2, 6, 0xFFD030);
+        Art.textBC(g, Brand.name(), W / 2, 6, 0xFFD030);
         Art.textC(g, "J2ME Edition", W / 2, 6 + fh + 1, 0xA0C0FF);
 
         boolean compact=UiLayout.compact(W,H);
@@ -61,7 +66,7 @@ public final class MenuScreen extends Screen {
             }
         }
 
-        int y = compact?y0+fh:y0+48;
+        int y = menuTop();
         String[] items = Lang.menu();
         int gap=compact?fh+1:fh+2;
         for (int i = 0; i < items.length; i++) {
@@ -77,7 +82,7 @@ public final class MenuScreen extends Screen {
         }
         y = H - fh * 3 - 3;
         if(!compact){
-            Art.textC(g, Lang.t("Bóng: ", "Poke Balls: ") + Save.balls, W / 2, y, 0xFF8080);
+            BallArt.wallet(g,W/8,y,W*3/4);
             Art.textC(g, Lang.t("Bộ sưu tập ", "Collection ") + Save.familiesUnlocked() + "/" + Data.countFamilies()
                     + Lang.t("   Vòng cao nhất ", "   Best round ") + Save.best, W / 2, y + fh, 0xC0FFC0);
         }

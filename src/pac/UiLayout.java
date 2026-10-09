@@ -12,6 +12,8 @@ public final class UiLayout {
     }
     public static boolean compact(int w,int h){return profile(w,h)==COMPACT;}
     public static boolean large(int w,int h){return profile(w,h)==LARGE;}
+    /** Wide mode gets a dedicated composition; ordinary near-square phones keep portrait layout. */
+    public static boolean landscape(int w,int h){return w>=240&&w>h+32;}
     public static int margin(int w,int h){return compact(w,h)?3:(large(w,h)?8:5);}
     public static int contentWidth(int w,int h){int m=margin(w,h);return Math.max(1,w-m*2);}
     public static int clamp(int value,int lo,int hi){if(hi<lo)return lo;return value<lo?lo:(value>hi?hi:value);}

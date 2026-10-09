@@ -1,10 +1,12 @@
-POKE AUTO CHESS ME v1.4.4 (J2ME - CLDC 1.0 / MIDP 2.0, offline 1 nguoi choi)
+POKE CHESS / Bao boi than ky v1.7.18 (J2ME - CLDC 1.0 / MIDP 2.0, offline)
+Huong dan hien tai: README.md; ban thu release: releases/1.7.18-rc1.
+Phan ben duoi la ghi chu lich su, khong phai mo ta day du ban hien tai.
 =====================================================================
 
 CAU TRUC
   build.xml         Ant build (compile -> preverify -> jar + jad)
   build.properties  ghi de duong dan neu tu dong tim khong ra
-  build-poke.bat    giong build-nro.bat: dat JAVA_HOME/KVEM_HOME roi chay "ant clean dist"
+  build-poke.bat    dat JAVA_HOME/KVEM_HOME roi chay "ant clean dist"
   src/pac/*.java    ma nguon game va cac module combat CLDC-safe
   res/sp/           386 sprite PNG (0.png .. 385.png), theo thu tu National Dex
   res/raw/          386 atlas PNG + DAT goc, nguon animation chinh
@@ -104,9 +106,9 @@ PHIEN BAN
           hien ten VI/EN, nhom, chi so goc va cong thuc ghep khi co.
   v1.1.6c: bitmap font giu dung mau UI goc; sua icon cong huong chen dong;
           danh dau moc dang kich hoat bang (2), (4), hoac (6).
-  v1.1.6b: font tahoma_7b gan co NRO; dung truc tiep item_tps_pixel, scale cache luc chay.
+  v1.1.6b: font tahoma_7b gan co compact; dung truc tiep item_tps_pixel, scale cache luc chay.
   v1.1.6a: sua line-height bitmap font bi lay nham glyph SPACE lam UI chong chu.
-  v1.1.6: font bitmap NRO 7px toan game; Collection co 10 item dau tien va icon PNG8 24px;
+  v1.1.6: font bitmap compact 7px toan game; Collection co 10 item dau tien va icon PNG8 24px;
           MIDlet-Vendor doi thanh KhaiLy.
   v1.1.5a: bang cong huong bo ten he sau icon; font nho va them khoang cach noi dung.
   v1.1.5: pet KO hien HP 0 ngay; bang cong huong dung icon he va mo ta bonus 2/4/6.

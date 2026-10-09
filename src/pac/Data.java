@@ -20,14 +20,59 @@ public final class Data {
     public static final int MAX_LEVEL=9;
     public static final int[] XP_NEED={0,2,2,6,10,20,32,50,66,9999};
     public static final int[][] ODDS={{100,0,0,0,0},{100,0,0,0,0},{100,0,0,0,0},{70,30,0,0,0},{55,35,10,0,0},{40,35,20,5,0},{30,35,25,10,0},{20,30,30,15,5},{15,25,30,20,10},{10,20,30,25,15}};
-    public static final int MAX=386;
+    public static final int CORE_N=386;
+    /** Highest generation enabled for gameplay in this build. Raised per v1.5.7 letter release. */
+    public static final int BATTLE_MAX_GEN=9;
+    public static final int MAX=1024;
     public static int N=0;
     public static final String[] name=new String[MAX],skillName=new String[MAX];
-    public static final int[] t1=new int[MAX],t2=new int[MAX],cost=new int[MAX],category=new int[MAX],hp=new int[MAX],atk=new int[MAX],def=new int[MAX],speDef=new int[MAX],speed=new int[MAX],range=new int[MAX],cd=new int[MAX],mana=new int[MAX],abil=new int[MAX],evo=new int[MAX],fam=new int[MAX],tier=new int[MAX],stage=new int[MAX],zones=new int[MAX];
+    public static final int[] t1=new int[MAX],t2=new int[MAX],cost=new int[MAX],category=new int[MAX],hp=new int[MAX],atk=new int[MAX],def=new int[MAX],speDef=new int[MAX],speed=new int[MAX],range=new int[MAX],cd=new int[MAX],mana=new int[MAX],abil=new int[MAX],evo=new int[MAX],fam=new int[MAX],tier=new int[MAX],stage=new int[MAX],zones=new int[MAX],laterDex=new int[MAX];
     public static int MEWTWO=149;
     static int add(String nm,String sk,int a,int b,int c,int cat,int h,int at,int df,int sd,int spd,int rg,int cool,int mn,int ab,int st,int zmask){int i=N++;name[i]=nm;skillName[i]=sk;t1[i]=a;t2[i]=b;cost[i]=c;category[i]=cat;hp[i]=h;atk[i]=at;def[i]=df;speDef[i]=sd;speed[i]=spd;range[i]=rg;cd[i]=cool;mana[i]=mn;abil[i]=ab;evo[i]=-1;fam[i]=i;tier[i]=1;stage[i]=st;zones[i]=zmask;return i;}
     static void link(int from,int to){evo[from]=to;fam[to]=fam[from];tier[to]=tier[from]+1;cost[to]=cost[from];zones[to]=0;}
-    static { init1(); init2(); init3(); initLinks(); }
+    static { init1(); init2(); init3(); initLinks(); initGen4Battle(); initLaterLegendaries(); initLaterBattle(); linkLaterFamilies(); CanonicalEvolutionData.init(); initBranchLinks(); }
+    private static void initBranchLinks(){
+        link(60,61);branch(60,185);branch(43,181);
+        link(132,133);int[] eevee={134,135,136,196,197,470,471,700};for(int i=0;i<eevee.length;i++){int sp=speciesByDex(eevee[i]);if(sp>=0)branch(132,sp);}
+        link(78,79);branch(78,198);
+        link(235,105);branch(235,106);branch(235,236);
+        link(122,211); // Scyther -> Scizor was missing from the core evolution links.
+        link(264,265);branch(264,267);link(267,268);
+        link(280,281);branch(280,speciesByDex(475));
+        link(360,361);branch(360,speciesByDex(478));
+        link(365,366);branch(365,367);
+        branch(289,291); // Shedinja is an explicit option instead of an extra free unit.
+        link(speciesByDex(406),314);link(314,speciesByDex(407));
+        link(speciesByDex(433),357);
+        int ob=speciesByDex(862);fam[ob]=fam[262];tier[ob]=3;cost[ob]=cost[262];zones[ob]=0;
+    }
+    private static void branch(int from,int to){fam[to]=fam[from];tier[to]=tier[from]+1;cost[to]=cost[from];zones[to]=0;}
+    private static void initGen4Battle(){for(int i=0;i<CollectionDex.COUNT;i++)if(CollectionDex.GEN[i]==4)addCollectionEntry(i);}
+    private static void addCollectionEntry(int i){int dex=CollectionDex.DEX[i],speed=LaterBattleData.SPEED[i],sp=add(CollectionDex.NAME[i],LaterBattleData.SKILL[i],CollectionDex.T1[i],CollectionDex.T2[i],LaterBattleData.COST[i],LaterBattleData.CATEGORY[i],LaterBattleData.HP[i],LaterBattleData.ATK[i],LaterBattleData.DEF[i],LaterBattleData.SDEF[i],speed,LaterBattleData.RANGE[i],Math.max(2,Math.min(7,8-speed/14)),LaterBattleData.MANA[i],LaterBattleData.ABILITY[i],LaterBattleData.TIER[i],0);laterDex[sp]=dex;tier[sp]=LaterBattleData.TIER[i];}
+    private static int collectionCategory(String s){if("Common".equals(s))return 0;if("Uncommon".equals(s))return 1;if("Rare".equals(s))return 2;if("Epic".equals(s))return 3;if("Ultra".equals(s))return 4;if("Legendary".equals(s))return 6;return 5;}
+    private static void initLaterLegendaries(){
+        for(int i=0;i<CollectionDex.COUNT;i++)if(CollectionDex.GEN[i]>4&&"Legendary".equals(CollectionDex.CATEGORY[i])){
+            addCollectionEntry(i);
+        }
+    }
+    private static void initLaterBattle(){for(int i=0;i<CollectionDex.COUNT;i++)if(CollectionDex.GEN[i]>=5&&CollectionDex.GEN[i]<=BATTLE_MAX_GEN&&!"Legendary".equals(CollectionDex.CATEGORY[i]))addCollectionEntry(i);}
+    private static int speciesByDex(int dex){if(dex>=1&&dex<=CORE_N)return dex-1;for(int i=CORE_N;i<N;i++)if(laterDex[i]==dex)return i;return-1;}
+    private static int collectionByDex(int dex){for(int i=0;i<CollectionDex.COUNT;i++)if(CollectionDex.DEX[i]==dex)return i;return-1;}
+    private static int familyDexOf(int sp){if(sp<CORE_N)return fam[sp]+1;int ci=collectionByDex(laterDex[sp]);return ci>=0?LaterBattleData.FAMILY_DEX[ci]:laterDex[sp];}
+    private static void linkLaterFamilies(){for(int sp=CORE_N;sp<N;sp++){int ci=collectionByDex(laterDex[sp]);if(ci<0)continue;int fd=LaterBattleData.FAMILY_DEX[ci],base=speciesByDex(fd);if(base>=0)fam[sp]=fam[base];int want=tier[sp]-1;if(want<1)continue;int prev=-1;for(int q=0;q<N;q++)if(q!=sp&&tier[q]==want&&fam[q]==fam[sp]){prev=q;break;}if(prev>=0)evo[prev]=sp;}}
+    private static String legendSkill(int type){
+        if(type==T_FIRE)return "Legend Flame";if(type==T_WATER)return "Origin Pulse";
+        if(type==T_ELEC)return "Thunder Storm";if(type==T_PSY)return "Astral Burst";
+        if(type==T_DRAGON)return "Dragon Force";if(type==T_GHOST)return "Phantom Rift";
+        if(type==T_ICE)return "Absolute Zero";if(type==T_STEEL)return "Titan Crash";
+        return "Legendary Power";
+    }
+    public static int nationalDex(int sp){
+        return sp<CORE_N?sp+1:(sp>=0&&sp<N?laterDex[sp]:0);
+    }
+    public static int generation(int sp){int dex=nationalDex(sp);return dex<=151?1:(dex<=251?2:(dex<=386?3:(dex<=493?4:(dex<=649?5:(dex<=721?6:(dex<=809?7:(dex<=905?8:9)))))));}
+    public static int collectionIndex(int sp){int dex=nationalDex(sp);for(int i=0;i<CollectionDex.COUNT;i++)if(CollectionDex.DEX[i]==dex)return i;return-1;}
+    public static int speciesForDex(int dex){return speciesByDex(dex);}
     private static void init1(){
         add("Bulbasaur","Magical Leaf",3,12,3,2,80,5,4,4,51,2,5,70,0,1,1); // #001
         add("Ivysaur","Magical Leaf",3,12,3,2,130,9,8,8,51,2,5,70,0,2,1); // #002
@@ -600,8 +645,9 @@ public final class Data {
     public static int countFamilies(){int n=0;for(int i=0;i<N;i++)if(fam[i]==i)n++;return n;}
     public static int synLevel(int count){return SynergyEffects.tier(T_FIRE,count);}
     public static int synLevel(int type,int count){return SynergyEffects.tier(type,count);}
-    public static int visualWidth(int sp){return VisualSize.W[sp];}
-    public static int visualHeight(int sp){return VisualSize.H[sp];}
-    public static int visualSize(int sp){return Math.max(VisualSize.W[sp],VisualSize.H[sp]);}
+    /** Collection-atlas combatants use the same visible footprint as core raw sprites. */
+    public static int visualWidth(int sp){return sp<CORE_N?VisualSize.W[sp]:48;}
+    public static int visualHeight(int sp){return sp<CORE_N?VisualSize.H[sp]:56;}
+    public static int visualSize(int sp){return Math.max(visualWidth(sp),visualHeight(sp));}
     public static int pickWild(int zone,Rng r){int total=0,bit=1<<zone;for(int i=0;i<N;i++)if((zones[i]&bit)!=0)total+=WILD_W[cost[i]];if(total<=0)return-1;int roll=r.nextInt(total);for(int i=0;i<N;i++)if((zones[i]&bit)!=0){roll-=WILD_W[cost[i]];if(roll<0)return i;}return-1;}
 }

@@ -11,10 +11,11 @@ import javax.microedition.lcdui.Image;
  * tools/make_sprites.py.
  */
 public final class Art {
+    private static final int[] SHINY_COLORS={0xFF5060,0xFFB840,0xFFF060,0x60E878,0x50D8FF,0x6080FF,0xD060FF};
     private Art() {}
 
     public static Font font, fontB, fontSmall;
-    private static PixelFont pixel,pixelB;
+    private static PixelFont pixel,pixelB,pixelSmall;
     public static int fh = 12;
     private static Image[] png = new Image[Data.N];
     private static boolean[] tried = new boolean[Data.N];
@@ -50,6 +51,10 @@ public final class Art {
     private static Image[] avatarTiny = new Image[Data.N];
     private static Image[] avatarDock = new Image[Data.N];
     private static Image[] avatarHistory = new Image[Data.N];
+    private static Image shinyAvatar,shinyAvatarMini;
+    private static int shinyAvatarSp=-1;
+    private static Image megaAvatar,megaAvatarMini,megaStone24,megaStone8,megaSymbol,megaSymbolMini;
+    private static int megaAvatarSp=-1;private static boolean megaAvatarShiny;
     private static Image[] dexAvatar = new Image[CollectionDex.COUNT];
     private static boolean[] dexAvatarTried = new boolean[CollectionDex.COUNT];
     private static int[] dexAvatarAge = new int[CollectionDex.COUNT];
@@ -57,9 +62,11 @@ public final class Art {
     private static final int DEX_AVATAR_CACHE_LIMIT=24;
     private static Image[] itemIcon = new Image[ItemData.ID.length];
     private static boolean[] itemIconTried = new boolean[ItemData.ID.length];
+    private static Image[] itemIconGray = new Image[ItemData.ID.length];
     private static Image[] itemIconTiny = new Image[ItemData.ID.length];
     private static boolean[] itemIconTinyTried = new boolean[ItemData.ID.length];
     private static Image[] itemIconMedium = new Image[ItemData.ID.length];
+    private static Image[] itemIconLarge = new Image[ItemData.ID.length];
     private static boolean[] itemIconMediumTried = new boolean[ItemData.ID.length];
     private static Image selectionOutline;
     private static int selectionOutlineSp=-1,selectionOutlineSize=-1;
@@ -74,10 +81,11 @@ public final class Art {
         font = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL);
         fontB = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_SMALL);
         fontSmall = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
-        // NRO menu text uses the 7b face: visibly larger/thicker than tahoma_7,
+        // The 7b face is visibly larger/thicker than tahoma_7,
         // while still much more compact than the emulator's MIDP system font.
         pixel=new PixelFont("tahoma_7b",true);
         pixelB=pixel;
+        pixelSmall=new PixelFont("tahoma_7",false);
         fh = pixel.height();
     }
 
@@ -121,7 +129,7 @@ public final class Art {
         text(g, s, rx - textWidth(s), y, col);
     }
 
-    /** Compact unshadowed text for dense stat panels, matching NRO-style information rows. */
+    /** Compact unshadowed text for dense stat panels. */
     public static void textSmall(Graphics g, String s, int x, int y, int col) {
         pixel.draw(g,s,x,y,col);
     }
@@ -137,6 +145,11 @@ public final class Art {
     public static int textWidth(String s){return pixel!=null?pixel.width(s):font.stringWidth(s);}
     public static int boldWidth(String s){return pixelB!=null?pixelB.width(s):fontB.stringWidth(s);}
     public static int smallWidth(String s){return textWidth(s);}
+
+    /** Narrow 7px face used only where a complete stat row must fit in a side panel. */
+    public static void textCompact(Graphics g,String s,int x,int y,int col){pixelSmall.draw(g,s,x,y,col);}
+    public static int compactWidth(String s){return pixelSmall.width(s);}
+    public static int compactHeight(){return pixelSmall.height();}
 
     /** word-wraps s into at most maxLines lines that fit maxW pixels. */
     public static String[] wrap(String s, int maxW, int maxLines) {
@@ -234,15 +247,14 @@ public final class Art {
         g.setColor(0x000000); g.fillRect(x,y,w,maxPp>0?10:7);
         g.setColor(0x303030); g.fillRect(x+1,y+1,inner,hpH);
         if(maxHp>0&&hp>0){
-            int total=Math.max(maxHp,hp+shield);
-            int hpW=inner*hp/total;
+            int hpW=inner*Math.min(hp,maxHp)/maxHp;
             g.setColor(ally?0x76C442:0xE76E55); g.fillRect(x+1,y+1,hpW,hpH);
             if(shield>0){
-                int sw=inner*shield/total;if(sw>inner-hpW)sw=inner-hpW;
+                int sw=inner*shield/maxHp;if(sw>inner-hpW)sw=inner-hpW;
                 g.setColor(0xE0E0E0);g.fillRect(x+1+hpW,y+1,sw,hpH);
             }
             g.setColor(0x303030);
-            for(int v=25;v<total;v+=25){int sx=x+1+inner*v/total;g.drawLine(sx,y+1,sx,y+4);}
+            for(int v=100;v<maxHp;v+=100){int sx=x+1+inner*v/maxHp;g.drawLine(sx,y+1,sx,y+4);}
         }
         if(maxPp>0){
             g.setColor(0x282828);g.fillRect(x+1,y+7,inner,2);
@@ -413,8 +425,21 @@ public final class Art {
 
     /** Draws a stage-sized frame. state: 0 idle, 1 attack, 2 victory/hop. */
     public static void battleSprite(Graphics g, int sp, int x, int y, int frame, int state, int direction) {
+        battleSprite(g,sp,x,y,frame,state,direction,false);
+    }
+
+    public static void battleSprite(Graphics g, int sp, int x, int y, int frame, int state, int direction, boolean shiny) {
+        battleSprite(g,sp,x,y,frame,state,direction,shiny,false);
+    }
+    public static void battleSprite(Graphics g, int sp, int x, int y, int frame, int state, int direction, boolean shiny,boolean mega) {
+        battleSprite(g,sp,x,y,frame,state,direction,shiny,mega,0);
+    }
+    public static void battleSprite(Graphics g, int sp, int x, int y, int frame, int state, int direction, boolean shiny,boolean mega,int specialForm) {
+        if(specialForm!=0&&SpecialFormAtlas.draw(g,specialForm,x,y,Data.visualWidth(sp),Data.visualHeight(sp),state,direction,frame,shiny))return;
+        if(mega&&MegaAtlas.draw(g,sp,x,y,Data.visualWidth(sp),Data.visualHeight(sp),state,direction,frame,shiny))return;
+        if(sp>=Data.CORE_N){int di=Data.collectionIndex(sp);if(di>=0&&CollectionAtlas.draw(g,di,x,y,Data.visualWidth(sp),Data.visualHeight(sp),state,direction,frame,shiny))return;}
         if (RawAtlas.draw(g, sp, x, y, Data.visualWidth(sp), Data.visualHeight(sp),
-                          state, direction, frame)) return;
+                          state, direction, frame, shiny)) return;
         int w = Data.visualWidth(sp), h = Data.visualHeight(sp);
         int s = Math.max(w, h);
         sprite(g, sp, x + (w - s) / 2, y + h - s, s);
@@ -422,17 +447,42 @@ public final class Art {
 
     /** Board/bench placement preview with visible-body centring for raw atlases. */
     public static void formationSprite(Graphics g,int sp,int x,int y,int w,int h,int screenW,int frame){
+        formationSprite(g,sp,x,y,w,h,screenW,frame,false);
+    }
+
+    public static void formationSprite(Graphics g,int sp,int x,int y,int w,int h,int screenW,int frame,boolean shiny){
+        formationSprite(g,sp,x,y,w,h,screenW,frame,shiny,false);
+    }
+    public static void formationSprite(Graphics g,int sp,int x,int y,int w,int h,int screenW,int frame,boolean shiny,boolean mega){
+        formationSprite(g,sp,x,y,w,h,screenW,frame,shiny,mega,0);
+    }
+    public static void formationSprite(Graphics g,int sp,int x,int y,int w,int h,int screenW,int frame,boolean shiny,boolean mega,int specialForm){
+        if(specialForm!=0&&SpecialFormAtlas.drawFormation(g,specialForm,x,y,w,h,screenW,7,frame,shiny))return;
+        if(mega&&MegaAtlas.drawFormation(g,sp,x,y,w,h,screenW,7,frame,shiny))return;
+        if(sp>=Data.CORE_N){int di=Data.collectionIndex(sp);if(di>=0&&CollectionAtlas.drawFormation(g,di,x,y,w,h,screenW,7,frame,shiny))return;}
         // Direction 7 is DOWN-LEFT in the original atlas direction table.
-        if(RawAtlas.drawFormation(g,sp,x,y,w,h,screenW,7,frame))return;
+        if(RawAtlas.drawFormation(g,sp,x,y,w,h,screenW,7,frame,shiny))return;
         int vw=Data.visualWidth(sp),vh=Data.visualHeight(sp);
         int px=x+(w-vw)/2;
         if(px<0)px=0;
         if(px+vw>screenW)px=screenW-vw;
-        battleSprite(g,sp,px,y+h-vh-2,frame,RawAtlas.IDLE,7);
+        battleSprite(g,sp,px,y+h-vh-2,frame,RawAtlas.IDLE,7,shiny);
     }
 
     /** Silhouette only; deliberately no ellipse or ground shadow. */
     public static void formationSelection(Graphics g,int sp,int x,int y,int size,int screenW,int frame,int color){
+        formationSelection(g,sp,x,y,size,screenW,frame,color,false);
+    }
+    public static void formationSelection(Graphics g,int sp,int x,int y,int size,int screenW,int frame,int color,boolean mega){
+        formationSelection(g,sp,x,y,size,screenW,frame,color,mega,0);
+    }
+    public static void formationSelection(Graphics g,int sp,int x,int y,int size,int screenW,int frame,int color,boolean mega,int specialForm){
+        formationSelection(g,sp,x,y,size,screenW,frame,color,mega,specialForm,false);
+    }
+    public static void formationSelection(Graphics g,int sp,int x,int y,int size,int screenW,int frame,int color,boolean mega,int specialForm,boolean shiny){
+        if(specialForm!=0&&SpecialFormAtlas.drawFormationOutline(g,specialForm,x,y,size,size,screenW,7,frame,color,shiny))return;
+        if(mega&&MegaAtlas.drawFormationOutline(g,sp,x,y,size,size,screenW,7,frame,color,shiny))return;
+        if(sp>=Data.CORE_N){int di=Data.collectionIndex(sp);if(di>=0&&CollectionAtlas.drawFormationOutline(g,di,x,y,size,size,screenW,7,frame,color))return;}
         if(RawAtlas.drawFormationOutline(g,sp,x,y,size,size,screenW,7,frame,color))return;
         if(selectionOutlineSp!=sp||selectionOutlineSize!=size||selectionOutline==null){
             selectionOutline=null;Image im=scaled(sp,size);
@@ -478,6 +528,28 @@ public final class Art {
     }
     public static void clearEvolutionFx(){evolutionFrame=null;evolutionFrameTier=-1;evolutionFrameIndex=-1;}
 
+    /** Allocation-free square particles used while a Pokemon changes to Shiny form. */
+    public static void shinyTransformFx(Graphics g,int cx,int cy,int age){
+        int p=age*256/900;if(p<0)p=0;if(p>256)p=256;
+        for(int i=0;i<20;i++){
+            int phase=(i*13+p)&255;
+            int reach=p<128?7+p/3:49-(p-128)/3;if(reach<5)reach=5;
+            int dx=((phase<64?phase:(phase<192?128-phase:phase-256))*reach)/64;
+            int q=(phase+64)&255;
+            int dy=((q<64?q:(q<192?128-q:q-256))*reach)/64;
+            int s=2+((i+p/20)%4);
+            g.setColor(SHINY_COLORS[i%SHINY_COLORS.length]);g.fillRect(cx+dx-s/2,cy+dy-s/2,s,s);
+        }
+        if(p>150){int r=2+(p-150)/4;g.setColor(0xFFFFFF);g.drawRect(cx-r,cy-r,r*2,r*2);g.setColor(0xFFF060);g.drawRect(cx-r-2,cy-r-2,r*2+4,r*2+4);}
+    }
+
+    /** Tiny persistent Shiny glints; no decoded image or per-frame allocation. */
+    public static void shinyGlints(Graphics g,int x,int y,int w,int h,int clock){
+        int p=(clock/90)&7;int col=(p&1)==0?0xFFF060:((p&2)==0?0x50D8FF:0xD060FF);
+        g.setColor(col);g.fillRect(x+(p*w/8),y+((p*5)%Math.max(1,h)),2,2);
+        int q=(p+4)&7;g.setColor(0xFFFFFF);g.fillRect(x+(q*w/8),y+((q*3)%Math.max(1,h)),1,1);
+    }
+
     public static void skillSprite(Graphics g, int ability, int x, int y, int frame) {
         if (!skillTried[ability]) {
             skillTried[ability] = true;
@@ -491,8 +563,9 @@ public final class Art {
     /** Eight-frame ability animation selected by Pokemon, sourced from app.zip. */
     public static void speciesSkillSprite(Graphics g, int sp, int x, int y, int frame) {
         if (sp < 0 || sp >= Data.MAX) return;
-        if(speciesSkill[sp]!=null)speciesSkillAge[sp]=++speciesSkillClock;
-        if (!speciesSkillTried[sp]) {
+        int effect=SkillFxData.effect(sp);if(effect<0||effect>=speciesSkill.length)return;
+        if(speciesSkill[effect]!=null)speciesSkillAge[effect]=++speciesSkillClock;
+        if (!speciesSkillTried[effect]) {
             int count=0,old=-1,age=Integer.MAX_VALUE;
             for(int i=0;i<speciesSkill.length;i++)if(speciesSkill[i]!=null){
                 count++;if(speciesSkillAge[i]<age){age=speciesSkillAge[i];old=i;}
@@ -500,12 +573,12 @@ public final class Art {
             if(count>=SPECIES_SKILL_CACHE_LIMIT&&old>=0){
                 speciesSkill[old]=null;speciesSkillAge[old]=0;speciesSkillTried[old]=false;
             }
-            speciesSkillTried[sp] = true;
-            try { speciesSkill[sp] = Image.createImage("/sfx/" + sp + ".png");speciesSkillAge[sp]=++speciesSkillClock; }
-            catch (Exception e) { speciesSkill[sp] = null; }
+            speciesSkillTried[effect] = true;
+            try { speciesSkill[effect] = Image.createImage("/sfx/" + effect + ".png");speciesSkillAge[effect]=++speciesSkillClock; }
+            catch (Exception e) { speciesSkill[effect] = null; }
         }
-        if (speciesSkill[sp] != null)
-            g.drawRegion(speciesSkill[sp], (frame & 7) * 32, 0, 32, 32, 0, x, y, TL);
+        if (speciesSkill[effect] != null)
+            g.drawRegion(speciesSkill[effect], (frame & 7) * 32, 0, 32, 32, 0, x, y, TL);
         else skillSprite(g, Data.abil[sp], x, y, frame);
     }
 
@@ -553,6 +626,12 @@ public final class Art {
         else{g.setColor(0x506078);g.fillRect(x,y,24,24);textC(g,"?",x+12,y+7,0xFFFFFF);}
     }
 
+    public static void itemIconGray(Graphics g,int id,int x,int y){
+        if(id<0||id>=itemIconGray.length)return;if(itemIcon[id]==null)itemIcon(g,id,-100,-100);
+        if(itemIconGray[id]==null&&itemIcon[id]!=null)try{int s=24;int[] src=new int[s*s],out=new int[s*s];itemIcon[id].getRGB(src,0,s,0,0,s,s);for(int i=0;i<src.length;i++){int c=src[i],a=c&0xFF000000,r=(c>>16)&255,gg=(c>>8)&255,b=c&255,v=(r*30+gg*59+b*11)/100;out[i]=a|(v<<16)|(v<<8)|v;}itemIconGray[id]=Image.createRGBImage(out,s,s,true);}catch(Exception e){}
+        if(itemIconGray[id]!=null)g.drawImage(itemIconGray[id],x,y,TL);else itemIcon(g,id,x,y);
+    }
+
     /** Eight-pixel nearest-neighbour icon used on formation units and compact cards. */
     public static void itemIconTiny(Graphics g,int id,int x,int y){
         if(id<0||id>=itemIconTiny.length)return;
@@ -571,6 +650,7 @@ public final class Art {
     }
 
     /** Sixteen-pixel nearest-neighbour icon used by the item recipe preview. */
+    public static void itemIconLarge(Graphics g,int id,int x,int y){if(id<0||id>=itemIconLarge.length)return;if(itemIcon[id]==null)itemIcon(g,id,-100,-100);if(itemIconLarge[id]==null&&itemIcon[id]!=null)itemIconLarge[id]=scaleImage(itemIcon[id],32);if(itemIconLarge[id]!=null)g.drawImage(itemIconLarge[id],x,y,TL);}
     public static void itemIconMedium(Graphics g,int id,int x,int y){
         if(id<0||id>=itemIconMedium.length)return;
         if(!itemIconMediumTried[id]){
@@ -623,7 +703,7 @@ public final class Art {
                 avatarAge[old]=0;avatarTried[old]=false;
             }
             avatarTried[sp] = true;
-            try { avatar[sp] = Image.createImage("/av/" + sp + ".png");avatarAge[sp]=++avatarClock; }
+            try { avatar[sp] = Image.createImage(sp<Data.CORE_N?"/av/"+sp+".png":"/dex/"+Data.nationalDex(sp)+".png");avatarAge[sp]=++avatarClock; }
             catch (Exception e) { avatar[sp] = null; }
         }
         return avatar[sp];
@@ -633,6 +713,56 @@ public final class Art {
         Image im=loadAvatar(sp);
         if (im != null) g.drawImage(im, x, y, TL);
         else sprite(g, sp, x, y, 32);
+    }
+
+    private static Image loadShinyAvatar(int sp){
+        if(!ShinyData.available(sp))return null;
+        if(shinyAvatarSp!=sp){shinyAvatarSp=sp;shinyAvatar=shinyAvatarMini=null;try{shinyAvatar=Image.createImage(sp<Data.CORE_N?"/shinyav/"+sp+".png":"/shinydex/"+Data.nationalDex(sp)+".png");}catch(Exception e){shinyAvatar=null;}}
+        return shinyAvatar;
+    }
+    public static void avatarShiny(Graphics g,int sp,int x,int y){Image im=loadShinyAvatar(sp);if(im!=null)g.drawImage(im,x,y,TL);else avatar(g,sp,x,y);}
+    public static void avatarMiniShiny(Graphics g,int sp,int x,int y){
+        Image im=loadShinyAvatar(sp);if(im!=null&&shinyAvatarMini==null)try{int sw=im.getWidth(),sh=im.getHeight(),s=20;int[] src=new int[sw*sh],dst=new int[s*s];im.getRGB(src,0,sw,0,0,sw,sh);for(int yy=0;yy<s;yy++)for(int xx=0;xx<s;xx++)dst[yy*s+xx]=src[(yy*sh/s)*sw+xx*sw/s];shinyAvatarMini=Image.createRGBImage(dst,s,s,true);}catch(Exception e){shinyAvatarMini=null;}
+        if(shinyAvatarMini!=null)g.drawImage(shinyAvatarMini,x,y,TL);else avatarMini(g,sp,x,y);
+    }
+    private static Image loadMegaAvatar(int sp,boolean shiny){if(!MegaData.available(sp))return null;if(megaAvatarSp!=sp||megaAvatarShiny!=shiny){megaAvatarSp=sp;megaAvatarShiny=shiny;megaAvatar=megaAvatarMini=null;try{megaAvatar=Image.createImage("/megaav/"+Data.nationalDex(sp)+(shiny?"-shiny":"")+".png");}catch(Exception e){if(shiny)return loadMegaAvatar(sp,false);megaAvatar=null;}}return megaAvatar;}
+    public static void avatarMega(Graphics g,int sp,int x,int y){avatarMega(g,sp,x,y,false);}
+    public static void avatarMega(Graphics g,int sp,int x,int y,boolean shiny){Image im=loadMegaAvatar(sp,shiny);if(im!=null)g.drawImage(im,x,y,TL);else if(shiny)avatarShiny(g,sp,x,y);else avatar(g,sp,x,y);}
+    public static void avatarMiniMega(Graphics g,int sp,int x,int y){avatarMiniMega(g,sp,x,y,false);}
+    public static void avatarMiniMega(Graphics g,int sp,int x,int y,boolean shiny){Image im=loadMegaAvatar(sp,shiny);if(im!=null&&megaAvatarMini==null)megaAvatarMini=scaleImage(im,20);if(megaAvatarMini!=null)g.drawImage(megaAvatarMini,x,y,TL);else if(shiny)avatarMiniShiny(g,sp,x,y);else avatarMini(g,sp,x,y);}
+    private static Image scaleImage(Image im,int s){try{int sw=im.getWidth(),sh=im.getHeight();int[] src=new int[sw*sh],dst=new int[s*s];im.getRGB(src,0,sw,0,0,sw,sh);for(int yy=0;yy<s;yy++)for(int xx=0;xx<s;xx++)dst[yy*s+xx]=src[(yy*sh/s)*sw+xx*sw/s];return Image.createRGBImage(dst,s,s,true);}catch(Exception e){return null;}}
+    private static Image uiAsset(String path,int size){try{return scaleImage(Image.createImage(path),size);}catch(Exception e){return null;}}
+    public static void megaStoneIcon(Graphics g,int x,int y,boolean tiny){if(tiny){if(megaStone8==null)megaStone8=uiAsset("/ui/mega_stone.png",8);if(megaStone8!=null)g.drawImage(megaStone8,x,y,TL);}else{if(megaStone24==null)megaStone24=uiAsset("/ui/mega_stone.png",24);if(megaStone24!=null)g.drawImage(megaStone24,x,y,TL);}}
+    public static void megaSymbol(Graphics g,int x,int y){if(megaSymbol==null)try{megaSymbol=Image.createImage("/ui/mega_symbol.png");}catch(Exception e){megaSymbol=null;}if(megaSymbol!=null)g.drawImage(megaSymbol,x,y,TL);}
+    public static void megaSymbolMini(Graphics g,int x,int y){if(megaSymbolMini==null){try{megaSymbolMini=scaleImage(Image.createImage("/ui/mega_symbol.png"),12);}catch(Exception e){megaSymbolMini=null;}}if(megaSymbolMini!=null)g.drawImage(megaSymbolMini,x,y,TL);}
+
+    /** Mega transformation: square burst, DNA strands and two centre-out light waves. */
+    public static void megaTransformFx(Graphics g,int cx,int cy,int age){
+        int p=age*256/1000;if(p<0)p=0;if(p>256)p=256;
+        // Two expanding waves inspired by the Legendary purchase flash.
+        for(int wave=0;wave<2;wave++){
+            int wp=p-wave*54;if(wp<0||wp>210)continue;int rx=4+wp/2,ry=3+wp/4;
+            g.setColor(wave==0?0xFFFFFF:0x70D8FF);g.drawArc(cx-rx,cy-ry,rx*2,ry*2,0,360);
+            if(wp<150){g.setColor(0xD060FF);g.drawArc(cx-rx-2,cy-ry-1,rx*2+4,ry*2+2,0,360);}
+        }
+        for(int i=0;i<28;i++){
+            int phase=(i*37+p*2)&255,reach=8+p/4;
+            int dx=((phase<64?phase:(phase<192?128-phase:phase-256))*reach)/64;
+            int q=(phase+64+(i&3)*11)&255;
+            int dy=((q<64?q:(q<192?128-q:q-256))*reach)/64;
+            int s=2+((i+p/18)%5);
+            g.setColor(SHINY_COLORS[(i+p/32)%SHINY_COLORS.length]);
+            g.fillRect(cx+dx-s/2,cy+dy-s/2,s,s);
+        }
+        // Pixel DNA double helix stays anchored to the transforming Pokemon.
+        int dnaH=44;for(int yy=-dnaH/2;yy<=dnaH/2;yy+=4){
+            int phase=(yy*9+p*3)&63;int tri=phase<32?phase:63-phase;int dx=tri/2-8;
+            int py=cy+yy;if(py<cy-dnaH/2||py>cy+dnaH/2)continue;
+            g.setColor(0x50D8FF);g.fillRect(cx+dx-1,py,3,3);
+            g.setColor(0xFF60D8);g.fillRect(cx-dx-1,py,3,3);
+            if((yy&7)==0){g.setColor(0xFFF060);g.drawLine(cx+dx+2,py+1,cx-dx-2,py+1);}
+        }
+        if(p>96&&p<236)megaSymbol(g,cx-16,cy-16);
     }
 
     /** 20px cached portrait used by the compact 3x3 combat statistics panel. */

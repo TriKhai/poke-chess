@@ -1,8 +1,0 @@
-POKE AUTO CHESS ME v1.1.5a
-==========================
-
-- Synergy rows no longer repeat ELECTRIC, ROCK or other type names after icons.
-- Row layout: type icon, spacing, current/2/4/6, spacing, bonus description.
-- Count/threshold and descriptions use Art.textSmall.
-- Synergy title keeps its existing bold size.
-- Numeric build.xml/JAD/manifest version remains 1.1.5 for MIDP compatibility.

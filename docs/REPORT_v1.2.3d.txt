@@ -1,5 +1,0 @@
-POKE AUTO CHESS ME v1.2.3d - COMPILATION HOTFIX
-================================================
-
-- Sua loi bien StringBuffer b trung voi tham so b trong itemBonusSummary.
-- MIDlet-Version so: 1.2.3. Vendor: KhaiLy.

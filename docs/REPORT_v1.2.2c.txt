@@ -1,7 +1,0 @@
-POKE AUTO CHESS ME v1.2.2c - DUPLICATE INGREDIENT HOTFIX
-=========================================================
-
-- Khong cho mot vat pham chi co so luong 1 chiem ca hai o nguyen lieu.
-- FIRE lan nua tren mon da dung het so luong se lay mon do khoi o chon.
-- O ket qua chi hien khi kho thuc su co du ca hai nguyen lieu.
-- MIDlet-Version so: 1.2.2. Vendor: KhaiLy.

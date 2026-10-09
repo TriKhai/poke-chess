@@ -1,4 +1,4 @@
-# PokeAutoChess ME
+# POKE CHESS — Bảo bối thần kỳ
 
 Game Pokémon offline dành cho Java ME. Phiên bản build hiện tại: **1.7.18**.
 
@@ -34,8 +34,8 @@ Hoặc chỉnh đường dẫn trong `build-poke.bat` rồi chạy. `build.prope
 
 Kết quả:
 
-- `build/dist/PokeAutoChess-Full.jar`
-- `build/dist/PokeAutoChess-Full.jad`
+- `build/dist/PokeChess-Full.jar`
+- `build/dist/PokeChess-Full.jad`
 
 Target `release` chạy kiểm thử combat và kiểm tra gói phát hành. Kiểm thử tự động không thay thế việc kiểm tra cảm ứng và hiển thị trên giả lập/thiết bị thật.
 
@@ -47,7 +47,7 @@ Target `release` chạy kiểm thử combat và kiểm tra gói phát hành. Ki�
 | `res/` | Tài nguyên runtime và credits; cần giữ để build |
 | `test/` | Kiểm thử Java |
 | `tools/` | Công cụ tạo/chuyển đổi tài nguyên; một số cần nguồn tham khảo không nằm trong repo |
-| `docs/` | Tài liệu gameplay, kiểm thử và rà soát nguồn |
+| `docs/` | Phạm vi Pokémon, chỉ số/trạng thái, nguồn chuyển thể và thông tin quyền tài nguyên |
 | `build.xml`, `build.properties`, `build-poke.bat` | Build bằng Ant |
 
 Build game sử dụng tài nguyên đã bake trong `res/`, không cần chạy lại mọi script tạo asset.
@@ -55,10 +55,10 @@ Build game sử dụng tài nguyên đã bake trong `res/`, không cần chạy 
 
 ## Nguồn và giấy phép
 
-Xem [CREDITS.md](CREDITS.md), [CREDITS.txt](CREDITS.txt), [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) và [checklist phát hành](docs/licensing/PUBLIC_RELEASE_CHECKLIST.md).
+Xem [người vẽ từng bộ tài nguyên](CREDITS_ASSETS.md), [CREDITS.md](CREDITS.md), [CREDITS.txt](CREDITS.txt), [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) và [checklist phát hành](docs/licensing/PUBLIC_RELEASE_CHECKLIST.md).
 
 Chưa gán LICENSE chung: cần xác định phạm vi code chuyển thể và quyền của từng nhóm tài nguyên. Không coi việc game miễn phí hoặc có credits là xác nhận quyền phân phối. Các giấy phép/credits bên thứ ba đã lưu trong `res/credits/` phải được giữ nguyên.
 
 ## Chuẩn bị phiên bản mới
 
-Build sạch, kiểm thử tay, rồi dùng JAR/JAD làm release assets; không commit build hay giả lập vào source. Quy trình chi tiết nằm trong [LOCAL_RELEASE_PREP.md](docs/LOCAL_RELEASE_PREP.md). Chủ project tự tạo repo, tag và đăng GitHub Releases.
+Build sạch bằng `clean release`, kiểm thử tay cảm ứng/hiển thị, lưu/tiếp tục, ghép/tiến hóa và các mode chơi; kiểm tra FPS/âm thanh trên thiết bị đích. Dùng JAR/JAD làm release assets, không commit build hay giả lập vào source. Chủ project tự tạo repo, tag và đăng GitHub Releases; đánh dấu pre-release nếu chưa hoàn tất kiểm thử trên thiết bị.

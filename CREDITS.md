@@ -1,5 +1,7 @@
 # Nguồn và ghi công
 
+Danh sách người vẽ theo từng bộ asset hiện có trong game: [CREDITS_ASSETS.md](CREDITS_ASSETS.md). Tên được tra từ credits nguồn và bảng tên SpriteCollab; phần chưa xác minh được đánh dấu riêng.
+
 ## Nhạc nền (thông tin bổ sung do chủ project cung cấp)
 
 - Auto Chess: **Littleroot Town (Remix) - Pokemon: Ruby, Sapphire & Emerald**.
@@ -44,7 +46,7 @@ không suy diễn mọi asset trong repo đều có cùng giấy phép.
 ## Nguồn khác chưa hoàn tất
 
 - Font tahoma_7/tahoma_7b: chủ project xác nhận tự làm; ghi nhận theo thông tin chủ project cung cấp.
-- Artwork item: item{tps}.zip do chủ project cung cấp; chưa có tên tác giả/giấy phép đầy đủ.
+- Artwork item: chủ project (Kdic) xác nhận tự làm; ghi nhận theo thông tin chủ project cung cấp.
 - Hiệu ứng và map: các bộ reference assets; cần kiểm tra theo từng nhóm trong docs/licensing/ASSET_SUMMARY.md.
 - Các hình được tạo mới: phải ghi nhận nguồn tạo và tách khỏi hình bên thứ ba; hiện chưa xác minh từng file.
 

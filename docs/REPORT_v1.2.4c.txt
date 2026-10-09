@@ -1,9 +1,0 @@
-POKE AUTO CHESS ME v1.2.4c - LEGACY JAVAC HOTFIX
-================================================
-
-- Sua loi compile tai PacMidlet.java:16.
-- Bo toan tu ba ngoi giua PlayPathScreen va MenuScreen.
-- Dung if/else de tuong thich trinh javac cu cua Java ME SDK 3.0.
-
-MIDlet-Version: 1.2.4
-MIDlet-Vendor: TriKhai

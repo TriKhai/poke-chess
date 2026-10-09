@@ -55,6 +55,14 @@ Build game sử dụng tài nguyên đã bake trong `res/`, không cần chạy 
 
 ## Nguồn và giấy phép
 
+POKE CHESS / Bảo bối thần kỳ phiên bản JAR là dự án fan-made do **Kdic** thực hiện, với sự đóng góp của **Cộng đồng Game Java Việt Nam**, dựa trên mã nguồn mở Pokémon Auto Chess của **keldaanCommunity**.
+
+Pokémon, tên nhân vật và các nhãn hiệu liên quan thuộc về **The Pokémon Company và các chủ sở hữu quyền tương ứng**. Dự án không liên kết chính thức, không được tài trợ và không tuyên bố được các chủ sở hữu Pokémon cấp phép. Artwork, sprite, nhạc và mã nguồn bên thứ ba vẫn thuộc về tác giả/chủ sở hữu của từng tài nguyên.
+
+Phiên bản game này được làm để chia sẻ **miễn phí, phi thương mại**, không nhằm mua bán game hoặc tài nguyên bên thứ ba. Thông báo này không thay thế hay sửa đổi các giấy phép của mã nguồn và tài nguyên gốc. Dự án có thể ngừng phát triển hoặc phát hành theo yêu cầu của chủ sở hữu quyền.
+
+Cảm ơn cộng đồng, các nghệ sĩ và tất cả người chơi đã góp phần vào dự án!
+
 Xem [người vẽ từng bộ tài nguyên](CREDITS_ASSETS.md), [CREDITS.md](CREDITS.md), [CREDITS.txt](CREDITS.txt), [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) và [checklist phát hành](docs/licensing/PUBLIC_RELEASE_CHECKLIST.md).
 
 Chưa gán LICENSE chung: cần xác định phạm vi code chuyển thể và quyền của từng nhóm tài nguyên. Không coi việc game miễn phí hoặc có credits là xác nhận quyền phân phối. Các giấy phép/credits bên thứ ba đã lưu trong `res/credits/` phải được giữ nguyên.
